@@ -771,7 +771,7 @@
                     <span class="traffic-dot yellow"></span>
                     <span class="traffic-dot green"></span>
                     <span style="margin-left:8px;font-family:var(--mono);font-size:11.5px;font-weight:700;color:#cbd5e1;" id="webTermTitleBar">
-                      huynguyen@MacBook-Air — zsh — ~/Developer/motion-estimator-14nm-asic-manual
+                      student@MacBook-Air — zsh — ~/Developer/motion-estimator-14nm-asic-manual
                     </span>
                   </div>
                   <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
@@ -788,11 +788,11 @@
   1) Click "[▶ Paste & Run One-Liner in Web Terminal]" on any page (or paste any command in the prompt below and press Enter).
   2) Every execution automatically verifies expected output markers, renders a high-DPI terminal PNG, and runs AI Auto-Debug!
 --------------------------------------------------------------------------------
-huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
+student@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
 
                 <!-- Interactive Command Input Bar & Paste Box -->
                 <div class="mac-terminal-input-row">
-                  <span class="terminal-prompt-label">huynguyen@MacBook-Air %</span>
+                  <span class="terminal-prompt-label">student@MacBook-Air %</span>
                   <input
                     type="text"
                     id="webTerminalInput"
@@ -812,7 +812,7 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
                   <button class="btn btn-sm" onclick="runQuickTerminalCmd('step0_fresh_start')">✨ step0_fresh_start</button>
                   <button class="btn btn-sm" onclick="runQuickTerminalCmd('status_now')">📡 status_now</button>
                   <button class="btn btn-sm" onclick="runQuickTerminalCmd('pwd && ls -la')">📂 pwd && ls -la</button>
-                  <button class="btn btn-sm" onclick="runQuickTerminalCmd('git -C /Users/huynguyen/Developer/portfolio/motion-estimator-asic-lab-notebook-2026 status -sb')">🌿 git status</button>
+                  <button class="btn btn-sm" onclick="runQuickTerminalCmd('git -C /workspace/student/Developer/portfolio/motion-estimator-asic-lab-notebook-2026 status -sb')">🌿 git status</button>
                 </div>
               </div>
 
@@ -869,7 +869,7 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
                   <span class="pill-badge emerald" id="lpStatusBadge">🟢 FULL-STACK WEB IDE & TERMINAL CONNECTED</span>
                   <span class="pill-badge blue" id="lpHostBadge">Host: MacBook-Air</span>
-                  <span class="pill-badge purple" id="lpModeBadge">Mode: Repo Owner (huynguyen1017)</span>
+                  <span class="pill-badge purple" id="lpModeBadge">Mode: Repo Owner (junior-developer-org)</span>
                 </div>
                 <h2 style="margin:4px 0 6px 0;font-size:19px;color:#fff;">
                   Welcome to Your ENGR 852 Interactive ASIC Studio & Step 0 Onboarding Doctor
@@ -912,7 +912,7 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:6px;">
                   <button id="lpGitOwner" class="btn btn-sm" onclick="setGithubMode('owner')" style="justify-content:flex-start;">
-                    👑 Repo Owner (huynguyen1017 Auto-Push to Sub-Branch)
+                    👑 Repo Owner (junior-developer-org Auto-Push to Sub-Branch)
                   </button>
                   <button id="lpGitGuest" class="btn btn-sm" onclick="setGithubMode('guest')" style="justify-content:flex-start;">
                     🔑 Student / Guest with Own GitHub Fork
@@ -931,7 +931,7 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
                 </div>
                 <div style="font-size:11.5px;color:#cbd5e1;line-height:1.5;margin-bottom:8px;">
                   <b>Option A (Easiest):</b> Run commands right inside <b>Tab 1 (Web IDE Terminal)</b> — zero external terminal setup required!<br>
-                  <b>Option B (External macOS Terminal):</b> Copy the Step 0 one-liner below into your clean <code>huynguyen@MacBook-Air ~ %</code> window:
+                  <b>Option B (External macOS Terminal):</b> Copy the Step 0 one-liner below into your clean <code>student@MacBook-Air ~ %</code> window:
                 </div>
                 <pre class="one-liner-pre" id="lpStep0CmdBox" style="font-size:11px;max-height:74px;margin-bottom:8px;"></pre>
                 <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -1193,8 +1193,8 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;">
                 <button class="btn btn-emerald" onclick="triggerGitSyncNow(this)">🚀 Commit & Push Practice Evidence Now</button>
-                <a class="btn btn-primary" href="https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026" target="_blank" rel="noopener">🌐 Open Main GitHub Repo</a>
-                <a class="btn" href="https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026/tree/manual-practice-macbook-air/practice_from_scratch" target="_blank" rel="noopener">🌿 Open Sub-Branch Evidence</a>
+                <a class="btn btn-primary" href="https://github.com/junior-developer-org/motion-estimator-asic-lab-notebook-2026" target="_blank" rel="noopener">🌐 Open Main GitHub Repo</a>
+                <a class="btn" href="https://github.com/junior-developer-org/motion-estimator-asic-lab-notebook-2026/tree/manual-practice-macbook-air/practice_from_scratch" target="_blank" rel="noopener">🌿 Open Sub-Branch Evidence</a>
               </div>
             </div>
             <div id="gitSyncStatusBanner" style="margin-top:10px;font-family:var(--mono);font-size:12px;color:#a7f3d0;"></div>
@@ -1380,7 +1380,7 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
       if (GITHUB_MODE === 'owner') {
         if (gitDesc) gitDesc.innerHTML = '<b>Owner Mode:</b> Auto-commits & pushes logs/screenshots to <code>manual-practice-macbook-air</code> while keeping <code>main</code> untouched.';
         if (step0Box) step0Box.textContent = 'cd ~/Developer/portfolio/motion-estimator-asic-lab-notebook-2026 2>/dev/null || cd ~/motion-estimator-asic-lab-notebook-2026 2>/dev/null || pwd; source practice_from_scratch/scripts/auto_bridge.sh && step0_fresh_start';
-        if (lpModeBadge) lpModeBadge.textContent = 'Mode: Repo Owner (huynguyen1017)';
+        if (lpModeBadge) lpModeBadge.textContent = 'Mode: Repo Owner (junior-developer-org)';
       } else if (GITHUB_MODE === 'guest') {
         if (gitDesc) gitDesc.innerHTML = '<b>Guest Fork Mode:</b> Pushes your step logs to your own GitHub fork on branch <code>manual-practice-macbook-air</code>.';
         if (step0Box) step0Box.textContent = 'source practice_from_scratch/scripts/auto_bridge.sh && step0_fresh_start';
@@ -1398,15 +1398,15 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
       const statusTag = exitCode === 0
         ? `[✓ EXIT=0 · ${elapsedS || 0.1}s]`
         : `[✗ EXIT=${exitCode} · ${elapsedS || 0.1}s]`;
-      const block = `\n\nhuynguyen@MacBook-Air motion-estimator-14nm-asic-manual % ${cmdText}\n${outputText}\n${statusTag}\nhuynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _`;
-      screen.textContent = (screen.textContent.replace(/\s*huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _$/, '') + block).slice(-18000);
+      const block = `\n\nstudent@MacBook-Air motion-estimator-14nm-asic-manual % ${cmdText}\n${outputText}\n${statusTag}\nstudent@MacBook-Air motion-estimator-14nm-asic-manual % _`;
+      screen.textContent = (screen.textContent.replace(/\s*student@MacBook-Air motion-estimator-14nm-asic-manual % _$/, '') + block).slice(-18000);
       screen.scrollTop = screen.scrollHeight;
     }
 
     function clearWebTerminal() {
       const screen = document.getElementById('webTerminalScreen');
       if (screen) {
-        screen.textContent = 'huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _';
+        screen.textContent = 'student@MacBook-Air motion-estimator-14nm-asic-manual % _';
       }
     }
 
@@ -2480,7 +2480,7 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
       const ips = LIVE_STATE.ip_addresses || {};
       const urlsBox = document.getElementById('dockUrlsBox');
       if (urlsBox) {
-        urlsBox.innerHTML = `Local: http://127.0.0.1:8788<br>LAN: http://${ips.lan || '192.168.1.70'}:8788<br>VPN: http://${ips.vpn || '130.212.163.69'}:8788`;
+        urlsBox.innerHTML = `Local: http://127.0.0.1:8788<br>LAN: http://${ips.lan || '127.0.0.1'}:8788<br>VPN: http://${ips.vpn || '127.0.0.1'}:8788`;
       }
     }
 

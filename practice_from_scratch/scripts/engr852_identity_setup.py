@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """
-ENGR 852 Identity, Keychain & Multi-Computer Automation Manager (v7.0)
-Modeled directly after `/Users/huynguyen/Desktop/automation/mac-ece-setup-v2.sh` and `ece_canvas.py`.
+ENGR 852 Identity, Keychain & Multi-Computer Automation Manager (v8.0 Hardened)
+Loads private owner settings from `~/.config/engr852/owner_private_config.json` (0600)
+without embedding personal usernames, institutional IDs, or private hosts in source code.
 
 Key Engineering Guarantees:
 1. Prompts for or verifies user identity (`local_username`, `sfsu_login_id`, `github_login`, `eda_server_host`)
    via interactive CLI or native macOS dialog (`osascript`) when needed.
 2. Saves non-secret identity metadata atomically (`0o600`, `O_NOFOLLOW`, `os.fsync`, `os.replace`) into:
-   - `~/.config/engr852/user_identity.txt` (human-readable `KEY=VALUE` format requested by user)
+   - `~/.config/engr852/user_identity.txt` (human-readable `KEY=VALUE` format)
    - `~/Library/Application Support/ENGR852-ASIC-Studio/identity_config.json` (structured JSON with SHA-256 receipt)
 3. Stores session/API tokens in macOS Keychain (`security add-generic-password`) or a `0o600` local bearer token
    protected by `fcntl.flock` advisory locks — never logging passwords or exposing credentials in chat/git.
-4. Enforces thermal/memory/storage health checks modeled after `canvas-sync.py`'s `gate()`.
+4. Enforces thermal/memory/storage health checks.
 """
 from __future__ import annotations
 
@@ -32,15 +33,16 @@ import tempfile
 import time
 from pathlib import Path
 
-VERSION = "7.0.0"
+VERSION = "8.0.0"
 HOME = Path.home().resolve()
 APP_SUPPORT_DIR = HOME / "Library/Application Support/ENGR852-ASIC-Studio"
 CONFIG_DIR = HOME / ".config/engr852"
+OWNER_PRIVATE_CONFIG = CONFIG_DIR / "owner_private_config.json"
 IDENTITY_TXT = CONFIG_DIR / "user_identity.txt"
 IDENTITY_JSON = APP_SUPPORT_DIR / "identity_config.json"
 TOKEN_FILE = APP_SUPPORT_DIR / "session_token.secret"
 RECEIPT_FILE = APP_SUPPORT_DIR / "automation_receipt.json"
-KEYCHAIN_SERVICE = "com.huynguyen.engr852.asic.studio"
+KEYCHAIN_SERVICE = "dev.juniordeveloper.engr852.asic.studio"
 
 
 def utc_now() -> str:
@@ -99,10 +101,20 @@ def advisory_lock(lock_name: str):
         os.close(fd)
 
 
+def _load_private_owner_cfg() -> dict:
+    if OWNER_PRIVATE_CONFIG.exists() and not OWNER_PRIVATE_CONFIG.is_symlink():
+        try:
+            return json.loads(OWNER_PRIVATE_CONFIG.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+
 def detect_git_and_system_defaults() -> dict:
-    local_user = os.environ.get("USER") or "huynguyen"
+    priv = _load_private_owner_cfg()
+    local_user = os.environ.get("USER") or str(priv.get("owner_local_username") or "student_user")
     hostname = socket.gethostname()
-    git_login = "huynguyen1017"
+    git_login = str(priv.get("github_login") or "student_github")
     try:
         r = subprocess.run(["git", "config", "--get", "user.name"], capture_output=True, text=True, timeout=3)
         if r.returncode == 0 and r.stdout.strip():
@@ -110,10 +122,9 @@ def detect_git_and_system_defaults() -> dict:
     except Exception:
         pass
 
-    # Discover SFSU login ID from ~/.ssh/config or existing logs if available
-    sfsu_id = "926784856"
+    sfsu_id = str(priv.get("sfsu_login_id") or "")
     ssh_cfg = HOME / ".ssh/config"
-    if ssh_cfg.exists() and not ssh_cfg.is_symlink():
+    if not sfsu_id and ssh_cfg.exists() and not ssh_cfg.is_symlink():
         try:
             txt = ssh_cfg.read_text(encoding="utf-8", errors="ignore")
             m = re.search(r"User\s+(\d{9})", txt)
@@ -122,6 +133,7 @@ def detect_git_and_system_defaults() -> dict:
         except Exception:
             pass
 
+    eda_host = str(priv.get("eda_server_host") or "")
     device_role = "iMac" if "imac" in hostname.lower() else ("MacBook-Air" if "macbook" in hostname.lower() else hostname)
     return {
         "schema": 1,
@@ -129,7 +141,7 @@ def detect_git_and_system_defaults() -> dict:
         "local_username": local_user,
         "sfsu_login_id": sfsu_id,
         "github_login": git_login,
-        "eda_server_host": "mahmoodi.rcc.at.sfsu.edu",
+        "eda_server_host": eda_host,
         "eda_server_user": sfsu_id,
         "eda_server_shell": "tcsh",
         "synopsys_setup_tcl": "/packages/synopsys/setup/synopsys_setup.tcl",
@@ -171,7 +183,7 @@ def save_identity(ident: dict) -> dict:
         f"LOCAL_USERNAME={ident.get('local_username', '')}",
         f"SFSU_LOGIN_ID={ident.get('sfsu_login_id', '')}",
         f"GITHUB_LOGIN={ident.get('github_login', '')}",
-        f"EDA_SERVER_HOST={ident.get('eda_server_host', 'mahmoodi.rcc.at.sfsu.edu')}",
+        f"EDA_SERVER_HOST={ident.get('eda_server_host', '')}",
         f"EDA_SERVER_USER={ident.get('eda_server_user', ident.get('sfsu_login_id', ''))}",
         f"EDA_SERVER_SHELL={ident.get('eda_server_shell', 'tcsh')}",
         f"SYNOPSYS_SETUP_TCL={ident.get('synopsys_setup_tcl', '/packages/synopsys/setup/synopsys_setup.tcl')}",
@@ -193,7 +205,6 @@ def get_or_create_session_token(user_id: str | None = None) -> str:
     else:
         secret = secrets.token_hex(32)
         atomic_write(TOKEN_FILE, secret + "\n", mode=0o600)
-        # Also store in macOS Keychain best-effort (non-interactive)
         try:
             subprocess.run(
                 [
@@ -201,7 +212,7 @@ def get_or_create_session_token(user_id: str | None = None) -> str:
                     "add-generic-password",
                     "-U",
                     "-a",
-                    os.environ.get("USER", "huynguyen"),
+                    os.environ.get("USER", "student_user"),
                     "-s",
                     KEYCHAIN_SERVICE,
                     "-w",
@@ -212,7 +223,7 @@ def get_or_create_session_token(user_id: str | None = None) -> str:
             )
         except Exception:
             pass
-    uid = (user_id or os.environ.get("USER") or "huynguyen").strip()
+    uid = (user_id or os.environ.get("USER") or "student_user").strip()
     sig = hmac.new(secret.encode("utf-8"), uid.encode("utf-8"), hashlib.sha256).hexdigest()[:32]
     return f"engr852_{uid}_{sig}"
 
@@ -237,8 +248,8 @@ def interactive_prompt(gui: bool = False) -> dict:
     cur = load_or_init_identity()
     if gui and sys.platform == "darwin":
         script = (
-            f'display dialog "ENGR 852 Automation Setup — Confirm SFSU Login ID (for mahmoodi.rcc.at.sfsu.edu) '
-            f'and GitHub Username:" default answer "{cur.get("sfsu_login_id", "926784856")},{cur.get("github_login", "huynguyen1017")}" '
+            f'display dialog "ENGR 852 Automation Setup — Confirm Authorized EDA Login ID '
+            f'and GitHub Username:" default answer "{cur.get("sfsu_login_id", "")},{cur.get("github_login", "")}" '
             f'with title "ENGR 852 ASIC Studio Identity"'
         )
         try:

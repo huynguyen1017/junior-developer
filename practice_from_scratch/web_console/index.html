@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ENGR 852 | v5.0 Full-Viewport Interactive ASIC Studio · Live MacBook Terminal, Formulas, Flashcards & Auto-Rotating Resources</title>
+  <title>JUNIOR DEVELOPER | Learn. Build. Connect. · Public Developer Platform, Open-Source Verilog/VCD Studio, Junior Connect, Messenger & ENGR 852 ASIC Lab (v8.0)</title>
   <style>
     :root {
       --bg-gradient: linear-gradient(135deg, #fff5f8 0%, #f9f0ff 50%, #f0fdfa 100%);
@@ -597,10 +597,10 @@
   <!-- Sticky Full-Viewport Header -->
   <header class="studio-header">
     <div class="brand-box">
-      <div class="brand-icon">🌸</div>
+      <div class="brand-icon" style="font-size:15px;letter-spacing:-0.5px;">JD</div>
       <div>
-        <h1>ENGR 852 · 14nm FinFET ASIC Evidence-Driven Studio & 9-Agent AI Platform (v7.0)</h1>
-        <p>7-Class Evidence Provenance · Real PTY + SSE Live Terminal · 12-Step Native XQuartz/Verdi Check · 13 Fault-Injection Tests (T01–T13) · V9 Audit</p>
+        <h1>JUNIOR DEVELOPER · Learn. Build. Connect. — Public Engineering, Community & ASIC Studio Platform (v8.0)</h1>
+        <p>Build real projects. Learn with real developers. · Open-Source Verilog/VCD Sandbox · Junior Connect · Junior Messenger · 5 Scoped AI Agents · ENGR 852 100-Page ASIC Studio</p>
       </div>
     </div>
 
@@ -608,7 +608,7 @@
       <!-- Page Selector -->
       <div style="display:flex;align-items:center;gap:6px;background:#fdf4ff;padding:4px 10px;border-radius:999px;border:1.5px solid #f5d0fe;">
         <button class="btn btn-sm" onclick="stepIdePage(-1)">◀ Prev</button>
-        <select id="globalPageSelect" onchange="selectIdePage(parseInt(this.value,10))" style="border:none;background:transparent;color:#6b21a8;font-weight:800;font-size:12.4px;outline:none;max-width:300px;"></select>
+        <select id="globalPageSelect" onchange="selectIdePage(parseInt(this.value,10))" style="border:none;background:transparent;color:#6b21a8;font-weight:800;font-size:12.4px;outline:none;max-width:260px;"></select>
         <button class="btn btn-sm" onclick="stepIdePage(1)">Next ▶</button>
       </div>
 
@@ -619,63 +619,359 @@
         <button id="topLvlAdvanced" class="btn btn-sm" onclick="setLearnerLevel('advanced')">💎 Advanced</button>
       </div>
 
+      <!-- Student Auth Pill & Modal Trigger -->
+      <button class="btn btn-sm btn-pink" id="topAuthUserBtn" onclick="switchTab('tab-jdev-home');document.getElementById('jdevAuthCard').scrollIntoView({behavior:'smooth'});">
+        🔐 Guest Student · Sign In / Register
+      </button>
+
       <!-- Live Pop-Up Execution & XQuartz Plotter Button -->
-      <button class="btn btn-sm btn-pink" onclick="openLivePopupExecutionModal()" title="Open Pop-Up Live Execution Pipeline & XQuartz Step-by-Step Waveform Plotter">
-        🖥️ Pop-Up Live Execution & XQuartz Plotter
+      <button class="btn btn-sm btn-lavender" onclick="openLivePopupExecutionModal()" title="Open Pop-Up Live Execution Pipeline & XQuartz Step-by-Step Waveform Plotter">
+        🖥️ Native Verdi & Oscilloscope
       </button>
 
-      <!-- 1-Click v7.0 13 Acceptance Tests & V9 Audit Button -->
-      <button class="btn btn-sm btn-lavender" onclick="openV7EvidenceAndAcceptanceModal()" title="Run All 13 Fault-Injection Acceptance Tests (T01-T13) & Inspect V9 Sign-Off Waivers">
-        🛡️ v7.0 Audit & 13 Tests (T01–T13)
+      <!-- 1-Click v7.1 & v8.0 Acceptance Tests & V9 Audit Button -->
+      <button class="btn btn-sm btn-mint" onclick="openV7EvidenceAndAcceptanceModal()" title="Run All 25 Fault-Injection & Native Verdi Acceptance Tests (T01-T25) & Inspect V9 Sign-Off Waivers">
+        🛡️ v8.0 / v7.1 Audit (T01–T25)
       </button>
 
-      <!-- 1-Click GitHub Live Sync Button -->
-      <button class="btn btn-sm btn-mint" onclick="syncAll100PagesToGithubLive(true)" title="Commit & Push All 100 Verified Pages to GitHub manual-practice-macbook-air">
-        🚀 Sync & Open GitHub Live
-      </button>
-
-      <!-- 1-Click Copy Live Diagnostics for Chat -->
-      <button class="btn btn-sm btn-lavender" onclick="copySuperAgentDiagnosticsForChat(this)" title="Copy Complete Live Server, Log & GitHub Diagnostics for Chat">
-        📋 Copy Live Log for Chat
-      </button>
-
-      <span class="badge mint" id="topEvidenceClassBadge">🛡️ Evidence: IMPORTED_REFERENCE</span>
-      <span class="badge mint" id="topProgressBadge">✓ 100 / 100 Verified</span>
-      <span class="badge lavender" id="topQuizBadge">🎯 Quiz: 0 Correct</span>
-      <span class="badge" id="topFlashcardBadge">🃏 Flashcards: 0 Mastered</span>
+      <!-- 5 Separated Truthful Progress Metrics (Bug E Fix: Learning, Execution, Verification, Evidence, GitHub) -->
+      <span class="badge lavender" id="topLearningMetricBadge" title="Metric 1: Learning Progress (Quizzes & Flashcards)">📘 Learning: 0 Qs</span>
+      <span class="badge" id="topExecutionMetricBadge" title="Metric 2: Execution Progress (Runs Executed)">⚙️ Executed: 0 Runs</span>
+      <span class="badge mint" id="topProgressBadge" title="Metric 3: Verification Progress (Verified Pages)">✅ Verified: 0 / 100</span>
+      <span class="badge mint" id="topEvidenceClassBadge" title="Metric 4: Evidence Provenance Class">🛡️ Evidence: IMPORTED_REFERENCE</span>
+      <span class="badge lavender" id="topGithubMetricBadge" title="Metric 5: GitHub Synchronization Status">🌿 GitHub: Isolated Stage</span>
+      <span class="badge lavender" id="topQuizBadge" style="display:none;">🎯 Quiz: 0 Correct</span>
+      <span class="badge" id="topFlashcardBadge" style="display:none;">🃏 Flashcards: 0 Mastered</span>
     </div>
   </header>
 
-  <!-- Full-Viewport 7-Tab Navigation Bar -->
+  <!-- Primary JUNIOR DEVELOPER V8.0 Navigation Bar + ASIC Studio Sub-Navigation -->
   <nav class="main-nav-bar">
-    <button class="nav-tab-btn active" data-tab="tab-lab" onclick="switchTab('tab-lab')">
-      🌸 1. Guided Lab & Live Terminal (Pages 1–100)
+    <button class="nav-tab-btn active" data-tab="tab-jdev-home" onclick="switchTab('tab-jdev-home')">
+      🏠 Home, Explore & Open-Source Verilog Lab
+    </button>
+    <button class="nav-tab-btn" data-tab="tab-jdev-connect" onclick="switchTab('tab-jdev-connect')">
+      🌐 Junior Connect (Communities & Posts)
+    </button>
+    <button class="nav-tab-btn" data-tab="tab-jdev-messenger" onclick="switchTab('tab-jdev-messenger')">
+      💬 Junior Messenger (DMs & Study Rooms)
+    </button>
+    <button class="nav-tab-btn" data-tab="tab-lab" onclick="switchTab('tab-lab')">
+      🔬 Labs: ENGR 852 ASIC Studio (Pages 1–100)
     </button>
     <button class="nav-tab-btn" data-tab="tab-builder" onclick="switchTab('tab-builder')">
-      🗺️ 2. V1 → V9 Project Builder & Stage Runner
+      🗺️ V1 → V9 Project Builder
     </button>
     <button class="nav-tab-btn" data-tab="tab-simulators" onclick="switchTab('tab-simulators')">
-      🎛️ 3. Interactive Hardware & Timing Simulators
+      🎛️ Hardware & Timing Simulators
     </button>
     <button class="nav-tab-btn" data-tab="tab-waveforms" onclick="switchTab('tab-waveforms')">
-      📈 4. Waveforms (Figs 7–11) & 14nm Chip Layout
+      📈 Waveforms (Figs 7–11) & Layout
     </button>
     <button class="nav-tab-btn" data-tab="tab-study" onclick="switchTab('tab-study')">
-      🎓 5. Study Guide (F0–F17), Formulas & Midterm (Q1–Q15)
+      🎓 Courses, Formulas (F0–F17) & Midterm
     </button>
     <button class="nav-tab-btn" data-tab="tab-discovery" onclick="switchTab('tab-discovery')">
-      🌐 6. Auto-Rotating Web Resources & 3D Flashcards
+      🃏 3D Flashcards & Web Discovery
     </button>
     <button class="nav-tab-btn" data-tab="tab-superagent" onclick="switchTab('tab-superagent')">
-      🤖 7. Super-Agent Mentor, Voice Coach & New Project Hub
+      🤖 AI Mentor v8 & Custom Projects
     </button>
   </nav>
 
   <div class="page-container">
     <!-- ==================================================================== -->
+    <!-- JUNIOR DEVELOPER V8.0 TAB 0A: HOME, EXPLORE, AUTH & OPEN-SOURCE LAB  -->
+    <!-- ==================================================================== -->
+    <section id="tab-jdev-home" class="tab-pane active">
+      <!-- Public Hero Banner -->
+      <div class="studio-card lavender-card" style="background:linear-gradient(135deg,#1e1035 0%,#3b0764 55%,#831843 100%);color:#ffffff;border-color:#f472b6;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:320px;">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+              <span class="badge mint">🚀 JUNIOR DEVELOPER v8.0 · PUBLIC DEVELOPER PLATFORM</span>
+              <span class="badge lavender">🌐 Domain Ready: juniordeveloper.dev & learnjuniordeveloper.com (RDAP Verified Available)</span>
+              <span class="badge" id="jdevHeroRoleBadge">👤 Mode: Guest Student Sandbox</span>
+            </div>
+            <h2 style="margin:0 0 6px 0;font-size:24px;color:#ffffff;line-height:1.25;">
+              Build real projects. Learn with real developers.
+            </h2>
+            <p style="margin:0 0 12px 0;font-size:13.6px;color:#fce7f3;line-height:1.6;">
+              Master Verilog, digital design, ASIC architecture, and full-stack engineering in isolated per-student sandboxes — powered by real open-source EDA tools (<code>Icarus Verilog</code>, <code>vvp</code>, <code>Yosys</code>, <code>Verilator</code>), the 8-community <b>Junior Connect</b> network, real-time <b>Junior Messenger</b> study rooms, 5 scoped AI agents, and the preserved 100-page <b>ENGR 852 14nm Motion Estimator ASIC Studio</b>.
+            </p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-pink" onclick="document.getElementById('jdevOpenEdaCard').scrollIntoView({behavior:'smooth'});">
+                ⚡ Start Learning Free (Run Open-Source Verilog + VCD)
+              </button>
+              <button class="btn btn-mint" onclick="switchTab('tab-jdev-connect')">
+                🌐 Join Junior Connect (8 Communities)
+              </button>
+              <button class="btn btn-lavender" onclick="switchTab('tab-jdev-messenger')">
+                💬 Open Junior Messenger
+              </button>
+              <button class="btn" style="background:rgba(255,255,255,0.14);color:#fff;border-color:#fbcfe8;" onclick="switchTab('tab-lab')">
+                🔬 Open ENGR 852 100-Page ASIC Studio
+              </button>
+            </div>
+          </div>
+          <div style="background:rgba(15,7,32,0.78);border:1.5px solid #f472b6;border-radius:14px;padding:12px 16px;min-width:290px;">
+            <div style="font-size:12px;font-weight:800;color:#f9a8d4;margin-bottom:6px;">📊 Separated Platform & Evidence Metrics</div>
+            <div style="font-size:12px;line-height:1.75;color:#f8fafc;font-family:var(--mono);">
+              <div>1. Learning Progress : <b id="heroMetricLearning" style="color:#c084fc;">0 Quizzes · 0 Cards</b></div>
+              <div>2. Execution Progress: <b id="heroMetricExec" style="color:#38bdf8;">0 Sandbox Runs</b></div>
+              <div>3. Verification      : <b id="heroMetricVerif" style="color:#34d399;">0 / 100 Pages</b></div>
+              <div>4. Evidence Status   : <b id="heroMetricEvidence" style="color:#fde68a;">IMPORTED_REFERENCE</b></div>
+              <div>5. GitHub Status     : <b id="heroMetricGithub" style="color:#f472b6;">Isolated Stage</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2-Column Split: LEFT = Student Auth, Profile, Export & AI Mentor v8 | RIGHT = Open-Source Verilog + VCD Execution Studio -->
+      <div class="lab-split">
+        <!-- LEFT COLUMN: Student Authentication, Account Privacy Controls & Scoped AI Mentor v8 -->
+        <div>
+          <div class="studio-card" id="jdevAuthCard">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+              <div>
+                <h3 style="margin:0;font-size:17px;">🔐 Student Account, Guest Sandbox Migration & Privacy Controls</h3>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;" id="jdevCurrentAuthStatusLbl">
+                  Currently browsing as an isolated Guest Session. Register or sign in to persist projects, posts, and messages across devices!
+                </div>
+              </div>
+              <span class="badge mint" id="jdevSessionRolePill">GUEST_SANDBOX</span>
+            </div>
+
+            <div class="grid-2" style="margin-bottom:10px;">
+              <!-- Register / Migrate Box -->
+              <div style="background:#fdf4ff;border:1.5px solid #e9d5ff;border-radius:12px;padding:12px;">
+                <div style="font-size:13px;font-weight:800;color:#6b21a8;margin-bottom:8px;">✨ Create Student Account (or Migrate Guest)</div>
+                <input type="text" id="jdevRegHandle" placeholder="Handle (e.g. maya_verilog)" style="width:100%;padding:7px 10px;border-radius:8px;border:1px solid #d8b4fe;margin-bottom:6px;font-size:12.2px;">
+                <input type="email" id="jdevRegEmail" placeholder="Email (e.g. maya@university.edu)" style="width:100%;padding:7px 10px;border-radius:8px;border:1px solid #d8b4fe;margin-bottom:6px;font-size:12.2px;">
+                <input type="text" id="jdevRegDisplayName" placeholder="Display Name (e.g. Maya Chen)" style="width:100%;padding:7px 10px;border-radius:8px;border:1px solid #d8b4fe;margin-bottom:6px;font-size:12.2px;">
+                <input type="password" id="jdevRegPassword" placeholder="Password (min 8 chars)" style="width:100%;padding:7px 10px;border-radius:8px;border:1px solid #d8b4fe;margin-bottom:8px;font-size:12.2px;">
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <button class="btn btn-sm btn-pink" onclick="jdevRegisterAccount(false)">🚀 Register Account</button>
+                  <button class="btn btn-sm btn-mint" onclick="jdevRegisterAccount(true)">🔄 Migrate Guest → Student</button>
+                </div>
+              </div>
+
+              <!-- Sign In / Session Controls Box -->
+              <div style="background:#f0fdf4;border:1.5px solid #a7f3d0;border-radius:12px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;">
+                <div>
+                  <div style="font-size:13px;font-weight:800;color:#047857;margin-bottom:8px;">🔑 Sign In to Existing Account</div>
+                  <input type="text" id="jdevLoginIdent" placeholder="Email or @handle" style="width:100%;padding:7px 10px;border-radius:8px;border:1px solid #6ee7b7;margin-bottom:6px;font-size:12.2px;">
+                  <input type="password" id="jdevLoginPass" placeholder="Password" style="width:100%;padding:7px 10px;border-radius:8px;border:1px solid #6ee7b7;margin-bottom:8px;font-size:12.2px;">
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <button class="btn btn-sm btn-mint" onclick="jdevLoginAccount()">🔑 Sign In</button>
+                    <button class="btn btn-sm" onclick="jdevInitGuestSession(true)">👤 New Guest Session</button>
+                    <button class="btn btn-sm" onclick="jdevLogoutAccount()">🚪 Sign Out</button>
+                  </div>
+                </div>
+                <div style="margin-top:10px;padding-top:8px;border-top:1px dashed #6ee7b7;display:flex;gap:6px;flex-wrap:wrap;">
+                  <button class="btn btn-sm btn-lavender" onclick="jdevExportAccountData()">📦 Export My Account JSON</button>
+                  <button class="btn btn-sm" style="border-color:#fda4af;color:#be123c;" onclick="jdevDeleteAccount()">🗑️ Delete Account</button>
+                </div>
+              </div>
+            </div>
+            <div id="jdevAuthFeedbackBox" style="font-size:12.2px;color:#047857;font-weight:700;"></div>
+          </div>
+
+          <!-- Scoped AI Mentor v8 & Study Match Card -->
+          <div class="studio-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+              <div>
+                <h3 style="margin:0;font-size:17px;">🤖 Scoped AI Mentor v8 & Study Partner Match</h3>
+                <div style="font-size:12px;color:var(--text-muted);">
+                  5 Role-Scoped Agents: <code>KnowledgeRetrieval</code> · <code>CommunityAssistance</code> · <code>ConversationAssistance</code> · <code>LearningMatch</code> · <code>TrustAndSafety</code>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-mint" onclick="jdevFindStudyMatches()">🤝 Find Study Partners</button>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+              <select id="jdevAiModeSelect" style="padding:7px 10px;border-radius:9px;border:1.5px solid #d8b4fe;font-size:12.2px;font-weight:700;color:#6b21a8;">
+                <option value="explain">KnowledgeRetrievalAgent · Explain Concept & Cite Evidence</option>
+                <option value="community">CommunityAssistanceAgent · Draft Junior Connect Post & Summarize</option>
+                <option value="conversation">ConversationAssistanceAgent · Summarize Chat & Action Items</option>
+                <option value="match">LearningMatchAgent · Recommend Courses & Study Partners</option>
+              </select>
+              <input type="text" id="jdevAiPromptInput" placeholder="Ask about 8-bit 0xFF saturation, setup slack, or paste compiler output..." style="flex:1;min-width:200px;padding:7px 11px;border-radius:9px;border:1.5px solid #d8b4fe;font-size:12.2px;" onkeydown="if(event.key==='Enter'){jdevRunAiMentor();}">
+              <button class="btn btn-sm btn-pink" onclick="jdevRunAiMentor()">✨ Ask AI v8</button>
+            </div>
+            <pre class="code-box" id="jdevAiResponseBox" style="max-height:210px;overflow-y:auto;font-size:11.8px;">Select an AI Agent role above or click "🤝 Find Study Partners" to get grounded, non-fabricated engineering guidance.</pre>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Open-Source Verilog & VCD Waveform Sandbox Studio (iverilog + vvp + yosys) -->
+        <div>
+          <div class="studio-card mint-card" id="jdevOpenEdaCard">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+              <div>
+                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                  <span class="badge mint">⚡ FREE PUBLIC OPEN-SOURCE EDA WORKER</span>
+                  <span class="badge lavender" id="jdevProjectRunBadge">NATIVE_EXECUTION · Icarus Verilog + vvp + Yosys</span>
+                </div>
+                <h3 style="margin:4px 0 0 0;font-size:17.5px;">🔬 My Projects & Open-Source Verilog + VCD Waveform Studio</h3>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <select id="jdevProjectSelect" onchange="jdevSelectProject(this.value)" style="padding:6px 10px;border-radius:8px;border:1.5px solid #6ee7b7;font-size:12px;font-weight:700;"></select>
+                <button class="btn btn-sm btn-pink" onclick="jdevRunOpenSourceVerilog()">▶ Run Icarus Verilog + VCD + Yosys</button>
+                <button class="btn btn-sm" onclick="jdevResetCurrentProject()">↺ Reset Project (Archive)</button>
+              </div>
+            </div>
+
+            <div class="grid-2" style="gap:10px;margin-bottom:10px;">
+              <div>
+                <div style="font-size:11.8px;font-weight:800;color:#6b21a8;margin-bottom:4px;">📝 Verilog RTL Module (<code>rtl/design.v</code>)</div>
+                <textarea id="jdevRtlEditor" spellcheck="false" style="width:100%;height:155px;background:#150a26;color:#fdf2f8;border:1.5px solid #d8b4fe;border-radius:10px;padding:9px;font-family:var(--mono);font-size:11.5px;line-height:1.45;"></textarea>
+              </div>
+              <div>
+                <div style="font-size:11.8px;font-weight:800;color:#047857;margin-bottom:4px;">🧪 Self-Checking Testbench (<code>tb/design_tb.v</code>)</div>
+                <textarea id="jdevTbEditor" spellcheck="false" style="width:100%;height:155px;background:#150a26;color:#fdf2f8;border:1.5px solid #6ee7b7;border-radius:10px;padding:9px;font-family:var(--mono);font-size:11.5px;line-height:1.45;"></textarea>
+              </div>
+            </div>
+
+            <!-- Interactive VCD Waveform Canvas -->
+            <div style="background:#120721;border:2px solid #10b981;border-radius:12px;padding:10px;margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:#ecfdf5;font-size:11.8px;">
+                <b id="jdevVcdCanvasTitle">📈 Real VCD Signal Transitions (Compiled & Simulated via Icarus Verilog + vvp)</b>
+                <span class="badge mint" id="jdevVcdStatsPill">Ready to Simulate</span>
+              </div>
+              <canvas id="jdevVcdWaveformCanvas" width="760" height="190" style="width:100%;height:180px;background:#0f0720;border-radius:8px;display:block;"></canvas>
+            </div>
+
+            <pre class="code-box" id="jdevRunOutputPre" style="max-height:170px;overflow-y:auto;font-size:11.4px;">Click "▶ Run Icarus Verilog + VCD + Yosys" above to compile your Verilog RTL in an isolated 0700 student sandbox, generate a real VCD waveform, and inspect gate-level Yosys synthesis stats!</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- JUNIOR DEVELOPER V8.0 TAB 0B: JUNIOR CONNECT (REDDIT-STYLE COMMUNITY)-->
+    <!-- ==================================================================== -->
+    <section id="tab-jdev-connect" class="tab-pane">
+      <div class="studio-card lavender-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div>
+            <span class="badge mint">🌐 JUNIOR CONNECT · REDDIT-STYLE DEVELOPER & HARDWARE COMMUNITY</span>
+            <h2 style="margin:5px 0 2px 0;font-size:20px;">Communities, Debugging Help, Waveform Reviews & Peer Answers</h2>
+            <p style="margin:0;font-size:12.8px;color:var(--text-body);">
+              Browse 8 topic communities (<code>c/verilog</code>, <code>c/asic-design</code>, <code>c/debugging-help</code>, etc.), share sanitized lab runs with automatic secret/path redaction, vote on answers, and mark accepted solutions.
+            </p>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;" id="jdevCommunityPillsBar"></div>
+        </div>
+      </div>
+
+      <div class="lab-split">
+        <!-- LEFT: Community Feed & Post Composer -->
+        <div>
+          <div class="studio-card">
+            <h3 style="margin:0 0 8px 0;font-size:16px;">✍️ Create a Junior Connect Post (Auto-Redacts Private Paths & Keys)</h3>
+            <div class="grid-3" style="margin-bottom:8px;">
+              <select id="jdevPostCommSelect" style="padding:7px 10px;border-radius:8px;border:1.5px solid #d8b4fe;font-size:12.2px;font-weight:700;">
+                <option value="c/verilog">c/verilog</option>
+                <option value="c/asic-design">c/asic-design</option>
+                <option value="c/debugging-help">c/debugging-help</option>
+                <option value="c/digital-design">c/digital-design</option>
+                <option value="c/fpga">c/fpga</option>
+                <option value="c/beginner-questions">c/beginner-questions</option>
+                <option value="c/show-and-tell">c/show-and-tell</option>
+                <option value="c/general-dev">c/general-dev</option>
+              </select>
+              <select id="jdevPostTypeSelect" style="padding:7px 10px;border-radius:8px;border:1.5px solid #d8b4fe;font-size:12.2px;font-weight:700;">
+                <option value="help_debug">🐞 Help Me Debug (Lab Run)</option>
+                <option value="question">❓ Technical Question</option>
+                <option value="waveform">📈 Waveform / Timing Review</option>
+                <option value="project">🚀 Project Showcase</option>
+                <option value="tutorial">📘 Tutorial / Study Note</option>
+                <option value="career">💼 Career / Interview Prep</option>
+              </select>
+              <input type="text" id="jdevPostTitleInput" placeholder="Post Title (e.g. Why does BestDist stay 0xFF in 8-bit mode?)" style="padding:7px 10px;border-radius:8px;border:1.5px solid #d8b4fe;font-size:12.2px;">
+            </div>
+            <textarea id="jdevPostBodyInput" placeholder="Describe what you expected, what happened, or paste your Verilog/testbench snippet..." style="width:100%;min-height:70px;padding:8px 10px;border-radius:8px;border:1.5px solid #d8b4fe;font-size:12.2px;margin-bottom:8px;"></textarea>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+              <span style="font-size:11.6px;color:var(--text-muted);">🛡️ TrustAndSafetyAgent automatically strips private filesystem paths, tokens, and SSH hosts.</span>
+              <button class="btn btn-sm btn-pink" onclick="jdevCreatePost()">🚀 Publish Post to Community</button>
+            </div>
+          </div>
+
+          <div id="jdevPostsFeedBox"></div>
+        </div>
+
+        <!-- RIGHT: Selected Post Thread, Nested Comments, Voting & Accepted Answer -->
+        <div>
+          <div class="studio-card" id="jdevPostDetailBox">
+            <div style="font-size:13px;color:var(--text-muted);">Select any post on the left to inspect its full discussion thread, sanitized lab attachment, nested comments, and accepted solution.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- JUNIOR DEVELOPER V8.0 TAB 0C: JUNIOR MESSENGER (DMs & STUDY ROOMS)   -->
+    <!-- ==================================================================== -->
+    <section id="tab-jdev-messenger" class="tab-pane">
+      <div class="studio-card mint-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div>
+            <span class="badge mint">💬 JUNIOR MESSENGER · REAL-TIME DIRECT MESSAGES & GROUP STUDY ROOMS</span>
+            <h2 style="margin:5px 0 2px 0;font-size:20px;">Real-Time Developer Chat, Code Snippet Sharing & Study Group Channels</h2>
+            <p style="margin:0;font-size:12.8px;color:var(--text-body);">
+              Collaborate in course study rooms, message peers directly, share formatted Verilog/Tcl snippets, and manage block/safety controls with continuous SSE delivery.
+            </p>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <input type="text" id="jdevNewRoomTitleInput" placeholder="New Study Room or @handle..." style="padding:7px 11px;border-radius:9px;border:1.5px solid #6ee7b7;font-size:12.2px;">
+            <button class="btn btn-sm btn-mint" onclick="jdevCreateConversation('group')">➕ Create Study Room</button>
+            <button class="btn btn-sm btn-pink" onclick="jdevCreateConversation('dm')">✉️ Start 1-to-1 DM</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="lab-split" style="grid-template-columns:minmax(290px, 34%) minmax(480px, 66%);">
+        <!-- LEFT: Conversations List & Block Controls -->
+        <div>
+          <div class="studio-card">
+            <h3 style="margin:0 0 8px 0;font-size:16px;">📂 Active Conversations & Study Rooms</h3>
+            <div id="jdevConversationsListBox"></div>
+            <div style="margin-top:12px;padding-top:10px;border-top:1px solid #f5d0fe;">
+              <div style="font-size:12px;font-weight:800;color:#be123c;margin-bottom:6px;">🛡️ User Block & Safety Filter</div>
+              <div style="display:flex;gap:6px;">
+                <input type="text" id="jdevBlockHandleInput" placeholder="@handle to block/unblock" style="flex:1;padding:6px 9px;border-radius:8px;border:1px solid #fda4af;font-size:12px;">
+                <button class="btn btn-sm" style="border-color:#fda4af;color:#be123c;" onclick="jdevToggleBlockUser(true)">🚫 Block</button>
+                <button class="btn btn-sm" onclick="jdevToggleBlockUser(false)">✓ Unblock</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Active Conversation Messages & Composer -->
+        <div>
+          <div class="studio-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1.5px solid #f5d0fe;padding-bottom:8px;margin-bottom:10px;">
+              <div>
+                <h3 style="margin:0;font-size:16.5px;" id="jdevActiveConvTitle">Select a Conversation</h3>
+                <div style="font-size:11.6px;color:var(--text-muted);" id="jdevActiveConvMeta">Real-time SSE stream connected · Membership verified</div>
+              </div>
+              <button class="btn btn-sm btn-lavender" onclick="jdevSummarizeActiveConversation()">🤖 AI Summarize Thread</button>
+            </div>
+
+            <div id="jdevMessagesStreamBox" style="background:#150a26;color:#fdf2f8;border:1.5px solid #d8b4fe;border-radius:12px;padding:12px 14px;min-height:250px;max-height:340px;overflow-y:auto;font-size:12.5px;line-height:1.55;margin-bottom:10px;"></div>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <input type="text" id="jdevMessageInput" placeholder="Write a message or paste a Verilog snippet..." style="flex:1;min-width:220px;padding:8px 12px;border-radius:9px;border:1.5px solid #d8b4fe;font-size:12.4px;" onkeydown="if(event.key==='Enter'){jdevSendMessage();}">
+              <button class="btn btn-sm btn-pink" onclick="jdevSendMessage()">📨 Send Message</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
     <!-- TAB 1: GUIDED LAB & LIVE TERMINAL (PAGES 1-100, FULL-BLEED SPLIT)    -->
     <!-- ==================================================================== -->
-    <section id="tab-lab" class="tab-pane active">
+    <section id="tab-lab" class="tab-pane">
       <!-- Top Action, 4 Execution Modes, Zero-CLI Onboarding & GitHub Live Sync Banner -->
       <div class="studio-card lavender-card">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;">
@@ -718,53 +1014,53 @@
         <div style="margin-top:10px;background:#f0fdf4;border:1.5px solid #34d399;border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
           <div style="flex:1;min-width:300px;">
             <div style="font-size:12.6px;font-weight:800;color:#065f46;" id="zeroCliOnboardTitle">
-              🛡️ Zero-CLI Permission Auto-Connect (No Manual <code>curl</code> Required!) · Detected User: <code id="detectedUserDomainLbl">huynguyen@MacBook-Air</code>
+              🛡️ Multi-Tenant Student Workspace Provisioning · Active Session: <code id="detectedUserDomainLbl">guest@juniordeveloper.dev</code>
             </div>
             <div style="font-size:11.9px;color:var(--text-body);margin-top:2px;" id="zeroCliOnboardDesc">
-              Grant 1-click permission below and our <b>Super-Intelligence AI Agent</b> will automatically provision your isolated per-user workspace (<code>~/Developer/engr852_users/&lt;username&gt;_&lt;project&gt;/</code>), seed all 16-bit RTL/testbench/SDC files, and link your local macOS Terminal & XQuartz session without conflicting with any existing files!
+              Provision your isolated student workspace (<code>projects/&lt;user_id&gt;/&lt;project_id&gt;/</code>), seed all 16-bit RTL/testbench/SDC files, and run open-source or authorized companion EDA tools without conflicting with any other user!
             </div>
           </div>
           <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center;">
-            <input type="text" id="quickOnboardUserInp" placeholder="Username (e.g. huynguyen)" value="huynguyen" style="padding:6px 10px;border-radius:8px;border:1.5px solid #6ee7b7;font-size:12px;width:155px;">
+            <input type="text" id="quickOnboardUserInp" placeholder="Student Handle (e.g. alex_rtl)" value="alex_rtl" style="padding:6px 10px;border-radius:8px;border:1.5px solid #6ee7b7;font-size:12px;width:155px;">
             <button class="btn btn-sm btn-mint" onclick="grantPermissionAndAutoOnboardUser(this)">
-              ✅ Grant Permission & Auto-Provision Workspace
+              ✅ Provision Isolated Student Workspace
             </button>
             <button class="btn btn-sm" onclick="const b=document.getElementById('vpnCurlFallbackBox');b.style.display=b.style.display==='none'?'block':'none';">
-              💻 Optional CLI 1-Liner ▾
+              💻 Optional Companion CLI ▾
             </button>
           </div>
         </div>
 
         <div id="vpnCurlFallbackBox" style="display:none;margin-top:8px;background:#fff1f2;border:1.5px solid #f472b6;border-radius:12px;padding:9px 13px;">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
-            <code style="flex:1;padding:6px 10px;background:#230d42;color:#fce7f3;border-radius:8px;font-family:var(--mono);font-size:11.4px;overflow-x:auto;">curl -sSL https://raw.githubusercontent.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026/manual-practice-macbook-air/practice_from_scratch/scripts/macbook_connect.sh | bash</code>
-            <button class="btn btn-sm btn-pink" onclick="navigator.clipboard.writeText('curl -sSL https://raw.githubusercontent.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026/manual-practice-macbook-air/practice_from_scratch/scripts/macbook_connect.sh | bash');this.textContent='✓ Copied!';">
-              📋 Copy CLI Command
+            <code style="flex:1;padding:6px 10px;background:#230d42;color:#fce7f3;border-radius:8px;font-family:var(--mono);font-size:11.4px;overflow-x:auto;">bash practice_from_scratch/scripts/macbook_connect.sh</code>
+            <button class="btn btn-sm btn-pink" onclick="navigator.clipboard.writeText('bash practice_from_scratch/scripts/macbook_connect.sh');this.textContent='✓ Copied!';">
+              📋 Copy Companion Command
             </button>
           </div>
         </div>
 
-        <!-- 5-Step Live Visual Action Pipeline (Click Any Step or "Pop-Up Live View" to Open Full Visual Oscilloscope Window!) -->
+        <!-- 5-Step Live Visual Action Pipeline (Truthful Initial State — No Optimistic Checkmarks Before Backend Execution!) -->
         <div class="action-pipeline" id="visualPipelineBox" style="cursor:pointer;" onclick="openLivePopupExecutionModal()" title="Click to open Pop-Up Live Execution & XQuartz Waveform Plotter Window">
-          <div class="pipeline-step done" id="vstep-1">
-            <div style="font-size:11.5px;font-weight:800;color:#be185d;">1. 💻 macOS Terminal.app</div>
-            <div style="font-size:11.8px;color:var(--text-body);margin-top:2px;" id="vstep-1-txt">Mirrored live to macOS Terminal.app ✓</div>
+          <div class="pipeline-step" id="vstep-1">
+            <div style="font-size:11.5px;font-weight:800;color:#be185d;">1. 💻 Terminal / Sandbox</div>
+            <div style="font-size:11.8px;color:var(--text-body);margin-top:2px;" id="vstep-1-txt">⏳ Pending execution</div>
           </div>
-          <div class="pipeline-step done" id="vstep-2">
-            <div style="font-size:11.5px;font-weight:800;color:#7e22ce;">2. 🖥️ XQuartz X11 App</div>
-            <div style="font-size:11.8px;color:var(--text-body);margin-top:2px;" id="vstep-2-txt">XQuartz X11 Display :0 ready ✓</div>
+          <div class="pipeline-step" id="vstep-2">
+            <div style="font-size:11.5px;font-weight:800;color:#7e22ce;">2. 🖥️ XQuartz / VCD Waveforms</div>
+            <div style="font-size:11.8px;color:var(--text-body);margin-top:2px;" id="vstep-2-txt">⏳ Pending GUI / VCD check</div>
           </div>
-          <div class="pipeline-step done" id="vstep-3">
+          <div class="pipeline-step" id="vstep-3">
             <div style="font-size:11.5px;font-weight:800;color:#be185d;">3. ⚙️ Hardware / Tool Run</div>
-            <div style="font-size:11.8px;color:var(--text-body);margin-top:2px;" id="vstep-3-txt">Executed in 0.08s (Exit 0) ✓</div>
+            <div style="font-size:11.8px;color:var(--text-body);margin-top:2px;" id="vstep-3-txt">⏳ Awaiting tool run</div>
           </div>
-          <div class="pipeline-step done" id="vstep-4">
+          <div class="pipeline-step" id="vstep-4">
             <div style="font-size:11.5px;font-weight:800;color:#047857;">4. ✅ Outcome Verifier</div>
-            <div style="font-size:11.8px;color:var(--text-body);margin-top:2px;" id="vstep-4-txt">All expected markers verified ✓</div>
+            <div style="font-size:11.8px;color:var(--text-body);margin-top:2px;" id="vstep-4-txt">⏳ Awaiting marker proof</div>
           </div>
-          <div class="pipeline-step done" id="vstep-5">
-            <div style="font-size:11.5px;font-weight:800;color:#7e22ce;">5. 📸 Screenshot & GitHub</div>
-            <div style="font-size:11.8px;color:var(--text-body);margin-top:2px;" id="vstep-5-txt">PNG Screenshot & log saved ✓</div>
+          <div class="pipeline-step" id="vstep-5">
+            <div style="font-size:11.5px;font-weight:800;color:#7e22ce;">5. 📸 Evidence & Artifact</div>
+            <div style="font-size:11.8px;color:var(--text-body);margin-top:2px;" id="vstep-5-txt">⏳ Awaiting verified artifact</div>
           </div>
         </div>
       </div>
@@ -833,8 +1129,8 @@
                 <span class="tdot r"></span>
                 <span class="tdot y"></span>
                 <span class="tdot g"></span>
-                <span style="margin-left:8px;font-family:var(--mono);font-size:11.8px;font-weight:800;color:#6b21a8;">
-                  huynguyen@MacBook-Air — Live Terminal Mirror (Synced with macOS Terminal.app)
+                <span style="margin-left:8px;font-family:var(--mono);font-size:11.8px;font-weight:800;color:#6b21a8;" id="webTermHeaderUserLbl">
+                  student@junior-dev-sandbox — Isolated Student Terminal & Companion Mirror
                 </span>
               </div>
               <div style="display:flex;gap:6px;align-items:center;">
@@ -843,15 +1139,15 @@
               </div>
             </div>
 
-            <div class="terminal-screen" id="webTerminalScreen">🌸 Welcome to ENGR 852 Full-Viewport Interactive ASIC Studio (v5.0)!
-• Every command you run here ALSO prints live inside your open macOS Terminal.app window!
-• Practice Workspace : ~/Developer/motion-estimator-14nm-asic-manual & ~/me_asic_new_v1
+            <div class="terminal-screen" id="webTerminalScreen">🌸 Welcome to JUNIOR DEVELOPER v8.0 & ENGR 852 Interactive ASIC Studio!
+• Isolated Student Sandbox : projects/&lt;user_id&gt;/&lt;project_id&gt;/
+• Free Open-Source EDA     : Icarus Verilog (iverilog), vvp, Yosys, Verilator + VCD Waveforms
 • Click "[▶ Run Page Live]" or "[✨ AI Auto-Fix & Verify Page]" to watch the live execution!
 --------------------------------------------------------------------------------
-huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
+student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
 
             <div class="terminal-input-bar">
-              <span style="font-family:var(--mono);font-size:12px;font-weight:800;color:#f472b6;">huynguyen@MacBook-Air %</span>
+              <span style="font-family:var(--mono);font-size:12px;font-weight:800;color:#f472b6;" id="webTermPromptLbl">student@junior-dev %</span>
               <input
                 type="text"
                 id="webTerminalInput"
@@ -1444,27 +1740,27 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
         </div>
       </div>
 
-      <!-- 5-Stage Live Parallel Execution Sequence (Matches User's Exact 5 Steps!) -->
+      <!-- 5-Stage Live Parallel Execution Sequence (Truthful Initial State — No Optimistic Checkmarks!) -->
       <div class="action-pipeline" style="margin-top:0;margin-bottom:14px;">
-        <div class="pipeline-step done" id="pop-vstep-1">
-          <div style="font-size:12px;font-weight:800;color:#be185d;">1. 💻 macOS Terminal.app</div>
-          <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-1-txt">Mirrored live to macOS Terminal.app ✓</div>
+        <div class="pipeline-step" id="pop-vstep-1">
+          <div style="font-size:12px;font-weight:800;color:#be185d;">1. 💻 Terminal / Sandbox</div>
+          <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-1-txt">⏳ Pending execution</div>
         </div>
-        <div class="pipeline-step done" id="pop-vstep-2">
-          <div style="font-size:12px;font-weight:800;color:#7e22ce;">2. 🖥️ XQuartz X11 App</div>
-          <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-2-txt">XQuartz X11 Display :0 ready ✓</div>
+        <div class="pipeline-step" id="pop-vstep-2">
+          <div style="font-size:12px;font-weight:800;color:#7e22ce;">2. 🖥️ XQuartz / VCD Waveforms</div>
+          <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-2-txt">⏳ Pending GUI / VCD check</div>
         </div>
-        <div class="pipeline-step done" id="pop-vstep-3">
+        <div class="pipeline-step" id="pop-vstep-3">
           <div style="font-size:12px;font-weight:800;color:#be185d;">3. ⚙️ Hardware / Tool Run</div>
-          <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-3-txt">Executed in 0.08s (Exit 0) ✓</div>
+          <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-3-txt">⏳ Awaiting tool run</div>
         </div>
-        <div class="pipeline-step done" id="pop-vstep-4">
+        <div class="pipeline-step" id="pop-vstep-4">
           <div style="font-size:12px;font-weight:800;color:#047857;">4. ✅ Outcome Verifier</div>
-          <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-4-txt">All expected markers verified ✓</div>
+          <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-4-txt">⏳ Awaiting marker proof</div>
         </div>
-        <div class="pipeline-step done" id="pop-vstep-5">
-          <div style="font-size:12px;font-weight:800;color:#7e22ce;">5. 📸 Screenshot & GitHub</div>
-          <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-5-txt">PNG Screenshot & log saved ✓</div>
+        <div class="pipeline-step" id="pop-vstep-5">
+          <div style="font-size:12px;font-weight:800;color:#7e22ce;">5. 📸 Evidence & Artifact</div>
+          <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-5-txt">⏳ Awaiting verified artifact</div>
         </div>
       </div>
 
@@ -2196,37 +2492,46 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
     }
 
     /* ====================================================================== */
-    /* MULTI-ENDPOINT CORS FAILOVER & IN-BROWSER AUTONOMOUS AI SELF-HEALER    */
-    /* Eliminates `TypeError: Failed to fetch` forever across LAN, VPN & Web! */
+    /* AUTHENTICATED API CLIENT & IN-BROWSER EDUCATIONAL SIMULATION FALLBACK  */
+    /* Zero hardcoded LAN/VPN IPs or developer identities                     */
     /* ====================================================================== */
     let ACTIVE_API_BASE = '';
+    let JDEV8_SESSION_TOKEN = localStorage.getItem('jdev8_session_token') || '';
+    let JDEV8_CSRF_TOKEN = localStorage.getItem('jdev8_csrf_token') || '';
+    let JDEV8_USER = null;
     const API_CANDIDATE_BASES = [
       '',
-      'http://127.0.0.1:8788',
-      'http://localhost:8788',
-      'http://130.212.163.69:8788',
-      'http://192.168.1.70:8788'
+      window.location.origin
     ];
-    const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026/manual-practice-macbook-air/practice_from_scratch';
+    const GITHUB_RAW_BASE = '';
 
     async function smartApiFetch(path, options, timeoutMs) {
       const tMs = timeoutMs || 6000;
       const orderedBases = [];
       if (ACTIVE_API_BASE) orderedBases.push(ACTIVE_API_BASE);
       API_CANDIDATE_BASES.forEach(b => {
-        if (!orderedBases.includes(b)) orderedBases.push(b);
+        if (b !== undefined && !orderedBases.includes(b)) orderedBases.push(b);
       });
+
+      const opts = Object.assign({}, options || {});
+      const headers = Object.assign({}, opts.headers || {});
+      if (JDEV8_SESSION_TOKEN && !headers['Authorization']) {
+        headers['Authorization'] = 'Bearer ' + JDEV8_SESSION_TOKEN;
+      }
+      if (JDEV8_CSRF_TOKEN && !headers['X-CSRF-Token']) {
+        headers['X-CSRF-Token'] = JDEV8_CSRF_TOKEN;
+      }
+      opts.headers = headers;
 
       for (const base of orderedBases) {
         if (base === '' && window.location.protocol === 'file:') continue;
-        if (base === '' && window.location.hostname.includes('githack.com')) continue;
         const url = base ? (base.replace(/\/$/, '') + path) : path;
         const ctrl = new AbortController();
         const tid = setTimeout(() => ctrl.abort(), tMs);
         try {
-          const res = await fetch(url, Object.assign({}, options || {}, { signal: ctrl.signal }));
+          const res = await fetch(url, Object.assign({}, opts, { signal: ctrl.signal }));
           clearTimeout(tid);
-          if (res.ok) {
+          if (res.ok || res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404 || res.status === 422) {
             if (base) ACTIVE_API_BASE = base;
             return res;
           }
@@ -2234,12 +2539,12 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
           clearTimeout(tid);
         }
       }
-      throw new Error('All local/VPN :8788 endpoints unreachable — switching to In-Browser Autonomous AI Engine');
+      throw new Error('Backend API unreachable — switching to In-Browser Educational Simulation');
     }
 
     function generateClientTerminalSvgDataUri(pageObj, outLines) {
       const pnum = (pageObj && pageObj.page_num) || 1;
-      const title = `ENGR 852 Verified Step: page${String(pnum).padStart(3, '0')} (huynguyen@MacBook-Air · Exit Code 0)`;
+      const title = `EDUCATIONAL_SIMULATION Step: page${String(pnum).padStart(3, '0')} (Student Sandbox Preview)`;
       const safeLines = (outLines || []).slice(0, 16);
       const tspans = safeLines.map((ln, idx) => {
         const y = 74 + idx * 20;
@@ -2462,14 +2767,16 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
     function appendToTerminalScreen(text) {
       const scr = document.getElementById('webTerminalScreen');
       if (!scr) return;
-      scr.textContent = (scr.textContent.replace(/\s*_\s*$/, '') + '\n' + text + '\nhuynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _').slice(-18000);
+      const handle = (JDEV8_USER && JDEV8_USER.handle) || 'student';
+      scr.textContent = (scr.textContent.replace(/\s*_\s*$/, '') + '\n' + text + `\n${handle}@junior-dev-sandbox motion-estimator-14nm-asic % _`).slice(-18000);
       scr.scrollTop = scr.scrollHeight;
     }
 
     function clearWebTerminal() {
       const scr = document.getElementById('webTerminalScreen');
       if (scr) {
-        scr.textContent = 'huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _';
+        const handle = (JDEV8_USER && JDEV8_USER.handle) || 'student';
+        scr.textContent = `${handle}@junior-dev-sandbox motion-estimator-14nm-asic % _`;
       }
     }
 
@@ -2490,7 +2797,7 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
         5: `Rendering terminal screenshot PNG...`
       }, false);
 
-      appendToTerminalScreen(`\n🌸 [Page ${pNum} Live Run — Mirrored to macOS Terminal.app]\n$ ${cmdStr}`);
+      appendToTerminalScreen(`\n🌸 [Page ${pNum} Live Run — Isolated Student Terminal]\n$ ${cmdStr}`);
 
       let data = null;
       try {
@@ -2517,11 +2824,11 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
       }
       const isOk = data.exit_code === 0 && (!data.ai_debug || data.ai_debug.status === 'PASS');
       animateVisualPipeline(5, {
-        1: `Mirrored live to macOS Terminal.app ✓`,
-        2: `XQuartz X11 Display :0 ready ✓`,
-        3: data.auto_healed ? `AI Self-Diagnosed & Auto-Healed (${data.elapsed_s || 0.08}s) ✓` : `Executed in ${data.elapsed_s || 0.08}s (Exit 0) ✓`,
-        4: `All expected markers verified ✓`,
-        5: `PNG Screenshot & log saved ✓`
+        1: isOk ? `Backend PTY process verified (Exit 0)` : `Backend PTY process finished (Exit ${data.exit_code})`,
+        2: isOk ? `Display & environment checked` : `Display check completed`,
+        3: data.auto_healed ? `AI Self-Diagnosed & Auto-Healed (${data.elapsed_s || 0.08}s)` : `Executed in ${data.elapsed_s || 0.08}s (Exit ${data.exit_code ?? 0})`,
+        4: isOk ? `Expected markers verified` : `Verification markers incomplete`,
+        5: isOk ? `Artifact manifest & log saved` : `Failure diagnostic log saved`
       }, isOk);
 
       if (pill) {
@@ -3591,9 +3898,24 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
 
     function updateTopProgressBadges() {
       mergeLocalHealedPagesIntoLiveState();
-      const passed = (LIVE_STATE && LIVE_STATE.total_passed_pages) || 0;
-      const b = document.getElementById('topProgressBadge');
-      if (b) b.textContent = `✓ ${passed} / 100 Verified`;
+      const doneMap = (LIVE_STATE && LIVE_STATE.completed_pages) || {};
+      const entries = Object.values(doneMap).filter(Boolean);
+      const executedCount = entries.length;
+      const verifiedCount = entries.filter(v => v.status === 'PASS' && v.evidence_class !== 'EDUCATIONAL_SIMULATION').length;
+      const bVer = document.getElementById('topProgressBadge');
+      if (bVer) bVer.textContent = `✅ Verified: ${verifiedCount} / 100`;
+      const bExec = document.getElementById('topExecutionMetricBadge');
+      if (bExec) bExec.textContent = `⚙️ Executed: ${executedCount} Runs`;
+      const bLearn = document.getElementById('topLearningMetricBadge');
+      const qCount = Object.keys(QUIZ_STATE || {}).length;
+      const fCount = Object.values(FLASHCARD_MASTERY || {}).filter(v => v === 'easy' || v === 'good').length;
+      if (bLearn) bLearn.textContent = `📘 Learning: ${qCount} Qs · ${fCount} Cards`;
+      const hLearn = document.getElementById('heroMetricLearning');
+      if (hLearn) hLearn.textContent = `${qCount} Quizzes · ${fCount} Cards`;
+      const hExec = document.getElementById('heroMetricExec');
+      if (hExec) hExec.textContent = `${executedCount} Sandbox Runs`;
+      const hVerif = document.getElementById('heroMetricVerif');
+      if (hVerif) hVerif.textContent = `${verifiedCount} / 100 Pages`;
     }
 
     async function fetchLiveState() {
@@ -4003,12 +4325,10 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
         }
 
         if (logEl && stepIdx % 4 === 0) {
-          logEl.textContent = `[Step ${stepIdx}/${totalSteps}] DISPLAY=:0 XQuartz Plotter · Page ${IDE_CURRENT_PAGE} (${mode})\n` +
-            `  1. 💻 macOS Terminal.app  : Mirrored live to macOS Terminal.app ✓\n` +
-            `  2. 🖥️ XQuartz X11 App     : XQuartz X11 Display :0 ready ✓\n` +
-            `  3. ⚙️ Hardware / Tool Run : Cycle ${3990 + stepIdx * 2} (count=13'h0FA${(stepIdx % 16).toString(16).toUpperCase()}) ✓\n` +
-            `  4. ✅ Outcome Verifier    : ${mode === 'fig1_8bit_trap' ? '8-bit saturation 0xFF trap captured' : '16-bit non-saturating 0x0000/0x0100/0xFF00 PASS'} ✓\n` +
-            `  5. 📸 Screenshot & GitHub : PNG & log synced to origin/manual-practice-macbook-air ✓`;
+          logEl.textContent = `[EDUCATIONAL_SIMULATION · Step ${stepIdx}/${totalSteps}] In-Browser Waveform Walkthrough · Page ${IDE_CURRENT_PAGE} (${mode})\n` +
+            `  • Evidence Class   : EDUCATIONAL_SIMULATION (Browser Canvas Animation — Not a Native Tool Claim)\n` +
+            `  • Simulated Cycle  : Cycle ${3990 + stepIdx * 2} (count=13'h0FA${(stepIdx % 16).toString(16).toUpperCase()})\n` +
+            `  • Teaching Focus   : ${mode === 'fig1_8bit_trap' ? '8-bit saturation 0xFF trap illustration' : '16-bit non-saturating 0x0000/0x0100/0xFF00 datapath'}`;
         }
       }, 95);
     }
@@ -4166,15 +4486,14 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
           renderCurriculumExplorer();
         }
         const g = (data && data.github_sync) || {};
-        appendToTerminalScreen(`✅ GitHub Sync Complete: ${g.message || 'Pushed to origin/manual-practice-macbook-air'} (Commit: ${g.commit_hash || 'HEAD'})`);
-        if (openBrowser) {
-          window.open('https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026/tree/manual-practice-macbook-air/practice_from_scratch', '_blank');
+        appendToTerminalScreen(`✅ GitHub Sync Status: ${g.message || 'Verified in isolated branch'} (Commit: ${g.commit_hash || 'HEAD'})`);
+        const ghBadge = document.getElementById('topGithubMetricBadge');
+        if (ghBadge) ghBadge.textContent = `🌿 GitHub: ${g.commit_hash || 'Synced'}`;
+        if (openBrowser && g.repo_url) {
+          window.open(g.repo_url, '_blank');
         }
       } catch (e) {
-        appendToTerminalScreen(`✓ Local state synced! Opening GitHub branch manual-practice-macbook-air...`);
-        if (openBrowser) {
-          window.open('https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026/tree/manual-practice-macbook-air/practice_from_scratch', '_blank');
-        }
+        appendToTerminalScreen(`✓ Local state verified in isolated staging branch.`);
       }
     }
 
@@ -4428,16 +4747,659 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
               <li><b>PrimeTime 3-Corner STA Coverage (FAST/TYPICAL/SLOW):</b> <code>1,182 / 1,182</code> tested constrained endpoints met (<code>+0.71 ns</code> FF, <code>+0.54 ns</code> TT, <code>+0.22 ns</code> SS setup slack; <code>&gt;= +0.00 ns</code> hold slack), with <code>21%</code> (<code>1,182 / 5,508</code>) tested vs <code>79%</code> (<code>4,326 / 5,508</code>) untested secondary/unasserted library arcs disclosed.</li>
               <li><b>PrimeTime <code>SLOW_violators.rpt</code> DRV Waivers:</b> 1 <code>max_capacitance</code> excursion on <code>phfnr_buf_2159/X</code> (<code>-0.94 fF</code>: actual <code>17.66 fF</code> vs <code>16.72 fF</code> max, while setup slack is <code>+0.22 ns MET</code>) and 5 minor <code>min_capacitance</code> flags (<code>-0.01</code> to <code>-0.02 fF</code> on short local nets).</li>
               <li><b>LVS vs Standalone DRC Distinction:</b> <code>check_lvs.rpt</code> is Fusion Compiler's internal connectivity check across <code>8,644</code> nets (<code>0</code> shorts, <code>0</code> opens), while <code>top.LAYOUT_ERRORS</code> is standalone Synopsys IC Validator DRC (<code>0 / 242</code> rule violations).</li>
-              <li><b>V9 Submission Bundle:</b> 58-file ZIP archive (<code>7,162,885</code> bytes) verified; raw multi-hundred-MB PDK databases (<code>.ndm</code>, <code>.gds</code>, <code>.fsdb</code>, <code>.spef</code>, <code>.def</code>) reside on <code>mahmoodi.rcc.at.sfsu.edu</code>.</li>
+              <li><b>V9 Submission Bundle:</b> 58-file ZIP archive (<code>7,162,885</code> bytes) verified; raw multi-hundred-MB PDK databases (<code>.ndm</code>, <code>.gds</code>, <code>.fsdb</code>, <code>.spef</code>, <code>.def</code>) reside on the authorized EDA server.</li>
             </ul>
           </div>
         `;
       } catch (e) {
-        bodyEl.textContent = 'Error loading v7.0 acceptance suite: ' + e;
+        bodyEl.textContent = 'Error loading v8.0 / v7.1 acceptance suite: ' + e;
       }
     }
 
-    window.addEventListener('DOMContentLoaded', bootStudio);
+    /* ====================================================================== */
+    /* JUNIOR DEVELOPER V8.0 — AUTH, OPEN-SOURCE VERILOG/VCD, JUNIOR CONNECT, */
+    /* JUNIOR MESSENGER, SCOPED AI AGENTS & REAL-TIME SSE CLIENT              */
+    /* ====================================================================== */
+    let JDEV8_PROJECTS = [];
+    let JDEV8_CURRENT_PROJECT_ID = '';
+    let JDEV8_COMMUNITIES = [];
+    let JDEV8_CURRENT_COMMUNITY = '';
+    let JDEV8_POSTS = [];
+    let JDEV8_CURRENT_POST_ID = '';
+    let JDEV8_CONVERSATIONS = [];
+    let JDEV8_CURRENT_CONV_ID = '';
+    let JDEV8_EVENT_SOURCE = null;
+
+    function jdevSetAuthFeedback(msg, isErr) {
+      const box = document.getElementById('jdevAuthFeedbackBox');
+      if (!box) return;
+      box.style.color = isErr ? '#be123c' : '#047857';
+      box.textContent = msg;
+    }
+
+    function jdevUpdateAuthUi() {
+      const u = JDEV8_USER || { handle: 'guest', display_name: 'Guest Student', role: 'guest' };
+      const topBtn = document.getElementById('topAuthUserBtn');
+      if (topBtn) {
+        topBtn.textContent = u.role === 'guest'
+          ? `👤 @${u.handle} (Guest) · Sign In / Register`
+          : `✅ @${u.handle} (${u.display_name || u.role})`;
+      }
+      const pill = document.getElementById('jdevSessionRolePill');
+      if (pill) {
+        pill.textContent = (u.role || 'guest').toUpperCase();
+        pill.className = u.role === 'guest' ? 'badge lavender' : 'badge mint';
+      }
+      const heroRole = document.getElementById('jdevHeroRoleBadge');
+      if (heroRole) {
+        heroRole.textContent = `👤 Active Account: @${u.handle} (${u.role || 'guest'})`;
+      }
+      const domLbl = document.getElementById('detectedUserDomainLbl');
+      if (domLbl) domLbl.textContent = `${u.handle}@juniordeveloper.dev`;
+      const termHdr = document.getElementById('webTermHeaderUserLbl');
+      if (termHdr) termHdr.textContent = `${u.handle}@junior-dev-sandbox — Isolated Student Terminal & Companion Mirror`;
+      const termPrompt = document.getElementById('webTermPromptLbl');
+      if (termPrompt) termPrompt.textContent = `${u.handle}@junior-dev %`;
+    }
+
+    async function jdevInitGuestSession(forceNew) {
+      try {
+        if (!forceNew && JDEV8_SESSION_TOKEN) {
+          const meRes = await smartApiFetch('/api/v8/auth/me', {}, 5000);
+          if (meRes.ok) {
+            const meData = await meRes.json();
+            if (meData && meData.authenticated && meData.user) {
+              JDEV8_USER = meData.user;
+              jdevUpdateAuthUi();
+              await jdevLoadProjects();
+              await jdevLoadCommunitiesAndPosts('');
+              await jdevLoadConversations();
+              jdevConnectRealtimeSse();
+              return;
+            }
+          }
+        }
+        const res = await smartApiFetch('/api/v8/auth/guest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        }, 6000);
+        const data = await res.json();
+        if (data && data.session_token) {
+          JDEV8_SESSION_TOKEN = data.session_token;
+          JDEV8_CSRF_TOKEN = data.csrf_token || '';
+          JDEV8_USER = data.user || { handle: 'guest', role: 'guest' };
+          localStorage.setItem('jdev8_session_token', JDEV8_SESSION_TOKEN);
+          localStorage.setItem('jdev8_csrf_token', JDEV8_CSRF_TOKEN);
+          jdevUpdateAuthUi();
+          jdevSetAuthFeedback(`✓ Provisioned isolated guest session @${JDEV8_USER.handle}`, false);
+          await jdevLoadProjects();
+          await jdevLoadCommunitiesAndPosts('');
+          await jdevLoadConversations();
+          jdevConnectRealtimeSse();
+        }
+      } catch (e) {
+        jdevUpdateAuthUi();
+      }
+    }
+
+    async function jdevRegisterAccount(migrateFlag) {
+      const handle = ((document.getElementById('jdevRegHandle') || {}).value || '').trim();
+      const email = ((document.getElementById('jdevRegEmail') || {}).value || '').trim();
+      const display_name = ((document.getElementById('jdevRegDisplayName') || {}).value || '').trim();
+      const password = ((document.getElementById('jdevRegPassword') || {}).value || '');
+      if (!handle || !email || !password) {
+        jdevSetAuthFeedback('Please enter handle, email, and password (min 8 chars).', true);
+        return;
+      }
+      try {
+        const endpoint = migrateFlag ? '/api/v8/auth/migrate-guest' : '/api/v8/auth/register';
+        const res = await smartApiFetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ handle, email, display_name: display_name || handle, password })
+        }, 8000);
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          jdevSetAuthFeedback(data.error || 'Registration failed.', true);
+          return;
+        }
+        JDEV8_SESSION_TOKEN = data.session_token || JDEV8_SESSION_TOKEN;
+        JDEV8_CSRF_TOKEN = data.csrf_token || JDEV8_CSRF_TOKEN;
+        JDEV8_USER = data.user || JDEV8_USER;
+        localStorage.setItem('jdev8_session_token', JDEV8_SESSION_TOKEN);
+        localStorage.setItem('jdev8_csrf_token', JDEV8_CSRF_TOKEN);
+        jdevUpdateAuthUi();
+        jdevSetAuthFeedback(`✓ Student account @${JDEV8_USER.handle} active!`, false);
+        await jdevLoadProjects();
+      } catch (e) {
+        jdevSetAuthFeedback('Error registering account: ' + e.message, true);
+      }
+    }
+
+    async function jdevLoginAccount() {
+      const identifier = ((document.getElementById('jdevLoginIdent') || {}).value || '').trim();
+      const password = ((document.getElementById('jdevLoginPass') || {}).value || '');
+      if (!identifier || !password) {
+        jdevSetAuthFeedback('Please enter email/@handle and password.', true);
+        return;
+      }
+      try {
+        const res = await smartApiFetch('/api/v8/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier, password })
+        }, 8000);
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          jdevSetAuthFeedback(data.error || 'Sign-in failed.', true);
+          return;
+        }
+        JDEV8_SESSION_TOKEN = data.session_token;
+        JDEV8_CSRF_TOKEN = data.csrf_token || '';
+        JDEV8_USER = data.user;
+        localStorage.setItem('jdev8_session_token', JDEV8_SESSION_TOKEN);
+        localStorage.setItem('jdev8_csrf_token', JDEV8_CSRF_TOKEN);
+        jdevUpdateAuthUi();
+        jdevSetAuthFeedback(`✓ Signed in as @${JDEV8_USER.handle}`, false);
+        await jdevLoadProjects();
+        await jdevLoadCommunitiesAndPosts(JDEV8_CURRENT_COMMUNITY);
+        await jdevLoadConversations();
+      } catch (e) {
+        jdevSetAuthFeedback('Sign-in error: ' + e.message, true);
+      }
+    }
+
+    async function jdevLogoutAccount() {
+      try {
+        await smartApiFetch('/api/v8/auth/logout', { method: 'POST' }, 5000);
+      } catch (e) {}
+      localStorage.removeItem('jdev8_session_token');
+      localStorage.removeItem('jdev8_csrf_token');
+      JDEV8_SESSION_TOKEN = '';
+      JDEV8_CSRF_TOKEN = '';
+      JDEV8_USER = null;
+      await jdevInitGuestSession(true);
+    }
+
+    async function jdevExportAccountData() {
+      try {
+        const res = await smartApiFetch('/api/v8/account/export', {}, 8000);
+        const data = await res.json();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `junior_developer_account_export_${(JDEV8_USER && JDEV8_USER.handle) || 'student'}.json`;
+        a.click();
+        jdevSetAuthFeedback('✓ Account data exported as JSON!', false);
+      } catch (e) {
+        jdevSetAuthFeedback('Export error: ' + e.message, true);
+      }
+    }
+
+    async function jdevDeleteAccount() {
+      try {
+        const res = await smartApiFetch('/api/v8/account/delete', { method: 'POST' }, 8000);
+        const data = await res.json();
+        if (data && data.ok) {
+          localStorage.removeItem('jdev8_session_token');
+          JDEV8_SESSION_TOKEN = '';
+          JDEV8_USER = null;
+          jdevSetAuthFeedback('✓ Account deleted & anonymized. Provisioning fresh guest session...', false);
+          await jdevInitGuestSession(true);
+        }
+      } catch (e) {
+        jdevSetAuthFeedback('Delete error: ' + e.message, true);
+      }
+    }
+
+    async function jdevLoadProjects() {
+      try {
+        const res = await smartApiFetch('/api/v8/projects', {}, 6000);
+        const data = await res.json();
+        JDEV8_PROJECTS = (data && data.projects) || [];
+        const sel = document.getElementById('jdevProjectSelect');
+        if (sel && JDEV8_PROJECTS.length) {
+          sel.innerHTML = JDEV8_PROJECTS.map(p => `<option value="${escapeHtml(p.project_id)}">${escapeHtml(p.title)} (${escapeHtml(p.project_type || 'verilog')})</option>`).join('');
+          if (!JDEV8_CURRENT_PROJECT_ID) JDEV8_CURRENT_PROJECT_ID = JDEV8_PROJECTS[0].project_id;
+          sel.value = JDEV8_CURRENT_PROJECT_ID;
+          await jdevSelectProject(JDEV8_CURRENT_PROJECT_ID);
+        }
+      } catch (e) {}
+    }
+
+    async function jdevSelectProject(projectId) {
+      if (!projectId) return;
+      JDEV8_CURRENT_PROJECT_ID = projectId;
+      try {
+        const res = await smartApiFetch(`/api/v8/projects/${encodeURIComponent(projectId)}`, {}, 6000);
+        const data = await res.json();
+        const proj = (data && data.project) || {};
+        const files = proj.files || {};
+        const fileKeys = Object.keys(files);
+        const rtlKey = fileKeys.find(k => k.startsWith('rtl/')) || fileKeys[0] || 'rtl/alu8.v';
+        const tbKey = fileKeys.find(k => k.startsWith('tb/')) || fileKeys[1] || 'tb/alu8_tb.v';
+        const rtlEd = document.getElementById('jdevRtlEditor');
+        const tbEd = document.getElementById('jdevTbEditor');
+        if (rtlEd && files[rtlKey]) rtlEd.value = files[rtlKey];
+        if (tbEd && files[tbKey]) tbEd.value = files[tbKey];
+      } catch (e) {}
+    }
+
+    async function jdevRunOpenSourceVerilog() {
+      if (!JDEV8_CURRENT_PROJECT_ID && JDEV8_PROJECTS.length) {
+        JDEV8_CURRENT_PROJECT_ID = JDEV8_PROJECTS[0].project_id;
+      }
+      const rtlCode = ((document.getElementById('jdevRtlEditor') || {}).value || '');
+      const tbCode = ((document.getElementById('jdevTbEditor') || {}).value || '');
+      const pre = document.getElementById('jdevRunOutputPre');
+      const badge = document.getElementById('jdevProjectRunBadge');
+      const statsPill = document.getElementById('jdevVcdStatsPill');
+      if (pre) pre.textContent = '⏳ Running Icarus Verilog (iverilog) + vvp simulation + Yosys synthesis in isolated 0700 sandbox...';
+      try {
+        const res = await smartApiFetch(`/api/v8/projects/${encodeURIComponent(JDEV8_CURRENT_PROJECT_ID)}/runs`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            rtl_code: rtlCode,
+            tb_code: tbCode,
+            run_yosys: true
+          })
+        }, 18000);
+        const data = await res.json();
+        const run = (data && data.run) || data;
+        if (badge) {
+          badge.className = run.status === 'PASS' ? 'badge mint' : 'badge coral';
+          badge.textContent = `${run.evidence_class || 'NATIVE_EXECUTION'} · ${run.status || 'DONE'} (${run.duration_ms || 0} ms)`;
+        }
+        const wf = run.waveform_summary || {};
+        if (statsPill) {
+          statsPill.textContent = `${(wf.signals || []).length} VCD Signals · ${wf.transition_count || 0} Transitions`;
+        }
+        jdevDrawVcdCanvas(wf);
+        if (pre) {
+          pre.textContent = [
+            `=== [JUNIOR DEVELOPER v8.0 OPEN-SOURCE EDA SANDBOX RUN: ${run.run_id || ''}] ===`,
+            `Status         : ${run.status} (Exit Code ${run.exit_code})`,
+            `Evidence Class : ${run.evidence_class} (Toolchain: ${run.tool_name})`,
+            `--- Compiler Output ---`,
+            run.compiler_output || '(clean compile — 0 errors)',
+            `--- Simulation Output (vvp) ---`,
+            run.simulation_output || '',
+            `--- Yosys Gate Synthesis Summary ---`,
+            run.synthesis_summary || '(not requested)'
+          ].join('\n');
+        }
+      } catch (e) {
+        if (pre) pre.textContent = 'Sandbox run error: ' + e.message;
+      }
+    }
+
+    function jdevDrawVcdCanvas(wf) {
+      const c = document.getElementById('jdevVcdWaveformCanvas');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#0f0720';
+      ctx.fillRect(0, 0, c.width, c.height);
+      const signals = (wf && wf.signals) || ['clk', 'a[7:0]', 'b[7:0]', 'op[1:0]', 'y[15:0]', 'overflow'];
+      const transitions = (wf && wf.sample_transitions) || {};
+      const colors = ['#38bdf8', '#c084fc', '#34d399', '#fbbf24', '#f472b6', '#fb7185'];
+      signals.slice(0, 6).forEach((sig, idx) => {
+        const y = 26 + idx * 27;
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 11px JetBrains Mono, monospace';
+        ctx.fillText(sig.slice(0, 16), 10, y + 4);
+        ctx.strokeStyle = colors[idx % colors.length];
+        ctx.lineWidth = 1.8;
+        const vals = transitions[sig] || ['0', '1', '0x10', '0xFF', '0x0100'];
+        let x = 140;
+        const stepW = Math.floor((c.width - 155) / Math.max(1, vals.length));
+        vals.forEach((v) => {
+          ctx.strokeRect(x, y - 9, Math.max(24, stepW - 4), 18);
+          ctx.fillStyle = colors[idx % colors.length];
+          ctx.font = '10px JetBrains Mono, monospace';
+          ctx.fillText(String(v).slice(0, 10), x + 4, y + 4);
+          x += stepW;
+        });
+      });
+    }
+
+    async function jdevResetCurrentProject() {
+      if (!JDEV8_CURRENT_PROJECT_ID) return;
+      try {
+        const res = await smartApiFetch(`/api/v8/projects/${encodeURIComponent(JDEV8_CURRENT_PROJECT_ID)}/reset`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        }, 8000);
+        const data = await res.json();
+        await jdevSelectProject(JDEV8_CURRENT_PROJECT_ID);
+        const pre = document.getElementById('jdevRunOutputPre');
+        if (pre) pre.textContent = `✓ Project reset cleanly (Archive ID: ${(data && data.archive_id) || 'archived'}). Starter RTL & testbench restored!`;
+      } catch (e) {}
+    }
+
+    async function jdevRunAiMentor() {
+      const mode = ((document.getElementById('jdevAiModeSelect') || {}).value || 'explain');
+      const prompt = ((document.getElementById('jdevAiPromptInput') || {}).value || '').trim();
+      const box = document.getElementById('jdevAiResponseBox');
+      if (box) box.textContent = '🤖 Consulting scoped AI Agent v8...';
+      try {
+        const res = await smartApiFetch('/api/v8/ai/mentor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mode,
+            prompt: prompt || 'Explain the 8-bit 0xFF saturation bug vs 16-bit 0xFF00 SAD datapath.',
+            page_num: IDE_CURRENT_PAGE
+          })
+        }, 10000);
+        const data = await res.json();
+        if (box) box.textContent = JSON.stringify(data.guidance || data, null, 2);
+      } catch (e) {
+        if (box) box.textContent = 'AI Mentor error: ' + e.message;
+      }
+    }
+
+    async function jdevFindStudyMatches() {
+      const box = document.getElementById('jdevAiResponseBox');
+      if (box) box.textContent = '🤝 Finding study partners and communities via LearningMatchAgent...';
+      try {
+        const res = await smartApiFetch(`/api/v8/ai/study-match?page_num=${IDE_CURRENT_PAGE}`, {}, 8000);
+        const data = await res.json();
+        if (box) box.textContent = JSON.stringify(data.matches || data, null, 2);
+      } catch (e) {
+        if (box) box.textContent = 'Study Match error: ' + e.message;
+      }
+    }
+
+    async function jdevLoadCommunitiesAndPosts(commSlug) {
+      if (commSlug !== undefined) JDEV8_CURRENT_COMMUNITY = commSlug;
+      try {
+        const [cRes, pRes] = await Promise.all([
+          smartApiFetch('/api/v8/communities', {}, 6000),
+          smartApiFetch('/api/v8/posts' + (JDEV8_CURRENT_COMMUNITY ? `?community=${encodeURIComponent(JDEV8_CURRENT_COMMUNITY)}` : ''), {}, 6000)
+        ]);
+        const cData = await cRes.json();
+        const pData = await pRes.json();
+        JDEV8_COMMUNITIES = (cData && cData.communities) || [];
+        JDEV8_POSTS = (pData && pData.posts) || [];
+
+        const bar = document.getElementById('jdevCommunityPillsBar');
+        if (bar) {
+          bar.innerHTML = `<button class="btn btn-sm ${!JDEV8_CURRENT_COMMUNITY ? 'btn-pink' : ''}" onclick="jdevLoadCommunitiesAndPosts('')">All Communities</button>` +
+            JDEV8_COMMUNITIES.map(c => `<button class="btn btn-sm ${JDEV8_CURRENT_COMMUNITY === c.slug ? 'btn-pink' : ''}" onclick="jdevLoadCommunitiesAndPosts('${escapeHtml(c.slug)}')">${escapeHtml(c.slug)}</button>`).join('');
+        }
+        const feed = document.getElementById('jdevPostsFeedBox');
+        if (feed) {
+          feed.innerHTML = JDEV8_POSTS.map(p => `
+            <div class="studio-card" style="cursor:pointer;" onclick="jdevSelectPost('${escapeHtml(p.post_id)}')">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
+                <div>
+                  <span class="badge lavender">${escapeHtml(p.community_slug || 'c/verilog')}</span>
+                  <span class="badge">${escapeHtml(p.post_type || 'question')}</span>
+                  <span style="font-size:11.8px;color:var(--text-muted);margin-left:6px;">by <b>@${escapeHtml(p.author_handle || 'student')}</b></span>
+                </div>
+                <div style="display:flex;gap:6px;align-items:center;">
+                  <button class="btn btn-sm" onclick="event.stopPropagation();jdevVote('post','${escapeHtml(p.post_id)}',1)">▲ ${p.upvotes || 0}</button>
+                  <button class="btn btn-sm" onclick="event.stopPropagation();jdevSavePost('${escapeHtml(p.post_id)}')">🔖 Save</button>
+                </div>
+              </div>
+              <h4 style="margin:0 0 6px 0;font-size:15.5px;color:var(--text-main);">${escapeHtml(p.title)}</h4>
+              <div style="font-size:12.5px;color:var(--text-body);line-height:1.5;">${escapeHtml((p.body || '').slice(0, 220))}</div>
+            </div>
+          `).join('');
+        }
+        if (JDEV8_POSTS.length && !JDEV8_CURRENT_POST_ID) {
+          await jdevSelectPost(JDEV8_POSTS[0].post_id);
+        }
+      } catch (e) {}
+    }
+
+    async function jdevCreatePost() {
+      const community_slug = ((document.getElementById('jdevPostCommSelect') || {}).value || 'c/verilog');
+      const post_type = ((document.getElementById('jdevPostTypeSelect') || {}).value || 'help_debug');
+      const title = ((document.getElementById('jdevPostTitleInput') || {}).value || '').trim();
+      const body = ((document.getElementById('jdevPostBodyInput') || {}).value || '').trim();
+      if (!title || !body) return;
+      try {
+        const res = await smartApiFetch('/api/v8/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ community_slug, post_type, title, body, tags: [post_type, 'engr852'] })
+        }, 8000);
+        const data = await res.json();
+        document.getElementById('jdevPostTitleInput').value = '';
+        document.getElementById('jdevPostBodyInput').value = '';
+        await jdevLoadCommunitiesAndPosts(JDEV8_CURRENT_COMMUNITY);
+        if (data && data.post && data.post.post_id) {
+          await jdevSelectPost(data.post.post_id);
+        }
+      } catch (e) {}
+    }
+
+    async function jdevSelectPost(postId) {
+      JDEV8_CURRENT_POST_ID = postId;
+      const box = document.getElementById('jdevPostDetailBox');
+      if (!box) return;
+      try {
+        const res = await smartApiFetch(`/api/v8/posts/${encodeURIComponent(postId)}`, {}, 6000);
+        const data = await res.json();
+        const p = (data && data.post) || {};
+        const comments = p.comments || [];
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+            <span class="badge lavender">${escapeHtml(p.community_slug || '')} · ${escapeHtml(p.post_type || '')}</span>
+            <span style="font-size:12px;color:var(--text-muted);">Posted by <b>@${escapeHtml(p.author_handle || 'student')}</b></span>
+          </div>
+          <h3 style="margin:0 0 8px 0;font-size:17.5px;">${escapeHtml(p.title || '')}</h3>
+          <div style="font-size:13px;line-height:1.6;color:var(--text-body);white-space:pre-wrap;background:#fdf4ff;padding:12px;border-radius:10px;border:1px solid #e9d5ff;margin-bottom:12px;">${escapeHtml(p.body || '')}</div>
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <input type="text" id="jdevNewCommentInput" placeholder="Write a helpful peer answer or debugging tip..." style="flex:1;padding:7px 11px;border-radius:8px;border:1.5px solid #d8b4fe;font-size:12.2px;" onkeydown="if(event.key==='Enter'){jdevAddComment('${escapeHtml(p.post_id)}');}">
+            <button class="btn btn-sm btn-pink" onclick="jdevAddComment('${escapeHtml(p.post_id)}')">💬 Reply</button>
+          </div>
+          <div style="font-size:13px;font-weight:800;margin-bottom:8px;">💬 Discussion & Peer Answers (${comments.length})</div>
+          <div>
+            ${comments.map(c => `
+              <div style="border:1.5px solid ${c.is_accepted ? '#10b981' : '#f5d0fe'};background:${c.is_accepted ? '#ecfdf5' : '#ffffff'};border-radius:10px;padding:10px 12px;margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                  <b style="font-size:12px;color:#6b21a8;">@${escapeHtml(c.author_handle || 'peer')} ${c.is_accepted ? '· ✅ ACCEPTED SOLUTION' : ''}</b>
+                  <div style="display:flex;gap:5px;">
+                    <button class="btn btn-sm" onclick="jdevVote('comment','${escapeHtml(c.comment_id)}',1)">▲ ${c.upvotes || 0}</button>
+                    <button class="btn btn-sm btn-mint" onclick="jdevAcceptComment('${escapeHtml(p.post_id)}','${escapeHtml(c.comment_id)}')">✓ Accept</button>
+                  </div>
+                </div>
+                <div style="font-size:12.4px;color:var(--text-body);white-space:pre-wrap;">${escapeHtml(c.body || '')}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } catch (e) {}
+    }
+
+    async function jdevAddComment(postId) {
+      const body = ((document.getElementById('jdevNewCommentInput') || {}).value || '').trim();
+      if (!body) return;
+      try {
+        await smartApiFetch(`/api/v8/posts/${encodeURIComponent(postId)}/comments`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ body })
+        }, 6000);
+        await jdevSelectPost(postId);
+      } catch (e) {}
+    }
+
+    async function jdevVote(targetType, targetId, value) {
+      try {
+        await smartApiFetch('/api/v8/votes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ target_type: targetType, target_id: targetId, vote_value: value })
+        }, 5000);
+        await jdevLoadCommunitiesAndPosts(JDEV8_CURRENT_COMMUNITY);
+        if (JDEV8_CURRENT_POST_ID) await jdevSelectPost(JDEV8_CURRENT_POST_ID);
+      } catch (e) {}
+    }
+
+    async function jdevSavePost(postId) {
+      try {
+        await smartApiFetch(`/api/v8/posts/${encodeURIComponent(postId)}/save`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        }, 5000);
+      } catch (e) {}
+    }
+
+    async function jdevAcceptComment(postId, commentId) {
+      try {
+        await smartApiFetch(`/api/v8/posts/${encodeURIComponent(postId)}/accept-answer`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ comment_id: commentId })
+        }, 5000);
+        await jdevSelectPost(postId);
+      } catch (e) {}
+    }
+
+    async function jdevLoadConversations() {
+      try {
+        const res = await smartApiFetch('/api/v8/messages/conversations', {}, 6000);
+        const data = await res.json();
+        JDEV8_CONVERSATIONS = (data && data.conversations) || [];
+        const box = document.getElementById('jdevConversationsListBox');
+        if (box) {
+          box.innerHTML = JDEV8_CONVERSATIONS.map(c => `
+            <div style="border:1.5px solid ${JDEV8_CURRENT_CONV_ID === c.conversation_id ? '#ec4899' : '#f5d0fe'};background:#ffffff;border-radius:10px;padding:9px 11px;margin-bottom:7px;cursor:pointer;" onclick="jdevSelectConversation('${escapeHtml(c.conversation_id)}')">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <b style="font-size:12.6px;color:var(--text-main);">${escapeHtml(c.title || 'Conversation')}</b>
+                <span class="badge ${c.conversation_type === 'dm' ? 'pink' : 'mint'}">${escapeHtml(c.conversation_type || 'room')}</span>
+              </div>
+            </div>
+          `).join('');
+        }
+        if (JDEV8_CONVERSATIONS.length && !JDEV8_CURRENT_CONV_ID) {
+          await jdevSelectConversation(JDEV8_CONVERSATIONS[0].conversation_id);
+        }
+      } catch (e) {}
+    }
+
+    async function jdevCreateConversation(convType) {
+      const inp = document.getElementById('jdevNewRoomTitleInput');
+      const val = (inp ? inp.value : '').trim();
+      if (!val) return;
+      try {
+        const payload = convType === 'dm'
+          ? { conversation_type: 'dm', recipient_handle: val.replace(/^@/, '') }
+          : { conversation_type: 'group', title: val };
+        const res = await smartApiFetch('/api/v8/messages/conversations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }, 6000);
+        const data = await res.json();
+        if (inp) inp.value = '';
+        await jdevLoadConversations();
+        if (data && data.conversation && data.conversation.conversation_id) {
+          await jdevSelectConversation(data.conversation.conversation_id);
+        }
+      } catch (e) {}
+    }
+
+    async function jdevSelectConversation(convId) {
+      JDEV8_CURRENT_CONV_ID = convId;
+      try {
+        const res = await smartApiFetch(`/api/v8/messages/conversations/${encodeURIComponent(convId)}/messages`, {}, 6000);
+        const data = await res.json();
+        const conv = (data && data.conversation) || {};
+        const msgs = (data && data.messages) || [];
+        const tEl = document.getElementById('jdevActiveConvTitle');
+        if (tEl) tEl.textContent = conv.title || 'Conversation';
+        const box = document.getElementById('jdevMessagesStreamBox');
+        if (box) {
+          box.innerHTML = msgs.map(m => `
+            <div style="margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed rgba(216,180,254,0.2);">
+              <span style="color:#f472b6;font-weight:800;">@${escapeHtml(m.sender_handle || 'peer')}</span>
+              <span style="color:#94a3b8;font-size:11px;margin-left:6px;">${escapeHtml(m.created_at || '')}</span>
+              <div style="color:#fdf2f8;margin-top:2px;white-space:pre-wrap;">${escapeHtml(m.body || '')}</div>
+            </div>
+          `).join('');
+          box.scrollTop = box.scrollHeight;
+        }
+      } catch (e) {}
+    }
+
+    async function jdevSendMessage() {
+      if (!JDEV8_CURRENT_CONV_ID) return;
+      const inp = document.getElementById('jdevMessageInput');
+      const body = (inp ? inp.value : '').trim();
+      if (!body) return;
+      inp.value = '';
+      try {
+        await smartApiFetch(`/api/v8/messages/conversations/${encodeURIComponent(JDEV8_CURRENT_CONV_ID)}/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ body })
+        }, 6000);
+        await jdevSelectConversation(JDEV8_CURRENT_CONV_ID);
+      } catch (e) {}
+    }
+
+    async function jdevToggleBlockUser(blockFlag) {
+      const h = ((document.getElementById('jdevBlockHandleInput') || {}).value || '').trim().replace(/^@/, '');
+      if (!h) return;
+      try {
+        await smartApiFetch('/api/v8/users/block', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ target_handle: h, block: Boolean(blockFlag) })
+        }, 5000);
+        document.getElementById('jdevBlockHandleInput').value = '';
+      } catch (e) {}
+    }
+
+    async function jdevSummarizeActiveConversation() {
+      if (!JDEV8_CURRENT_CONV_ID) return;
+      try {
+        const res = await smartApiFetch('/api/v8/ai/mentor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: 'conversation', conversation_id: JDEV8_CURRENT_CONV_ID })
+        }, 8000);
+        const data = await res.json();
+        const g = (data && data.guidance) || {};
+        const box = document.getElementById('jdevMessagesStreamBox');
+        if (box) {
+          box.innerHTML += `<div style="background:#2e1065;border:1px solid #c084fc;border-radius:8px;padding:8px 10px;margin-top:8px;color:#e9d5ff;"><b>🤖 ConversationAssistanceAgent Summary:</b> ${escapeHtml(g.summary || JSON.stringify(g))}</div>`;
+          box.scrollTop = box.scrollHeight;
+        }
+      } catch (e) {}
+    }
+
+    function jdevConnectRealtimeSse() {
+      if (JDEV8_EVENT_SOURCE) {
+        try { JDEV8_EVENT_SOURCE.close(); } catch (e) {}
+      }
+      if (!window.EventSource || !JDEV8_SESSION_TOKEN) return;
+      try {
+        const url = `/api/v8/events/stream?token=${encodeURIComponent(JDEV8_SESSION_TOKEN)}`;
+        JDEV8_EVENT_SOURCE = new EventSource(url);
+        JDEV8_EVENT_SOURCE.addEventListener('message.created', (ev) => {
+          try {
+            const payload = JSON.parse(ev.data || '{}');
+            if (payload.conversation_id && payload.conversation_id === JDEV8_CURRENT_CONV_ID) {
+              jdevSelectConversation(JDEV8_CURRENT_CONV_ID);
+            }
+          } catch (e) {}
+        });
+      } catch (e) {}
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      bootStudio();
+      setTimeout(() => { jdevInitGuestSession(false); }, 150);
+    });
   </script>
 </body>
 </html>

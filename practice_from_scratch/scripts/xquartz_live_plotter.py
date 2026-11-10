@@ -10,7 +10,7 @@ Repairs Defects B, C, D, and E:
        Step 2: Local XQuartz process & launchd DISPLAY readiness
        Step 3: Local X11 display response (`xset q`)
        Step 4: Local X11 window tools (`xwininfo`, `xprop`, `xwd`, `ffmpeg`)
-       Step 5: Authenticated SSH `-Y` connectivity to `mahmoodi.rcc.at.sfsu.edu`
+       Step 5: Authenticated SSH `-Y` connectivity to `<EDA_SERVER_HOST>`
        Step 6: Remote X11 forwarding verification (`xset q` inside `tcsh`)
        Step 7: Remote Synopsys environment initialization (`synopsys_setup.tcl`, `which verdi`, `which fsdb2vcd`)
        Step 8: Real FSDB verification via `fsdb2vcd <fsdb> -summary` (200 variables & required signal paths)

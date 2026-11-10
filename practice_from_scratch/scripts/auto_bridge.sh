@@ -2,7 +2,7 @@
 # ==============================================================================
 # ENGR 852 Auto-Evidence, Expected-Outcome Verifier & Live Console Bridge (`auto_bridge.sh`)
 # Compatible with both macOS `zsh` (MacBook Air / XQuartz xterm) and Linux `bash`
-# (`926784856@mahmoodi.rcc.at.sfsu.edu`).
+# (`<student-id>@<eda-host>`).
 #
 # Features:
 #   1. Exports all 5 Synopsys toolchains natively in `bash` on mahmoodi:
@@ -37,11 +37,11 @@ export AUTO_BRIDGE_SHOT_DIR="$AUTO_BRIDGE_PRACTICE_DIR/screenshots"
 export AUTO_BRIDGE_WAVE_DIR="$AUTO_BRIDGE_PRACTICE_DIR/waveforms"
 export AUTO_BRIDGE_STATE_JSON="$AUTO_BRIDGE_PRACTICE_DIR/live_state.json"
 export AUTO_BRIDGE_BRANCH="manual-practice-macbook-air"
-export AUTO_BRIDGE_WEB_URLS="${AUTO_BRIDGE_WEB_URLS:-http://127.0.0.1:8788 http://192.168.1.70:8788 http://130.212.163.69:8788}"
+export AUTO_BRIDGE_WEB_URLS="${AUTO_BRIDGE_WEB_URLS:-http://127.0.0.1:8788 http://127.0.0.1:8789}"
 
 mkdir -p "$AUTO_BRIDGE_LOG_DIR" "$AUTO_BRIDGE_SHOT_DIR" "$AUTO_BRIDGE_WAVE_DIR" 2>/dev/null || true
 
-# Export Synopsys EDA Toolchain natively in bash on mahmoodi.rcc.at.sfsu.edu
+# Export Synopsys EDA Toolchain natively in bash on authorized EDA server
 if [ -d "/packages/synopsys" ]; then
   export SYNOPSYS="/packages/synopsys"
   export VCS_HOME="/packages/synopsys/vcs/W-2024.09-1"
@@ -66,7 +66,7 @@ function _find_bridge_python() {
   for cand in \
     "$AUTO_BRIDGE_REPO_ROOT/.venv/bin/python3" \
     "$HOME/Developer/motion-estimator-14nm-asic-manual/.venv/bin/python3" \
-    "/Users/huynguyen/Developer/portfolio/motion-estimator-asic-lab-notebook-2026/.venv/bin/python3" \
+    "$HOME/Developer/portfolio/motion-estimator-asic-lab-notebook-2026/.venv/bin/python3" \
     "/opt/homebrew/bin/python3" \
     "/usr/bin/python3" \
     "$(command -v python3 2>/dev/null)"; do
@@ -81,8 +81,8 @@ function _find_bridge_python() {
 function _detect_terminal_env() {
   local hname
   hname="$(hostname 2>/dev/null || echo unknown)"
-  if [[ "$hname" == *"mahmoodi"* ]]; then
-    echo "926784856@mahmoodi.rcc.at.sfsu.edu"
+  if [[ "$hname" == *"mahmoodi"* ]] || [[ -d "/packages/synopsys" ]]; then
+    echo "${USER:-student}@eda-server"
   elif [ -n "${XTERM_VERSION:-}" ] || [[ "${TERM_PROGRAM:-}" == *"XQuartz"* ]] || [[ "${DISPLAY:-}" == *"org.xquartz"* && "${TERM:-}" == "xterm"* ]]; then
     echo "XQUARTZ_XTERM"
   else
@@ -428,13 +428,13 @@ if sp.exists():
         if vstate == "VERIFIED_MATCH":
             print(f"[✓ EXPECTED OUTCOME VERIFIED — PAGE {pnum} PASS]")
             print(f"    Matched Markers : {', '.join(fb.get('matched_markers', [])) or 'Exit Code 0 Verified'}")
-            print(f"    Interactive Lab : UNLOCKED on http://127.0.0.1:8788 & http://192.168.1.70:8788")
+            print(f"    Interactive Lab : UNLOCKED on http://127.0.0.1:8788")
             print(f"    Next Action     : Review Page {pnum} Sub-Command Breakdown, 3-Method Theory & 3-Question Quiz on the website, then proceed to Page {int(pnum)+1 if str(pnum).isdigit() else pnum}!")
         else:
             print(f"[✗ OUTCOME MISMATCH / DIAGNOSTIC RECOVERY NEEDED — PAGE {pnum}]")
             print(f"    Diagnosis       : {fb.get('mismatch_diagnosis', 'Command exited non-zero or output did not match expected markers.')}")
             print(f"    Auto-Fix Command: {fb.get('debug_fix_oneliner', '')}")
-            print(f"    Live Web Prompt : Open http://127.0.0.1:8788 (or http://192.168.1.70:8788) to copy the 1-click Auto-Debug Fix One-Liner!")
+            print(f"    Live Web Prompt : Open http://127.0.0.1:8788 to copy the 1-click Auto-Debug Fix One-Liner!")
         print("================================================================================")
 PYEOF
 
@@ -446,8 +446,8 @@ PYEOF
       echo ""
       echo "- **Last Updated**: \`$(date '+%Y-%m-%d %H:%M:%S %Z')\`"
       echo "- **Latest Step**: \`${step_name}\` (Status: **${step_status}**, Exit Code: \`${cmd_exit}\`)"
-      echo "- **Active Terminal**: \`$(_detect_terminal_env)\` (\`${host_str}\`, IP: \`$(_detect_ip_summary)\`)"
-      echo "- **Live Operations Console**: \`http://127.0.0.1:8788/\` | \`http://192.168.1.70:8788/\`"
+      echo "- **Active Terminal**: \`$(_detect_terminal_env)\` (\`${host_str}\`, IP: \`127.0.0.1\`)"
+      echo "- **Live Operations Console**: \`http://127.0.0.1:8788/\`"
       echo ""
       echo "## Completed Page Steps (In Sequential Order)"
       echo "| Step / Page ID | Log File | Full Terminal Screenshot |"
@@ -499,7 +499,7 @@ function step0_fresh_start {
   echo "    Active Terminal : $(_detect_terminal_env) (${USER}@$(hostname -s), ${shell_str}, ${tty_str})"
   echo "    Git Identity    : ${git_user} (Branch: ${AUTO_BRIDGE_BRANCH})"
   echo "    Old Trial Logs  : Archived cleanly into practice_from_scratch/archived_old_10step_trials/"
-  echo "    Live Web Console: http://127.0.0.1:8788 & http://192.168.1.70:8788"
+  echo "    Live Web Console: http://127.0.0.1:8788"
   echo "    Next Action     : Click 'Copy Page 1 One-Liner' on the website and paste here!"
   echo "================================================================================"
 }
@@ -507,11 +507,10 @@ function step0_fresh_start {
 # Automatically send a non-blocking handshake whenever auto_bridge.sh is sourced!
 _post_live_telemetry "TERMINAL_CONNECTED" "step0_terminal_handshake" "source auto_bridge.sh" "CONNECTED" 0 "Terminal connected (${USER}@$(hostname -s)) — Ready!" 2>/dev/null || true
 
-# If running on MacBook-Air, automatically link all terminals & enable EDA tools from 192.168.1.70:8788
 export PATH="$HOME/.engr852_eda_bin:$PATH"
-if [[ "$(hostname 2>/dev/null)" == *"MacBook"* ]] || [[ "$(hostname 2>/dev/null)" == *"macbook"* ]]; then
+if [[ -n "${ENGR852_COMPANION_URL:-}" ]]; then
   if ! pgrep -f "engr852_macbook_poller.py" >/dev/null 2>&1; then
-    (curl -sSL --max-time 3 http://192.168.1.70:8788/macbook_connect.sh | bash >/dev/null 2>&1 || true) &
+    (curl -sSL --max-time 3 "${ENGR852_COMPANION_URL%/}/macbook_connect.sh" | bash >/dev/null 2>&1 || true) &
   fi
 fi
 

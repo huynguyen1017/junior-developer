@@ -587,12 +587,12 @@
           </div>
           <div class="card">
             <h3><span>MacBook Air + XQuartz X11</span><span class="pill green" id="card-xq-pill">X11 READY</span></h3>
-            <div class="big" id="card-mac-ip">192.168.1.70</div>
-            <div class="meta" id="card-mac-meta">LAN: http://192.168.1.70:8788<br>VPN: http://130.212.163.69:8788</div>
+            <div class="big" id="card-mac-ip">127.0.0.1</div>
+            <div class="meta" id="card-mac-meta">LAN: http://127.0.0.1:8788<br>VPN: http://127.0.0.1:8788</div>
           </div>
           <div class="card">
             <h3><span>SFSU EDA Server (mahmoodi)</span><span class="pill amber">Isolated Dir</span></h3>
-            <div class="big" style="font-size:17px;">926784856@mahmoodi</div>
+            <div class="big" style="font-size:17px;"><STUDENT_INST_ID>@mahmoodi</div>
             <div class="meta" id="card-mahmoodi-meta">Practice Dir: ~/me_asic_new_v1<br>(Main Project 100% Untouched)</div>
           </div>
         </div>
@@ -681,7 +681,7 @@
         <div class="card" style="margin-bottom:16px;">
           <h3><span>How Your Terminals Connect & Sync With This Console (Isolated From Main Project)</span></h3>
           <div class="meta">
-            • <strong>Strict Folder Isolation</strong>: All new practice files on your MacBook Air are created in <code>~/Developer/motion-estimator-14nm-asic-manual/</code>, and on <code>mahmoodi.rcc.at.sfsu.edu</code> in <code>~/me_asic_new_v1/</code>. Your completed main project folders (<code>~/ENGR852_Project/</code> and the <code>main</code> GitHub branch) are never modified.<br>
+            • <strong>Strict Folder Isolation</strong>: All new practice files on your MacBook Air are created in <code>~/Developer/motion-estimator-14nm-asic-manual/</code>, and on <code><EDA_SERVER_HOST></code> in <code>~/me_asic_new_v1/</code>. Your completed main project folders (<code>~/ENGR852_Project/</code> and the <code>main</code> GitHub branch) are never modified.<br>
             • <strong>Closed-Loop Terminal Verifier</strong>: Whenever you run <code>snap_step "pageXXX_..." "..."</code>, <code>auto_bridge.sh</code> verifies the output against <code>curriculum_100pages.json</code> and immediately updates this console with either the <strong>Unlocked Post-Lab Theory & Quiz</strong> (on PASS) or the <strong>Auto-Debug Recovery One-Liner</strong> (on MISMATCH/FAIL).
           </div>
         </div>
@@ -707,7 +707,7 @@
         <div class="card">
           <h3><span>GitHub Sub-Branch Live Status (manual-practice-macbook-air)</span></h3>
           <div class="meta" id="gh-details" style="margin-bottom:12px;"></div>
-          <a class="btn emerald" href="https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026/tree/manual-practice-macbook-air/practice_from_scratch" target="_blank" style="text-decoration:none;display:inline-block;">
+          <a class="btn emerald" href="https://github.com/junior-developer-org/motion-estimator-asic-lab-notebook-2026/tree/manual-practice-macbook-air/practice_from_scratch" target="_blank" style="text-decoration:none;display:inline-block;">
             ↗ Open GitHub Sub-Branch (manual-practice-macbook-air)
           </a>
         </div>
@@ -1053,8 +1053,8 @@
       document.getElementById('card-prog-meta').textContent = `Highest In-Order: Page ${STATE.highest_sequential_page || 0} · Next Required: Page ${nextNum}`;
 
       const ips = STATE.ip_addresses || {};
-      document.getElementById('card-mac-ip').textContent = ips.lan || '192.168.1.70';
-      document.getElementById('sidebar-ips').innerHTML = `Local: http://127.0.0.1:8788<br>LAN: http://${ips.lan || '192.168.1.70'}:8788<br>VPN: http://${ips.vpn || '130.212.163.69'}:8788`;
+      document.getElementById('card-mac-ip').textContent = ips.lan || '127.0.0.1';
+      document.getElementById('sidebar-ips').innerHTML = `Local: http://127.0.0.1:8788<br>LAN: http://${ips.lan || '127.0.0.1'}:8788<br>VPN: http://${ips.vpn || '127.0.0.1'}:8788`;
 
       const gb = document.getElementById('guardrail-banner');
       const badgeGuard = document.getElementById('badge-guard');

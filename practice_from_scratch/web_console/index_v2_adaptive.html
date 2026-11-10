@@ -579,7 +579,7 @@
             <span class="pill blue" id="user-visitor-badge">🧭 STEP 0 · SMART ONBOARDING & TERMINAL DOCTOR</span>
             <span class="pill green" id="term-conn-pill" style="margin-left:6px;">🟢 TERMINAL BRIDGE: READY</span>
             <span class="pill purple" id="active-level-pill" style="margin-left:6px;">🌱 LEVEL: BEGINNER (GUIDE ME FROM ZERO)</span>
-            <span class="pill amber" id="active-gh-pill" style="margin-left:6px;">👑 GITHUB: OWNER (huynguyen1017)</span>
+            <span class="pill amber" id="active-gh-pill" style="margin-left:6px;">👑 GITHUB: OWNER (junior-developer-org)</span>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn secondary" onclick="toggleOnboardingBody()" id="btn-toggle-onboard">▼ Collapse / Expand Step 0 Guide</button>
@@ -605,12 +605,12 @@
             <div style="background:rgba(15,23,42,0.85);border:1px solid #334155;border-radius:9px;padding:12px;">
               <strong style="color:#fbbf24;font-size:12.5px;display:block;margin-bottom:6px;">2. Select Your GitHub & Account Mode (No GitHub Required to Practice!):</strong>
               <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
-                <button class="btn emerald" id="gh-btn-owner" onclick="setGithubMode('owner')">👑 Repo Owner (huynguyen1017 Fast-Track)</button>
+                <button class="btn emerald" id="gh-btn-owner" onclick="setGithubMode('owner')">👑 Repo Owner (junior-developer-org Fast-Track)</button>
                 <button class="btn secondary" id="gh-btn-guest" onclick="setGithubMode('guest')">🔑 Student / Guest with GitHub</button>
                 <button class="btn secondary" id="gh-btn-local" onclick="setGithubMode('local')">💻 No GitHub Yet (100% Local Sandbox)</button>
               </div>
               <div id="gh-desc-box" style="font-size:12px;color:#cbd5e1;line-height:1.5;">
-                <strong>👑 Repository Owner Mode (`huynguyen1017`):</strong> Pre-configured for <code>huynguyen@MacBook-Air</code> and <code>926784856@mahmoodi.rcc.at.sfsu.edu</code>. Automatically pushes your step-by-step logs & screenshots to the <code>manual-practice-macbook-air</code> sub-branch while keeping <code>main</code> 100% untouched!
+                <strong>👑 Repository Owner Mode (`junior-developer-org`):</strong> Pre-configured for <code>student@MacBook-Air</code> and <code><STUDENT_EDA_LOGIN>@<EDA_HOST></code>. Automatically pushes your step-by-step logs & screenshots to the <code>manual-practice-macbook-air</code> sub-branch while keeping <code>main</code> 100% untouched!
               </div>
             </div>
           </div>
@@ -630,25 +630,25 @@
                 </div>
               </div>
               <div style="background:rgba(16,185,129,0.14);border:1px solid #10b981;border-radius:8px;padding:10px 12px;font-size:12px;">
-                <strong style="color:#34d399;">✅ Window #2 (`huynguyen — -zsh — 120×30` sitting at `huynguyen@MacBook-Air ~ %`):</strong>
+                <strong style="color:#34d399;">✅ Window #2 (`student — -zsh — 120×30` sitting at `student@MacBook-Air ~ %`):</strong>
                 <div style="color:#e2e8f0;margin-top:4px;line-height:1.5;">
                   • <strong>USE THIS WINDOW!</strong> This is a clean local macOS <code>zsh</code> terminal sitting at your home folder (<code>~</code>, prompt ends with <code>%</code>).<br>
                   • <strong>How to Connect It Automatically to This Website (3 Baby Steps):</strong><br>
                   &nbsp;&nbsp;<strong>Step A:</strong> Click the green <strong><code>[📋 Copy Step 0 Auto-Connect & Fresh-Start Command]</code></strong> button below.<br>
-                  &nbsp;&nbsp;<strong>Step B:</strong> Click inside your clean Terminal Window #2 (where it says <code>huynguyen@MacBook-Air ~ %</code>).<br>
+                  &nbsp;&nbsp;<strong>Step B:</strong> Click inside your clean Terminal Window #2 (where it says <code>student@MacBook-Air ~ %</code>).<br>
                   &nbsp;&nbsp;<strong>Step C:</strong> Press <strong><code>Cmd + V</code></strong> (Paste) and press <strong><code>Return</code></strong> (Enter)!
                 </div>
               </div>
             </div>
 
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-              <strong style="font-size:12px;color:#a7f3d0;">Step 0 Auto-Connect & Fresh-Start Bootstrap Command (Paste into `huynguyen@MacBook-Air ~ %` once before Page 1):</strong>
+              <strong style="font-size:12px;color:#a7f3d0;">Step 0 Auto-Connect & Fresh-Start Bootstrap Command (Paste into `student@MacBook-Air ~ %` once before Page 1):</strong>
               <div style="display:flex;gap:8px;flex-wrap:wrap;">
                 <button class="btn emerald" onclick="copyStep0Command()">📋 Copy Step 0 Auto-Connect & Fresh-Start Command</button>
                 <button class="btn blue" onclick="simulateHandshakeNow()">⚡ Test / Verify Terminal Connection Now</button>
               </div>
             </div>
-            <div class="code-box" id="step0-cmd-box" style="color:#fde68a;margin-top:6px;">mkdir -p ~/Developer/engr852_practice && cd ~/Developer/engr852_practice && if [ ! -d motion-estimator-asic-lab-notebook-2026 ]; then git clone https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026.git; fi && cd motion-estimator-asic-lab-notebook-2026 && git fetch origin manual-practice-macbook-air && git checkout manual-practice-macbook-air && git pull --rebase origin manual-practice-macbook-air && source practice_from_scratch/scripts/auto_bridge.sh && step0_fresh_start</div>
+            <div class="code-box" id="step0-cmd-box" style="color:#fde68a;margin-top:6px;">mkdir -p ~/Developer/engr852_practice && cd ~/Developer/engr852_practice && if [ ! -d motion-estimator-asic-lab-notebook-2026 ]; then git clone https://github.com/junior-developer-org/motion-estimator-asic-lab-notebook-2026.git; fi && cd motion-estimator-asic-lab-notebook-2026 && git fetch origin manual-practice-macbook-air && git checkout manual-practice-macbook-air && git pull --rebase origin manual-practice-macbook-air && source practice_from_scratch/scripts/auto_bridge.sh && step0_fresh_start</div>
           </div>
         </div>
       </div>
@@ -668,12 +668,12 @@
           </div>
           <div class="card">
             <h3><span>MacBook Air + XQuartz X11</span><span class="pill green" id="card-xq-pill">X11 READY</span></h3>
-            <div class="big" id="card-mac-ip">192.168.1.70</div>
-            <div class="meta" id="card-mac-meta">LAN: http://192.168.1.70:8788<br>VPN: http://130.212.163.69:8788</div>
+            <div class="big" id="card-mac-ip">127.0.0.1</div>
+            <div class="meta" id="card-mac-meta">LAN: http://127.0.0.1:8788<br>VPN: http://127.0.0.1:8788</div>
           </div>
           <div class="card">
             <h3><span>SFSU EDA Server (mahmoodi)</span><span class="pill amber">Isolated Dir</span></h3>
-            <div class="big" style="font-size:17px;">926784856@mahmoodi</div>
+            <div class="big" style="font-size:17px;"><STUDENT_INST_ID>@mahmoodi</div>
             <div class="meta" id="card-mahmoodi-meta">Practice Dir: ~/me_asic_new_v1<br>(Main Project 100% Untouched)</div>
           </div>
         </div>
@@ -762,7 +762,7 @@
         <div class="card" style="margin-bottom:16px;">
           <h3><span>How Your Terminals Connect & Sync With This Console (Isolated From Main Project)</span></h3>
           <div class="meta">
-            • <strong>Strict Folder Isolation</strong>: All new practice files on your MacBook Air are created in <code>~/Developer/motion-estimator-14nm-asic-manual/</code>, and on <code>mahmoodi.rcc.at.sfsu.edu</code> in <code>~/me_asic_new_v1/</code>. Your completed main project folders (<code>~/ENGR852_Project/</code> and the <code>main</code> GitHub branch) are never modified.<br>
+            • <strong>Strict Folder Isolation</strong>: All new practice files on your MacBook Air are created in <code>~/Developer/motion-estimator-14nm-asic-manual/</code>, and on <code><EDA_SERVER_HOST></code> in <code>~/me_asic_new_v1/</code>. Your completed main project folders (<code>~/ENGR852_Project/</code> and the <code>main</code> GitHub branch) are never modified.<br>
             • <strong>Closed-Loop Terminal Verifier</strong>: Whenever you run <code>snap_step "pageXXX_..." "..."</code>, <code>auto_bridge.sh</code> verifies the output against <code>curriculum_100pages.json</code> and immediately updates this console with either the <strong>Unlocked Post-Lab Theory & Quiz</strong> (on PASS) or the <strong>Auto-Debug Recovery One-Liner</strong> (on MISMATCH/FAIL).
           </div>
         </div>
@@ -788,7 +788,7 @@
         <div class="card">
           <h3><span>GitHub Sub-Branch Live Status (manual-practice-macbook-air)</span></h3>
           <div class="meta" id="gh-details" style="margin-bottom:12px;"></div>
-          <a class="btn emerald" href="https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026/tree/manual-practice-macbook-air/practice_from_scratch" target="_blank" style="text-decoration:none;display:inline-block;">
+          <a class="btn emerald" href="https://github.com/junior-developer-org/motion-estimator-asic-lab-notebook-2026/tree/manual-practice-macbook-air/practice_from_scratch" target="_blank" style="text-decoration:none;display:inline-block;">
             ↗ Open GitHub Sub-Branch (manual-practice-macbook-air)
           </a>
         </div>
@@ -1030,17 +1030,17 @@
       const ghDesc = document.getElementById('gh-desc-box');
       const step0Box = document.getElementById('step0-cmd-box');
       if (GITHUB_MODE === 'owner') {
-        if (ghPill) ghPill.textContent = '👑 GITHUB: OWNER (huynguyen1017)';
-        if (ghDesc) ghDesc.innerHTML = '<strong>👑 Repository Owner Mode (`huynguyen1017`):</strong> Pre-configured for <code>huynguyen@MacBook-Air</code> and <code>926784856@mahmoodi.rcc.at.sfsu.edu</code>. Automatically pushes your step-by-step logs & screenshots to the <code>manual-practice-macbook-air</code> sub-branch while keeping <code>main</code> 100% untouched!';
-        if (step0Box) step0Box.textContent = 'mkdir -p ~/Developer/engr852_practice && cd ~/Developer/engr852_practice && if [ ! -d motion-estimator-asic-lab-notebook-2026 ]; then git clone https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026.git; fi && cd motion-estimator-asic-lab-notebook-2026 && git fetch origin manual-practice-macbook-air && git checkout manual-practice-macbook-air && git pull --rebase origin manual-practice-macbook-air && source practice_from_scratch/scripts/auto_bridge.sh && step0_fresh_start';
+        if (ghPill) ghPill.textContent = '👑 GITHUB: OWNER (junior-developer-org)';
+        if (ghDesc) ghDesc.innerHTML = '<strong>👑 Repository Owner Mode (`junior-developer-org`):</strong> Pre-configured for <code>student@MacBook-Air</code> and <code><STUDENT_EDA_LOGIN>@<EDA_HOST></code>. Automatically pushes your step-by-step logs & screenshots to the <code>manual-practice-macbook-air</code> sub-branch while keeping <code>main</code> 100% untouched!';
+        if (step0Box) step0Box.textContent = 'mkdir -p ~/Developer/engr852_practice && cd ~/Developer/engr852_practice && if [ ! -d motion-estimator-asic-lab-notebook-2026 ]; then git clone https://github.com/junior-developer-org/motion-estimator-asic-lab-notebook-2026.git; fi && cd motion-estimator-asic-lab-notebook-2026 && git fetch origin manual-practice-macbook-air && git checkout manual-practice-macbook-air && git pull --rebase origin manual-practice-macbook-air && source practice_from_scratch/scripts/auto_bridge.sh && step0_fresh_start';
       } else if (GITHUB_MODE === 'guest') {
         if (ghPill) ghPill.textContent = '🔑 GITHUB: GUEST / FORK MODE';
         if (ghDesc) ghDesc.innerHTML = '<strong>🔑 Student / Guest with GitHub Account:</strong> Run <code>gh auth login</code> (or configure SSH keys), clone the repository, and track your own practice sub-branch!';
-        if (step0Box) step0Box.textContent = 'gh auth status || gh auth login && mkdir -p ~/Developer/engr852_practice && cd ~/Developer/engr852_practice && if [ ! -d motion-estimator-asic-lab-notebook-2026 ]; then git clone https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026.git; fi && cd motion-estimator-asic-lab-notebook-2026 && git checkout -B manual-practice-macbook-air && source practice_from_scratch/scripts/auto_bridge.sh && step0_fresh_start';
+        if (step0Box) step0Box.textContent = 'gh auth status || gh auth login && mkdir -p ~/Developer/engr852_practice && cd ~/Developer/engr852_practice && if [ ! -d motion-estimator-asic-lab-notebook-2026 ]; then git clone https://github.com/junior-developer-org/motion-estimator-asic-lab-notebook-2026.git; fi && cd motion-estimator-asic-lab-notebook-2026 && git checkout -B manual-practice-macbook-air && source practice_from_scratch/scripts/auto_bridge.sh && step0_fresh_start';
       } else {
         if (ghPill) ghPill.textContent = '💻 LOCAL SANDBOX (NO GITHUB NEEDED)';
         if (ghDesc) ghDesc.innerHTML = '<strong>💻 No GitHub Account Yet (`100% Local Sandbox Mode`):</strong> Sets <code>export ENGR852_SKIP_GIT_PUSH=1</code> so every one-liner, screenshot, auto-debugger, and quiz works 100% locally on your laptop without requiring a GitHub login! (Want a free GitHub account later? Visit <a href="https://github.com/signup" target="_blank" style="color:#60a5fa;">github.com/signup</a>).';
-        if (step0Box) step0Box.textContent = 'export ENGR852_SKIP_GIT_PUSH=1 && mkdir -p ~/Developer/engr852_practice && cd ~/Developer/engr852_practice && if [ ! -d motion-estimator-asic-lab-notebook-2026 ]; then git clone https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026.git; fi && cd motion-estimator-asic-lab-notebook-2026 && source practice_from_scratch/scripts/auto_bridge.sh && step0_fresh_start';
+        if (step0Box) step0Box.textContent = 'export ENGR852_SKIP_GIT_PUSH=1 && mkdir -p ~/Developer/engr852_practice && cd ~/Developer/engr852_practice && if [ ! -d motion-estimator-asic-lab-notebook-2026 ]; then git clone https://github.com/junior-developer-org/motion-estimator-asic-lab-notebook-2026.git; fi && cd motion-estimator-asic-lab-notebook-2026 && source practice_from_scratch/scripts/auto_bridge.sh && step0_fresh_start';
       }
     }
 
@@ -1054,7 +1054,7 @@
         await fetch('/api/terminal_handshake', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user: 'huynguyen', host: 'MacBook-Air', tty: 'ttys005', shell: 'zsh', mode: GITHUB_MODE })
+          body: JSON.stringify({ user: 'student', host: 'MacBook-Air', tty: 'ttys005', shell: 'zsh', mode: GITHUB_MODE })
         });
         await refreshAll();
       } catch (e) {
@@ -1277,12 +1277,12 @@
 
       const tcPill = document.getElementById('term-conn-pill');
       if (tcPill) {
-        tcPill.textContent = `🟢 TERMINAL CONNECTED: ${STATE.user || 'huynguyen'}@${STATE.host || 'MacBook-Air'} (${STATE.active_terminal || 'zsh'})`;
+        tcPill.textContent = `🟢 TERMINAL CONNECTED: ${STATE.user || 'student'}@${STATE.host || 'MacBook-Air'} (${STATE.active_terminal || 'zsh'})`;
       }
 
       const ips = STATE.ip_addresses || {};
-      document.getElementById('card-mac-ip').textContent = ips.lan || '192.168.1.70';
-      document.getElementById('sidebar-ips').innerHTML = `Local: http://127.0.0.1:8788<br>LAN: http://${ips.lan || '192.168.1.70'}:8788<br>VPN: http://${ips.vpn || '130.212.163.69'}:8788`;
+      document.getElementById('card-mac-ip').textContent = ips.lan || '127.0.0.1';
+      document.getElementById('sidebar-ips').innerHTML = `Local: http://127.0.0.1:8788<br>LAN: http://${ips.lan || '127.0.0.1'}:8788<br>VPN: http://${ips.vpn || '127.0.0.1'}:8788`;
 
       const gb = document.getElementById('guardrail-banner');
       const badgeGuard = document.getElementById('badge-guard');

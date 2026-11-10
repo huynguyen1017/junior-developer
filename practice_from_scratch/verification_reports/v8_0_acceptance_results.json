@@ -1,0 +1,120 @@
+{
+  "platform": "JUNIOR DEVELOPER v8.0 (Learn. Build. Connect.) + ENGR 852 ASIC Studio v7.1",
+  "staging_url": "http://127.0.0.1:8789",
+  "production_port_8788_untouched": true,
+  "total_v8_tests": 15,
+  "passed_v8_tests": 15,
+  "all_v8_passed": true,
+  "v7_1_summary": {
+    "total_tests": 25,
+    "passed_tests": 25,
+    "all_passed": true
+  },
+  "results": [
+    {
+      "test_id": "AC01",
+      "name": "Public Homepage, RDAP Domain Readiness, Strict CORS & Zero PII/Optimistic Checkmarks",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "status=200/200, evil_origin_acao='', optimistic_checkmarks=False, pii_leaks=[]"
+    },
+    {
+      "test_id": "AC02",
+      "name": "Guest Sandbox Provisioning, Student Registration & PBKDF2-HMAC-SHA256 Login",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "guest_token_len=60, user1=maya_43031 (usr_081510293a9a), login_status=200"
+    },
+    {
+      "test_id": "AC03",
+      "name": "Guest-to-Student Migration Preserves Guest Sandbox Projects & Progress",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "migrated_user=liam_43031 (usr_guest_183a6830c6), preserved_project=proj_c59600a3cd75, fetch_status=200"
+    },
+    {
+      "test_id": "AC04",
+      "name": "Multi-Tenant 0700 Project Isolation, Cross-User 403 & Spoofed user_id 403",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "u1_proj=proj_f6705b6935de, cross_user_get=403, spoofed_user_id_post=403, unauth_post=401"
+    },
+    {
+      "test_id": "AC05",
+      "name": "Open-Source Verilog (iverilog + vvp + Yosys) Real VCD Execution & Unsafe $system Sandbox Block",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "run_status=PASS, evidence=OPEN_SOURCE_SIMULATION_VERIFIED, vcd_transitions=1263, unsafe_task_http=403"
+    },
+    {
+      "test_id": "AC06",
+      "name": "Non-Destructive Project Reset & Historical Archive Preservation",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "reset_http=200, archive_id=arch_proj_f6705b6935de_1794343032"
+    },
+    {
+      "test_id": "AC07",
+      "name": "Junior Connect 8 Communities, Posts, Nested Comments, Voting, Accepted Solution, Save & Moderation",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "communities=8, post_id=post_d39e52b7f33a, comment_id=cmt_31a8e63349f2, vote/accept/save/report=200/200/200/200"
+    },
+    {
+      "test_id": "AC08",
+      "name": "Automatic Privacy & Secret Redaction on Shared Junior Connect Debugging Posts",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "sanitized_body='My log showed path /workspace/student/project and host <redacted_inst_id>@<private_eda_host> at <redacted_vpn_...'"
+    },
+    {
+      "test_id": "AC09",
+      "name": "Junior Messenger 1-to-1 DMs, Study Rooms, Reactions & Non-Member Access Block (403)",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "dm_id=conv_6d8a793df84b, msg_http=200, react_http=200, non_member_read_http=403"
+    },
+    {
+      "test_id": "AC10",
+      "name": "Junior Messenger User Block Enforcement (403 on Blocked Sender)",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "block_http=200, blocked_sender_http=403"
+    },
+    {
+      "test_id": "AC11",
+      "name": "Continuous SSE Stream Authentication (401 Unauth), Monotonic id: & Last-Event-ID Replay",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "unauth_http=401, auth_http=200, has_event_id=True"
+    },
+    {
+      "test_id": "AC12",
+      "name": "Scoped AI Agent v8 Suite (KnowledgeRetrieval, Community, Conversation, LearningMatch, TrustAndSafety)",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "mentor_http=200, study_match_http=200"
+    },
+    {
+      "test_id": "AC13",
+      "name": "Preserved 100-Page ENGR 852 Studio, Verified Fig 10 Redacted Capture & Fail-Closed 422 on Unredacted Frame",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "curriculum_pages=100, fig10_frame_http=200, unredacted_failclosed_http=422"
+    },
+    {
+      "test_id": "AC14",
+      "name": "Student Account JSON Export & Account Deletion / Anonymization",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "export_http=200, delete_http=200"
+    },
+    {
+      "test_id": "AC15",
+      "name": "Combined v7.1 (25/25) & v8.0 Acceptance Gate",
+      "passed": true,
+      "evidence_class": "NATIVE_EXECUTION",
+      "detail": "v7_1_passed=25/25, v8_0_prior_passed=14/14"
+    }
+  ]
+}

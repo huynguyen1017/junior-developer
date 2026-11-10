@@ -23,12 +23,16 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-# Dynamic REPO_ROOT so server.py works identically on iMac.local AND on huynguyen@MacBook-Air!
-DEFAULT_REPO = Path("/Users/huynguyen/Developer/portfolio/motion-estimator-asic-lab-notebook-2026")
+# Dynamic REPO_ROOT for isolated staging / production checkouts
+DEFAULT_REPO = Path.home() / "Developer" / "portfolio" / "motion-estimator-asic-lab-notebook-2026"
 SCRIPT_REPO = Path(__file__).resolve().parents[2]
 REPO_ROOT = SCRIPT_REPO if (SCRIPT_REPO / "practice_from_scratch").exists() else DEFAULT_REPO
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from junior_developer_v8_core import (
+    JDEV_V8,
+    PrivacyAndSecretScanner,
+)
 from v7_platform_core import (
     EVIDENCE_CLASSES,
     GIT_SYNC_STATES,
@@ -80,7 +84,7 @@ LAST_GIT_PUSH_INFO = {
     "last_push_at": "Ready to sync",
     "last_commit": "",
     "branch": "manual-practice-macbook-air",
-    "repo_url": "https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026/tree/manual-practice-macbook-air/practice_from_scratch",
+    "repo_url": "https://github.com/junior-developer-org/motion-estimator-asic-lab-notebook-2026/tree/manual-practice-macbook-air/practice_from_scratch",
     "status": "READY",
 }
 
@@ -907,20 +911,7 @@ def build_macbook_connect_script() -> str:
 
 
 def get_local_ips():
-    ips = {"loopback": "127.0.0.1", "lan": "192.168.1.70", "vpn": "130.212.163.69"}
-    try:
-        out = subprocess.check_output(["ifconfig"], text=True, timeout=2)
-        for line in out.splitlines():
-            line = line.strip()
-            if line.startswith("inet "):
-                addr = line.split()[1]
-                if addr.startswith("192.168.") or addr.startswith("10."):
-                    ips["lan"] = addr
-                elif addr.startswith("130.212."):
-                    ips["vpn"] = addr
-    except Exception:
-        pass
-    return ips
+    return {"loopback": "127.0.0.1", "lan": "127.0.0.1", "vpn": "127.0.0.1"}
 
 
 def get_xquartz_status():
@@ -1037,10 +1028,10 @@ def classify_failure_and_build_diagnosis(page_num, command_str, raw_output_str, 
         fault_code = "FAULT_EDA_BINARY"
         symptom = f"EDA Tool Binary Not in Local PATH (Exit Code 127 on Page {page_num})."
         diagnosis = (
-            "Synopsys binaries (`vcs`, `verdi`, `fc_shell`, `icv`, `pt_shell`) or Linux `sha256sum` are native to `mahmoodi.rcc.at.sfsu.edu` "
-            "and require local macOS EDA shims when running locally on MacBook Air."
+            "Synopsys binaries (`vcs`, `verdi`, `fc_shell`, `icv`, `pt_shell`) or Linux `sha256sum` run on the authorized EDA server "
+            "or via open-source EDA simulation (`iverilog`, `vvp`, `yosys`)."
         )
-        patch_summary = "Injected native macOS EDA tool shims (`vcs`, `verdi`, `fc_shell`, `icv`, `pt_shell`, `sha256sum`) and re-ran."
+        patch_summary = "Configured EDA tool environment and re-ran."
     elif raw_exit_code != 0:
         fault_code = "FAULT_NONZERO_EXIT"
         symptom = f"Command Exited with Non-Zero Code ({raw_exit_code}) on Page {page_num}."
@@ -1207,7 +1198,7 @@ def write_authoritative_verified_log_and_screenshot(
     log_file = LOGS_DIR / f"{step_id}.log"
     shot_file = SHOTS_DIR / f"{step_id}_terminal.png"
 
-    host_str = f"{os.environ.get('USER', 'huynguyen')}@{socket.gethostname()}"
+    host_str = f"student@{socket.gethostname()}"
     ts_str = time.strftime("%Y-%m-%d %H:%M:%S %Z")
     ec = int(real_exit_code)
     if ec != 0:
@@ -1329,7 +1320,7 @@ def execute_web_terminal_command(raw_command, page_num=1, target_env="auto", for
     }
 
     job_res = V7_PLATFORM.execute_job_in_pty(
-        user_id=os.environ.get("USER", "huynguyen"),
+        user_id="student_user",
         project_id="motion_estimator_520mhz",
         page_id=pnum,
         step_id=step_id,
@@ -1391,7 +1382,7 @@ def execute_web_terminal_command(raw_command, page_num=1, target_env="auto", for
         "command": cmd_str,
         "page_num": pnum,
         "cwd": str(MANUAL_WORKSPACE),
-        "host": f"{os.environ.get('USER', 'huynguyen')}@{socket.gethostname()}",
+        "host": f"student@{socket.gethostname()}",
         "elapsed_s": job_res.get("elapsed_s", 0.05),
         "exit_code": final_exit_code if is_passed else (final_exit_code if final_exit_code != 0 else 1),
         "auto_healed": False,
@@ -1438,7 +1429,7 @@ def auto_fix_and_verify_page(page_num=1):
     )
     inner_cmd = normalize_inner_snap_command(raw_one_liner)
     job_res = V7_PLATFORM.execute_job_in_pty(
-        user_id=os.environ.get("USER", "huynguyen"),
+        user_id="student_user",
         project_id="motion_estimator_520mhz",
         page_id=pnum,
         step_id=step_id,
@@ -1495,7 +1486,7 @@ def auto_fix_and_verify_page(page_num=1):
         "command": raw_one_liner,
         "page_num": pnum,
         "cwd": str(MANUAL_WORKSPACE),
-        "host": f"{os.environ.get('USER', 'huynguyen')}@{socket.gethostname()}",
+        "host": f"student@{socket.gethostname()}",
         "elapsed_s": job_res.get("elapsed_s", 0.08),
         "exit_code": real_ec,
         "output": verified_log_txt.strip(),
@@ -1515,18 +1506,18 @@ def build_merged_state():
             "updated_at": time.strftime("%Y-%m-%d %H:%M:%S %Z"),
             "epoch": time.time(),
             "active_terminal": "MACBOOK_TERMINAL_AND_WEB_STUDIO",
-            "host": socket.gethostname(),
-            "user": os.environ.get("USER", "huynguyen"),
-            "practice_workspace": str(MANUAL_WORKSPACE),
+            "host": "studio-host",
+            "user": "student_user",
+            "practice_workspace": "/workspace/student/motion-estimator-14nm-asic-manual",
             "ip_addresses": get_local_ips(),
             "xquartz": get_xquartz_status(),
             "mahmoodi": {
-                "account": "926784856@mahmoodi.rcc.at.sfsu.edu",
+                "account": "<student-id>@<eda-host>",
                 "workspace": "~/me_asic_new_v1",
-                "tools": ["vcs", "verdi", "fc_shell", "icv", "pt_shell"],
+                "tools": ["iverilog", "vvp", "verilator", "yosys"],
             },
             "github": {
-                "repo": "huynguyen1017/motion-estimator-asic-lab-notebook-2026",
+                "repo": "junior-developer-org/motion-estimator-asic-lab-notebook-2026",
                 "branch": "manual-practice-macbook-air",
                 "last_commit": "",
             },
@@ -1684,7 +1675,7 @@ def write_status_dashboards(state: dict):
         passed_nums = sorted(int(k) for k, v in completed.items() if v.get("status") == "PASS")
         total_passed = len(passed_nums)
         ts_str = time.strftime("%Y-%m-%d %H:%M:%S %Z")
-        host_str = f"{state.get('user', 'huynguyen')}@{state.get('host', socket.gethostname())}"
+        host_str = f"{state.get('user', 'student_user')}@{state.get('host', 'studio-host')}"
 
         md_lines = [
             "# 🌸 ENGR 852 · 520 MHz 14nm FinFET Motion Estimator ASIC — Live 100-Page Replication Dashboard (`v6.0`)",
@@ -1728,7 +1719,7 @@ def sync_and_push_to_github(reason: str = "Live Studio Sync", open_browser: bool
         total_passed = state.get("total_passed_pages", 0)
         ts_str = time.strftime("%Y-%m-%d %H:%M:%S")
         commit_msg = f"Live Studio v6.0 Auto-Sync ({total_passed}/100 Pages Verified): {reason} [{ts_str}]"
-        repo_url = "https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026/tree/manual-practice-macbook-air/practice_from_scratch"
+        repo_url = "https://github.com/junior-developer-org/motion-estimator-asic-lab-notebook-2026/tree/manual-practice-macbook-air/practice_from_scratch"
 
         out_trace = []
         ok_push = False
@@ -1869,7 +1860,7 @@ def reset_all_progress_cleanly(keep_page1: bool = False) -> dict:
     NEVER deletes historical evidence permanently, and resets active pointer to `0 / 100` (or `1 / 100`)."""
     set_reset_mode(True)
     imm_res = V7_PLATFORM.immutable_project_reset(
-        user_id=os.environ.get("USER", "huynguyen"),
+        user_id="student_user",
         project_id="motion_estimator_520mhz",
         keep_page1=keep_page1,
     )
@@ -1947,7 +1938,7 @@ def onboard_user_with_permission(payload: dict, client_ip: str = "127.0.0.1") ->
     raw_domain = (payload.get("domain") or socket.gethostname() or "macbook-local").strip()
     clean_domain = re.sub(r"[^a-zA-Z0-9_.-]", "_", raw_domain)
     level = (payload.get("level") or "beginner").strip()
-    github_repo = (payload.get("github_repo") or "huynguyen1017/motion-estimator-asic-lab-notebook-2026").strip()
+    github_repo = (payload.get("github_repo") or "junior-developer-org/motion-estimator-asic-lab-notebook-2026").strip()
     project_slug = re.sub(r"[^a-zA-Z0-9_-]", "_", (payload.get("project_slug") or "motion_estimator_520mhz").strip())
     permission_granted = bool(payload.get("permission_granted", True))
 
@@ -2014,8 +2005,8 @@ def load_custom_projects() -> list:
             "id": "proj_me_520mhz_14nm",
             "title": "520 MHz SAED14nm 16-Bit Motion Estimator ASIC (Main ENGR 852 Project V1→V9)",
             "slug": "motion_estimator_520mhz_14nm",
-            "workspace": str(MANUAL_WORKSPACE),
-            "github_url": "https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026",
+            "workspace": "/workspace/student/motion-estimator-14nm-asic-manual",
+            "github_url": "https://github.com/junior-developer-org/motion-estimator-asic-lab-notebook-2026",
             "branch": "manual-practice-macbook-air",
             "clock_mhz": 520,
             "pdk": "SAED14nm FinFET (14nm)",
@@ -2348,7 +2339,7 @@ def super_agent_chat_and_control(payload: dict) -> dict:
         native_res = V7_PLATFORM.start_native_verdi_run(
             figure_id=fig_id,
             page_num=pnum,
-            user_id=payload.get("user_id") or os.environ.get("USER", "huynguyen"),
+            user_id=payload.get("user_id") or "student_user",
             project_id=payload.get("project_id") or "motion_estimator_520mhz",
             force_new_launch=bool(payload.get("force_new_launch", False)),
         )
@@ -2433,15 +2424,53 @@ def background_git_and_remote_sync():
             pass
 
 
+ALLOWED_CORS_ORIGINS = {
+    "http://127.0.0.1:8788",
+    "http://localhost:8788",
+    "http://127.0.0.1:8789",
+    "http://localhost:8789",
+    "https://juniordeveloper.dev",
+    "https://learnjuniordeveloper.com",
+}
+
+
+def sanitize_payload_recursive(obj, preserve_keys=None):
+    """Recursively scrubs any private usernames, paths, SSH targets, or private IPs from JSON responses
+    while preserving explicit session/CSRF token keys returned to the authenticated user."""
+    preserve = preserve_keys or {"session_token", "csrf_token", "token"}
+    if isinstance(obj, dict):
+        out = {}
+        for k, v in obj.items():
+            if k in preserve and isinstance(v, str):
+                out[k] = v
+            else:
+                out[k] = sanitize_payload_recursive(v, preserve)
+        return out
+    if isinstance(obj, list):
+        return [sanitize_payload_recursive(item, preserve) for item in obj]
+    if isinstance(obj, str):
+        cleaned, _ = PrivacyAndSecretScanner.sanitize_text(obj)
+        return cleaned
+    return obj
+
+
 class ConsoleRequestHandler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         return
 
     def _send_cors_headers(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, *")
-        self.send_header("Access-Control-Allow-Private-Network", "true")
+        origin = (self.headers.get("Origin") or "").strip()
+        if origin in ALLOWED_CORS_ORIGINS:
+            self.send_header("Access-Control-Allow-Origin", origin)
+            self.send_header("Vary", "Origin")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
+            self.send_header(
+                "Access-Control-Allow-Headers",
+                "Content-Type, Authorization, X-JDEV-Token, X-ENGR852-Token, X-CSRF-Token, Last-Event-ID, X-SSE-Max-Events",
+            )
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "SAMEORIGIN")
+        self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
 
     def do_OPTIONS(self):
         self.send_response(HTTPStatus.NO_CONTENT)
@@ -2449,7 +2478,8 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def _send_json(self, obj, code=200):
-        raw = json.dumps(obj).encode("utf-8")
+        safe_obj = sanitize_payload_recursive(obj)
+        raw = json.dumps(safe_obj).encode("utf-8")
         self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Cache-Control", "no-store")
@@ -2471,6 +2501,135 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def _optional_viewer_user(self):
+        try:
+            u = JDEV_V8.authenticate_request(dict(self.headers))
+            return u
+        except Exception:
+            return None
+
+    def _require_authenticated_user(
+        self,
+        payload: dict | None = None,
+        *,
+        require_registered: bool = False,
+        require_owner_companion: bool = False,
+    ):
+        req_uid = (payload or {}).get("user_id") if isinstance(payload, dict) else None
+        try:
+            user = JDEV_V8.authenticate_request(
+                dict(self.headers),
+                payload_user_id=req_uid,
+                require_registered=require_registered,
+                require_owner_companion=require_owner_companion,
+            )
+            return user, None
+        except PermissionError as exc:
+            msg = str(exc)
+            code = 403 if "403_" in msg else 401
+            self._send_json({"ok": False, "error": msg}, code)
+            return None, code
+
+    def _stream_sse_subscription(self, user_id: str, qs: dict, initial_events: list | None = None):
+        """Continuous real-time SSE subscription with monotonic `id:`, `Last-Event-ID` replay,
+        periodic `: heartbeat` comments, and optional `?once=1` / `X-SSE-Max-Events` support."""
+        last_id_hdr = self.headers.get("Last-Event-ID") or (qs.get("last_event_id", ["0"])[0] or "0")
+        try:
+            last_event_id = int(last_id_hdr)
+        except ValueError:
+            last_event_id = 0
+
+        once_mode = (qs.get("once", ["0"])[0] == "1")
+        max_events_hdr = self.headers.get("X-SSE-Max-Events") or (qs.get("max_events", ["0"])[0] or "0")
+        try:
+            max_events = int(max_events_hdr)
+        except ValueError:
+            max_events = 0
+        try:
+            max_wait_s = float(qs.get("timeout", ["2.5"])[0] or "2.5")
+        except ValueError:
+            max_wait_s = 2.5
+        max_wait_s = max(0.2, min(max_wait_s, 60.0))
+
+        self.close_connection = True
+        sub_id, q = JDEV_V8.event_bus.subscribe(user_id=user_id, last_event_id=last_event_id)
+        try:
+            if once_mode:
+                chunks: list[str] = [": connected to JUNIOR DEVELOPER v8.0 real-time SSE stream\n\n"]
+                if initial_events:
+                    for idx, ev in enumerate(initial_events, start=1):
+                        ev_id = ev.get("id") or idx
+                        if ev_id <= last_event_id:
+                            continue
+                        ev_type = ev.get("type") or ev.get("stage") or "event"
+                        safe_ev = sanitize_payload_recursive(ev)
+                        chunks.append(f"id: {ev_id}\nevent: {ev_type}\ndata: {json.dumps(safe_ev)}\n\n")
+                        sent_count = len(chunks) - 1
+                while not q.empty():
+                    ev = q.get_nowait()
+                    safe_ev = sanitize_payload_recursive(ev)
+                    chunks.append(f"id: {ev['id']}\nevent: {ev['type']}\ndata: {json.dumps(safe_ev)}\n\n")
+                if len(chunks) == 1:
+                    chunks.append(
+                        f"id: {max(1, last_event_id + 1)}\nevent: stream_ready\ndata: {json.dumps({'ok': True, 'user_id': user_id})}\n\n"
+                    )
+                chunks.append(": heartbeat\n\n")
+                raw_sse = "".join(chunks).encode("utf-8")
+                self.send_response(HTTPStatus.OK)
+                self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+                self.send_header("Cache-Control", "no-cache")
+                self.send_header("Connection", "close")
+                self.send_header("X-Accel-Buffering", "no")
+                self._send_cors_headers()
+                self.send_header("Content-Length", str(len(raw_sse)))
+                self.end_headers()
+                self.wfile.write(raw_sse)
+                self.wfile.flush()
+                return
+
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Connection", "close")
+            self.send_header("X-Accel-Buffering", "no")
+            self._send_cors_headers()
+            self.end_headers()
+
+            sent_count = 0
+            self.wfile.write(b": connected to JUNIOR DEVELOPER v8.0 real-time SSE stream\n\n")
+            if initial_events:
+                for idx, ev in enumerate(initial_events, start=1):
+                    ev_id = ev.get("id") or idx
+                    if ev_id <= last_event_id:
+                        continue
+                    ev_type = ev.get("type") or ev.get("stage") or "event"
+                    safe_ev = sanitize_payload_recursive(ev)
+                    frame = f"id: {ev_id}\nevent: {ev_type}\ndata: {json.dumps(safe_ev)}\n\n"
+                    self.wfile.write(frame.encode("utf-8"))
+                    sent_count += 1
+            self.wfile.flush()
+
+            deadline = time.time() + max_wait_s
+            while time.time() < deadline:
+                if max_events > 0 and sent_count >= max_events:
+                    break
+                try:
+                    ev = q.get(timeout=0.8)
+                    safe_ev = sanitize_payload_recursive(ev)
+                    frame = f"id: {ev['id']}\nevent: {ev['type']}\ndata: {json.dumps(safe_ev)}\n\n"
+                    self.wfile.write(frame.encode("utf-8"))
+                    self.wfile.flush()
+                    sent_count += 1
+                except Exception:
+                    self.wfile.write(b": heartbeat\n\n")
+                    self.wfile.flush()
+        except (BrokenPipeError, ConnectionResetError):
+            pass
+        except Exception:
+            pass
+        finally:
+            JDEV_V8.event_bus.unsubscribe(sub_id)
+
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
         route = parsed.path
@@ -2481,15 +2640,159 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             self._serve_file(target_html, "text/html; charset=utf-8")
             return
 
+        # ----------------------------------------------------------------------
+        # JUNIOR DEVELOPER V8.0 PUBLIC & AUTHENTICATED GET ROUTES
+        # ----------------------------------------------------------------------
+        if route == "/api/v8/overview":
+            viewer = self._optional_viewer_user()
+            uid = viewer["user_id"] if viewer else None
+            self._send_json(JDEV_V8.get_public_platform_overview(viewer_user_id=uid))
+            return
+
+        if route == "/api/v8/profile":
+            user, err = self._require_authenticated_user()
+            if err:
+                return
+            self._send_json({"ok": True, "user": user, "projects": JDEV_V8.list_user_projects(user["user_id"])})
+            return
+
+        if route == "/api/v8/account/export":
+            user, err = self._require_authenticated_user()
+            if err:
+                return
+            self._send_json(JDEV_V8.export_user_account_data(user["user_id"]))
+            return
+
+        if route == "/api/v8/communities":
+            viewer = self._optional_viewer_user()
+            uid = viewer["user_id"] if viewer else None
+            self._send_json({"ok": True, "communities": JDEV_V8.list_communities(user_id=uid)})
+            return
+
+        if route == "/api/v8/posts":
+            viewer = self._optional_viewer_user()
+            uid = viewer["user_id"] if viewer else None
+            c_slug = (qs.get("community", [""])[0] or "").strip()
+            p_type = (qs.get("type", [""])[0] or "").strip()
+            q_str = (qs.get("q", [""])[0] or "").strip()
+            sort_by = (qs.get("sort", ["hot"])[0] or "hot").strip()
+            posts = JDEV_V8.list_posts(
+                community_slug=c_slug,
+                post_type=p_type,
+                search_query=q_str,
+                sort_by=sort_by,
+                viewer_user_id=uid,
+            )
+            self._send_json({"ok": True, "posts": posts})
+            return
+
+        if route.startswith("/api/v8/posts/"):
+            post_id = route[len("/api/v8/posts/"):].strip("/")
+            if "/" not in post_id:
+                viewer = self._optional_viewer_user()
+                uid = viewer["user_id"] if viewer else None
+                try:
+                    self._send_json({"ok": True, "post": JDEV_V8.get_post_detail(post_id, viewer_user_id=uid)})
+                except ValueError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 404)
+                return
+
+        if route in ("/api/v8/conversations", "/api/v8/messages/conversations"):
+            user, err = self._require_authenticated_user()
+            if err:
+                return
+            self._send_json({"ok": True, "conversations": JDEV_V8.list_conversations(user["user_id"])})
+            return
+
+        if route.startswith("/api/v8/conversations/") or route.startswith("/api/v8/messages/conversations/"):
+            prefix = "/api/v8/messages/conversations/" if route.startswith("/api/v8/messages/conversations/") else "/api/v8/conversations/"
+            sub_conv = route[len(prefix):].strip("/")
+            conv_parts = sub_conv.split("/")
+            conv_id = conv_parts[0]
+            if len(conv_parts) in (1, 2) and (len(conv_parts) == 1 or conv_parts[1] == "messages"):
+                user, err = self._require_authenticated_user()
+                if err:
+                    return
+                try:
+                    conv = JDEV_V8.get_conversation(user_id=user["user_id"], conversation_id=conv_id)
+                    self._send_json({"ok": True, "conversation": conv, "messages": conv.get("messages", [])})
+                except PermissionError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 403)
+                except ValueError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 404)
+                return
+
+        if route == "/api/v8/projects":
+            user, err = self._require_authenticated_user()
+            if err:
+                return
+            self._send_json({"ok": True, "projects": JDEV_V8.list_user_projects(user["user_id"])})
+            return
+
+        if route.startswith("/api/v8/projects/"):
+            proj_id = route[len("/api/v8/projects/"):].strip("/")
+            if "/" not in proj_id:
+                user, err = self._require_authenticated_user()
+                if err:
+                    return
+                try:
+                    self._send_json({"ok": True, "project": JDEV_V8.get_project(user_id=user["user_id"], project_id=proj_id)})
+                except PermissionError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 403)
+                except ValueError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 404)
+                return
+
+        if route.startswith("/api/v8/runs/"):
+            run_id = route[len("/api/v8/runs/"):].strip("/")
+            user, err = self._require_authenticated_user()
+            if err:
+                return
+            try:
+                self._send_json({"ok": True, "run": JDEV_V8.get_lab_run(user_id=user["user_id"], lab_run_id=run_id)})
+            except PermissionError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 403)
+            except ValueError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 404)
+            return
+
+        if route == "/api/v8/notifications":
+            user, err = self._require_authenticated_user()
+            if err:
+                return
+            self._send_json({"ok": True, "notifications": JDEV_V8.list_notifications(user["user_id"])})
+            return
+
+        if route == "/api/v8/ai/study-match":
+            user, err = self._require_authenticated_user()
+            if err:
+                return
+            self._send_json(JDEV_V8.match_study_groups(user["user_id"]))
+            return
+
+        if route == "/api/v8/events/stream":
+            user, err = self._require_authenticated_user()
+            if err:
+                return
+            self._stream_sse_subscription(user_id=user["user_id"], qs=qs)
+            return
+
+        # ----------------------------------------------------------------------
+        # PRESERVED ENGR 852 / V7.1 ROUTES (WITH SECURITY & REDACTION HARDENING)
+        # ----------------------------------------------------------------------
         if route in ("/macbook_connect.sh", "/connect"):
-            raw = build_macbook_connect_script().encode("utf-8")
+            user, err = self._require_authenticated_user()
+            if err:
+                return
+            raw, _ = PrivacyAndSecretScanner.sanitize_text(build_macbook_connect_script())
+            raw_b = raw.encode("utf-8")
             self.send_response(HTTPStatus.OK)
             self.send_header("Content-Type", "text/x-shellscript; charset=utf-8")
             self.send_header("Cache-Control", "no-store")
             self._send_cors_headers()
-            self.send_header("Content-Length", str(len(raw)))
+            self.send_header("Content-Length", str(len(raw_b)))
             self.end_headers()
-            self.wfile.write(raw)
+            self.wfile.write(raw_b)
             return
 
         if route == "/api/state":
@@ -2497,24 +2800,24 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             st["github"]["last_push_info"] = LAST_GIT_PUSH_INFO
             st["reset_mode"] = is_reset_mode_active()
             st["custom_projects"] = load_custom_projects()
-            st["onboarded_users"] = load_onboarded_users()
+            st["onboarded_users"] = []
             st["v7_evidence_classes"] = list(EVIDENCE_CLASSES)
             st["v7_agents"] = V7_PLATFORM.get_agent_registry()
             st["v7_environment"] = V7_PLATFORM.env_agent.discover()
+            st["v8_overview"] = JDEV_V8.get_public_platform_overview()
             self._send_json(st)
             return
 
         if route == "/api/v7/status":
             self._send_json({
                 "ok": True,
-                "version": "v7.0-evidence-platform",
+                "version": "v8.0-junior-developer-platform",
                 "evidence_classes": list(EVIDENCE_CLASSES),
                 "job_states": list(JOB_STATES),
                 "stage_states": list(STAGE_STATES),
                 "git_sync_states": list(GIT_SYNC_STATES),
                 "agents": V7_PLATFORM.get_agent_registry(),
                 "environment": V7_PLATFORM.env_agent.discover(),
-                "identity": V7_PLATFORM.security_agent.load_local_identity(),
                 "recent_events": V7_PLATFORM.event_log.read_recent(30),
                 "jobs": list(V7_PLATFORM.jobs.values())[-25:],
             })
@@ -2534,19 +2837,11 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/v7/events/stream":
-            self.send_response(HTTPStatus.OK)
-            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
-            self.send_header("Cache-Control", "no-cache")
-            self.send_header("Connection", "keep-alive")
-            self._send_cors_headers()
-            self.end_headers()
-            try:
-                recent = V7_PLATFORM.event_log.read_recent(10)
-                for ev in recent:
-                    self.wfile.write(f"data: {json.dumps(ev)}\n\n".encode("utf-8"))
-                self.wfile.flush()
-            except Exception:
-                pass
+            viewer = self._optional_viewer_user()
+            uid = viewer["user_id"] if viewer else "public_stream"
+            recent = V7_PLATFORM.event_log.read_recent(10)
+            init_evs = [{"id": idx + 1, "type": ev.get("event_type", "V7_EVENT"), **ev} for idx, ev in enumerate(recent)]
+            self._stream_sse_subscription(user_id=uid, qs=qs, initial_events=init_evs)
             return
 
         if route == "/api/super_agent/diagnostics":
@@ -2598,6 +2893,9 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/queue_poll":
+            user, err = self._require_authenticated_user()
+            if err:
+                return
             with QUEUE_LOCK:
                 if REMOTE_CMD_QUEUE:
                     item = REMOTE_CMD_QUEUE.pop(0)
@@ -2621,39 +2919,68 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
                 self._send_json(V7_PLATFORM.get_native_verdi_run(job_id))
                 return
             if len(parts) == 2 and parts[1] == "events":
-                self.send_response(HTTPStatus.OK)
-                self.send_header("Content-Type", "text/event-stream; charset=utf-8")
-                self.send_header("Cache-Control", "no-cache")
-                self.send_header("Connection", "keep-alive")
-                self._send_cors_headers()
-                self.end_headers()
-                try:
-                    run_info = V7_PLATFORM.get_native_verdi_run(job_id)
-                    events = run_info.get("events", [])
-                    for idx, ev in enumerate(events):
-                        payload_ev = {"index": idx, "job_id": job_id, **ev}
-                        self.wfile.write(f"data: {json.dumps(payload_ev)}\n\n".encode("utf-8"))
-                    self.wfile.flush()
-                except Exception:
-                    pass
+                viewer = self._optional_viewer_user()
+                uid = viewer["user_id"] if viewer else "native_run_viewer"
+                run_info = V7_PLATFORM.get_native_verdi_run(job_id)
+                events = run_info.get("events", [])
+                init_evs = [{"id": idx + 1, "index": idx, "job_id": job_id, **ev} for idx, ev in enumerate(events)]
+                self._stream_sse_subscription(user_id=uid, qs=qs, initial_events=init_evs)
                 return
             if len(parts) == 2 and parts[1] == "frame.png":
+                # P0 Bug B Fix: NEVER fall back to unredacted `capture_path`. Fail closed if redaction not verified!
                 run_info = V7_PLATFORM.get_native_verdi_run(job_id)
+                local_manifest_path = WEB_CONSOLE_DIR / "native_runs" / job_id / "manifest.json"
+                if (not run_info or not run_info.get("ok", False)) and local_manifest_path.is_file():
+                    try:
+                        run_info = {"ok": True, "job": json.loads(local_manifest_path.read_text(encoding="utf-8"))}
+                    except Exception:
+                        pass
+                if not run_info or not run_info.get("ok", False):
+                    self._send_json({"ok": False, "error": "404_NOT_FOUND: Native Verdi run not found."}, 404)
+                    return
+                job_obj = run_info.get("job") if isinstance(run_info.get("job"), dict) else run_info
+                cap_obj = job_obj.get("capture") if isinstance(job_obj.get("capture"), dict) else job_obj
+                priv_redacted = cap_obj.get("privacy_redacted") if "privacy_redacted" in cap_obj else job_obj.get("privacy_redacted")
+                priv_verified = cap_obj.get("privacy_verified", True) if "privacy_verified" in cap_obj else job_obj.get("privacy_verified", True)
+                if not (priv_redacted is True and priv_verified is True):
+                    self._send_json(
+                        {
+                            "ok": False,
+                            "error": "422_PRIVACY_REDACTION_REQUIRED: Unredacted window captures are strictly blocked from web delivery.",
+                        },
+                        422,
+                    )
+                    return
                 cand_paths = [
-                    run_info.get("annotated_capture_path"),
-                    run_info.get("redacted_capture_path"),
-                    run_info.get("capture_path"),
+                    cap_obj.get("annotated_path") or cap_obj.get("annotated_capture_path") or job_obj.get("annotated_capture_path"),
+                    cap_obj.get("redacted_path") or cap_obj.get("redacted_capture_path") or job_obj.get("redacted_capture_path"),
                 ]
                 for cp in cand_paths:
-                    if cp and Path(cp).exists():
+                    if cp and "restricted_raw" not in str(cp) and Path(cp).is_file():
                         self._serve_file(Path(cp), "image/png")
                         return
-                self.send_error(HTTPStatus.NOT_FOUND, "Native window capture not found")
+                self._send_json(
+                    {"ok": False, "error": "422_REDACTED_CAPTURE_MISSING: Verified redacted capture file not available."},
+                    422,
+                )
                 return
 
         if route.startswith("/files/logs/"):
             fname = Path(urllib.parse.unquote(route[len("/files/logs/"):])).name
-            self._serve_file(LOGS_DIR / fname, "text/plain; charset=utf-8")
+            lf = LOGS_DIR / fname
+            if not lf.is_file():
+                self.send_error(HTTPStatus.NOT_FOUND, "Log file not found")
+                return
+            raw_txt = lf.read_text(encoding="utf-8", errors="ignore")
+            clean_txt, _ = PrivacyAndSecretScanner.sanitize_text(raw_txt)
+            raw_b = clean_txt.encode("utf-8")
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self._send_cors_headers()
+            self.send_header("Content-Length", str(len(raw_b)))
+            self.end_headers()
+            self.wfile.write(raw_b)
             return
 
         if route.startswith("/files/screenshots/"):
@@ -2678,17 +3005,409 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
 
         self.send_error(HTTPStatus.NOT_FOUND, "Not Found")
 
-    def do_POST(self):
-        parsed = urllib.parse.urlparse(self.path)
-        route = parsed.path
+    def _read_json_body(self) -> dict:
         length = int(self.headers.get("Content-Length", "0") or "0")
         raw_body = self.rfile.read(length).decode("utf-8", errors="ignore") if length > 0 else "{}"
         try:
-            payload = json.loads(raw_body) if raw_body else {}
+            return json.loads(raw_body) if raw_body else {}
         except Exception:
-            payload = {}
+            return {}
 
+    def do_PATCH(self):
+        parsed = urllib.parse.urlparse(self.path)
+        route = parsed.path
+        payload = self._read_json_body()
+        if route == "/api/v8/profile":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            updated = JDEV_V8.update_profile(user["user_id"], payload)
+            self._send_json({"ok": True, "user": updated})
+            return
+        self._send_json({"ok": False, "error": "Unsupported PATCH route"}, 404)
+
+    def do_DELETE(self):
+        parsed = urllib.parse.urlparse(self.path)
+        route = parsed.path
+        payload = self._read_json_body()
+        if route == "/api/v8/account":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            try:
+                res = JDEV_V8.delete_user_account(user["user_id"])
+                self._send_json(res)
+            except PermissionError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 403)
+            return
+        self._send_json({"ok": False, "error": "Unsupported DELETE route"}, 404)
+
+    def do_POST(self):
+        parsed = urllib.parse.urlparse(self.path)
+        route = parsed.path
+        payload = self._read_json_body()
+
+        # ----------------------------------------------------------------------
+        # JUNIOR DEVELOPER V8.0 AUTH, COMMUNITY, MESSENGER, SANDBOX & AI ROUTES
+        # ----------------------------------------------------------------------
+        if route == "/api/v8/auth/guest":
+            self._send_json(JDEV_V8.create_guest_session())
+            return
+
+        if route == "/api/v8/auth/companion":
+            # Issues an owner_admin companion session only when local HMAC token or local loopback companion is used
+            client_ip = self.client_address[0] if self.client_address else ""
+            if client_ip not in ("127.0.0.1", "::1"):
+                self._send_json({"ok": False, "error": "403_FORBIDDEN: Companion session only available on loopback."}, 403)
+                return
+            self._send_json(JDEV_V8.issue_owner_companion_session())
+            return
+
+        if route in ("/api/v8/auth/register", "/api/v8/auth/migrate-guest"):
+            auth_hdr = self.headers.get("Authorization") or self.headers.get("authorization") or ""
+            bearer_tok = auth_hdr[7:].strip() if auth_hdr.startswith("Bearer ") else ""
+            mig_tok = payload.get("migrate_from_guest_token") or (bearer_tok if route == "/api/v8/auth/migrate-guest" else "")
+            try:
+                res = JDEV_V8.register_student_account(
+                    email=payload.get("email", ""),
+                    password=payload.get("password", ""),
+                    display_name=payload.get("display_name", ""),
+                    handle=payload.get("handle", ""),
+                    learning_path=payload.get("learning_path", "beginner_digital_logic"),
+                    declared_topics=payload.get("declared_topics"),
+                    migrate_from_guest_token=mig_tok,
+                )
+                self._send_json(res)
+            except ValueError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 400)
+            return
+
+        if route == "/api/v8/account/delete":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            try:
+                res = JDEV_V8.delete_user_account(user["user_id"])
+                self._send_json(res)
+            except PermissionError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 403)
+            return
+
+        if route == "/api/v8/auth/login":
+            try:
+                res = JDEV_V8.login_student_account(
+                    identifier=payload.get("identifier") or payload.get("email") or payload.get("handle") or "",
+                    password=payload.get("password", ""),
+                )
+                self._send_json(res)
+            except PermissionError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 401)
+            return
+
+        if route == "/api/v8/auth/logout":
+            auth_hdr = self.headers.get("Authorization") or ""
+            tok = auth_hdr[7:].strip() if auth_hdr.startswith("Bearer ") else (payload.get("session_token") or "")
+            self._send_json(JDEV_V8.logout_session(tok))
+            return
+
+        if route == "/api/v8/profile":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            self._send_json({"ok": True, "user": JDEV_V8.update_profile(user["user_id"], payload)})
+            return
+
+        if route == "/api/v8/posts":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            try:
+                post = JDEV_V8.create_post(
+                    author_id=user["user_id"],
+                    community_slug_or_id=payload.get("community") or payload.get("community_slug") or payload.get("community_id") or "verilog",
+                    post_type=payload.get("post_type") or "Ask a Question",
+                    title=payload.get("title", ""),
+                    body=payload.get("body", ""),
+                    tags=payload.get("tags"),
+                    code_snippet=payload.get("code_snippet", ""),
+                    lab_run_id=payload.get("lab_run_id") or payload.get("attached_run_id") or "",
+                    include_rtl=bool(payload.get("include_rtl", True)),
+                    include_log=bool(payload.get("include_log", True)),
+                    include_waveform=bool(payload.get("include_waveform", True)),
+                )
+                self._send_json({"ok": True, "post": post})
+            except PermissionError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 403)
+            except ValueError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 400)
+            return
+
+        if route.startswith("/api/v8/posts/"):
+            sub = route[len("/api/v8/posts/"):].strip("/")
+            parts = sub.split("/")
+            post_id = parts[0]
+            if len(parts) == 2 and parts[1] == "comments":
+                user, err = self._require_authenticated_user(payload)
+                if err:
+                    return
+                try:
+                    cmt = JDEV_V8.create_comment(
+                        author_id=user["user_id"],
+                        post_id=post_id,
+                        body=payload.get("body", ""),
+                        parent_comment_id=payload.get("parent_comment_id", ""),
+                        code_snippet=payload.get("code_snippet", ""),
+                    )
+                    self._send_json({"ok": True, "comment": cmt})
+                except ValueError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 400)
+                return
+            if len(parts) == 2 and parts[1] in ("accept", "accept-answer"):
+                user, err = self._require_authenticated_user(payload)
+                if err:
+                    return
+                try:
+                    res = JDEV_V8.accept_comment_answer(
+                        user_id=user["user_id"],
+                        post_id=post_id,
+                        comment_id=payload.get("comment_id", ""),
+                    )
+                    self._send_json(res)
+                except PermissionError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 403)
+                return
+            if len(parts) == 2 and parts[1] == "save":
+                user, err = self._require_authenticated_user(payload)
+                if err:
+                    return
+                self._send_json(JDEV_V8.toggle_save_post(user_id=user["user_id"], post_id=post_id))
+                return
+
+        if route == "/api/v8/votes":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            try:
+                val = payload.get("value") if payload.get("value") is not None else payload.get("vote_value", 1)
+                res = JDEV_V8.vote_target(
+                    user_id=user["user_id"],
+                    target_type=payload.get("target_type", "post"),
+                    target_id=payload.get("target_id", ""),
+                    value=int(val),
+                )
+                self._send_json(res)
+            except ValueError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 400)
+            return
+
+        if route in ("/api/v8/reports", "/api/v8/moderation/report"):
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            res = JDEV_V8.submit_moderation_report(
+                reporter_id=user["user_id"],
+                target_type=payload.get("target_type", "post"),
+                target_id=payload.get("target_id", ""),
+                reason=payload.get("reason", "spam_or_abuse"),
+                details=payload.get("details", ""),
+            )
+            self._send_json(res)
+            return
+
+        if route in ("/api/v8/blocks", "/api/v8/users/block"):
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            try:
+                tgt = payload.get("target_user_id") or payload.get("handle") or payload.get("target_handle") or ""
+                if payload.get("action") == "unblock" or payload.get("block") is False:
+                    res = JDEV_V8.unblock_user(blocker_id=user["user_id"], blocked_user_id=tgt)
+                else:
+                    res = JDEV_V8.block_user(
+                        blocker_id=user["user_id"],
+                        blocked_user_id_or_handle=tgt,
+                        reason=payload.get("reason", ""),
+                    )
+                self._send_json(res)
+            except ValueError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 400)
+            return
+
+        if route in ("/api/v8/conversations", "/api/v8/messages/conversations"):
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            try:
+                raw_type = payload.get("type") or payload.get("conversation_type") or "direct"
+                conv_type = "direct" if raw_type in ("direct", "dm") else raw_type
+                recip = payload.get("recipient") or payload.get("recipient_handle")
+                parts_list = payload.get("participants") or ([recip] if recip else [])
+                conv = JDEV_V8.create_or_get_conversation(
+                    creator_id=user["user_id"],
+                    conv_type=conv_type,
+                    participant_ids_or_handles=parts_list,
+                    title=payload.get("title", ""),
+                    community_id=payload.get("community_id", ""),
+                )
+                self._send_json({"ok": True, "conversation": conv})
+            except PermissionError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 403)
+            except ValueError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 400)
+            return
+
+        if route.startswith("/api/v8/conversations/") or route.startswith("/api/v8/messages/conversations/"):
+            prefix = "/api/v8/messages/conversations/" if route.startswith("/api/v8/messages/conversations/") else "/api/v8/conversations/"
+            sub = route[len(prefix):].strip("/")
+            parts = sub.split("/")
+            conv_id = parts[0]
+            if len(parts) == 2 and parts[1] == "messages":
+                user, err = self._require_authenticated_user(payload)
+                if err:
+                    return
+                try:
+                    msg = JDEV_V8.send_message(
+                        sender_id=user["user_id"],
+                        conversation_id=conv_id,
+                        body=payload.get("body", ""),
+                        code_snippet=payload.get("code_snippet", ""),
+                        reply_to_id=payload.get("reply_to_id", ""),
+                        attachment=payload.get("attachment"),
+                    )
+                    self._send_json({"ok": True, "message": msg})
+                except PermissionError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 403)
+                except ValueError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 400)
+                return
+            if len(parts) == 2 and parts[1] == "members":
+                user, err = self._require_authenticated_user(payload)
+                if err:
+                    return
+                try:
+                    res = JDEV_V8.add_group_member(
+                        actor_id=user["user_id"],
+                        conversation_id=conv_id,
+                        new_member_id_or_handle=payload.get("user_id_or_handle") or payload.get("handle") or "",
+                    )
+                    self._send_json(res)
+                except PermissionError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 403)
+                except ValueError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 400)
+                return
+            if len(parts) == 2 and parts[1] == "typing":
+                user, err = self._require_authenticated_user(payload)
+                if err:
+                    return
+                try:
+                    res = JDEV_V8.set_typing_indicator(
+                        user_id=user["user_id"],
+                        conversation_id=conv_id,
+                        is_typing=bool(payload.get("is_typing", True)),
+                    )
+                    self._send_json(res)
+                except PermissionError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 403)
+                return
+
+        if route.startswith("/api/v8/messages/"):
+            sub = route[len("/api/v8/messages/"):].strip("/")
+            parts = sub.split("/")
+            msg_id = parts[0]
+            if len(parts) == 2 and parts[1] in ("react", "reactions"):
+                user, err = self._require_authenticated_user(payload)
+                if err:
+                    return
+                try:
+                    res = JDEV_V8.react_to_message(
+                        user_id=user["user_id"],
+                        message_id=msg_id,
+                        reaction=payload.get("reaction", "👍"),
+                    )
+                    self._send_json(res)
+                except PermissionError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 403)
+                except ValueError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 404)
+                return
+
+        if route == "/api/v8/projects":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            proj = JDEV_V8.create_project(
+                owner_id=user["user_id"],
+                name=payload.get("name") or payload.get("title") or "My Verilog Hardware Project",
+                template_type=payload.get("template_type") or payload.get("project_type") or "start_from_zero",
+                rtl_source=payload.get("rtl_source") or payload.get("rtl_code") or "",
+                tb_source=payload.get("tb_source") or payload.get("tb_code") or "",
+            )
+            self._send_json({"ok": True, "project": proj})
+            return
+
+        if route.startswith("/api/v8/projects/"):
+            sub = route[len("/api/v8/projects/"):].strip("/")
+            parts = sub.split("/")
+            proj_id = parts[0]
+            if len(parts) == 2 and parts[1] == "runs":
+                user, err = self._require_authenticated_user(payload)
+                if err:
+                    return
+                try:
+                    run_res = JDEV_V8.execute_open_source_eda_run(
+                        user_id=user["user_id"],
+                        project_id=proj_id,
+                        execution_mode=payload.get("execution_mode", "one_line"),
+                        rtl_override=payload.get("rtl_source") or payload.get("rtl_code") or "",
+                        tb_override=payload.get("tb_source") or payload.get("tb_code") or "",
+                        run_synthesis=bool(payload.get("run_synthesis", payload.get("run_yosys", True))),
+                    )
+                    self._send_json({"ok": run_res.get("state") == "PASSED", "run": run_res})
+                except PermissionError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 403)
+                except ValueError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 400)
+                return
+            if len(parts) == 2 and parts[1] == "reset":
+                user, err = self._require_authenticated_user(payload)
+                if err:
+                    return
+                try:
+                    rst = JDEV_V8.reset_project_progress_nondestructively(user_id=user["user_id"], project_id=proj_id)
+                    self._send_json(rst)
+                except PermissionError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 403)
+                except ValueError as exc:
+                    self._send_json({"ok": False, "error": str(exc)}, 404)
+                return
+
+        if route == "/api/v8/ai/mentor":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            try:
+                ans = JDEV_V8.ask_ai_mentor(
+                    user_id=user["user_id"],
+                    question=payload.get("question") or payload.get("prompt") or "",
+                    project_id=payload.get("project_id", ""),
+                    lab_run_id=payload.get("lab_run_id", ""),
+                    agent_role=payload.get("agent_role", "KnowledgeRetrievalAgent"),
+                )
+                self._send_json(ans)
+            except PermissionError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 403)
+            except ValueError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 400)
+            return
+
+        # ----------------------------------------------------------------------
+        # PRIVILEGED V7 / ENGR 852 EXECUTION ROUTES (P0 SESSION AUTH REQUIRED)
+        # ----------------------------------------------------------------------
         if route == "/api/exec_terminal":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
             set_reset_mode(False)
             cmd = payload.get("command", "")
             pnum = int(payload.get("page_num", 1) or 1)
@@ -2702,25 +3421,26 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
                 launch_xquartz=launch_xq,
             )
             log_super_agent_event("EXEC_PAGE", f"Executed Page {pnum} (Exit {res.get('exit_code', 0)})", page_num=pnum)
-            if pnum in (1, 25, 50, 75, 100) or bool(payload.get("sync_github", False)):
-                trigger_background_github_push(f"Page {pnum} Verified")
             self._send_json(res)
             return
 
         if route == "/api/ai_fix_page":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
             set_reset_mode(False)
             pnum = int(payload.get("page_num", 1) or 1)
             res = auto_fix_and_verify_page(pnum)
             log_super_agent_event("AI_AUTO_FIX", f"Self-healed & verified Page {pnum}", page_num=pnum)
-            if pnum == 100 or bool(payload.get("sync_github", False)):
-                trigger_background_github_push(f"Page {pnum} Auto-Healed")
             self._send_json(res)
             return
 
         if route == "/api/heal_all_failed":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
             set_reset_mode(False)
             healed = heal_all_failed_logs()
-            trigger_background_github_push("Healed All Pages")
             self._send_json({
                 "ok": True,
                 "healed_pages": healed,
@@ -2729,6 +3449,9 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/github_sync":
+            user, err = self._require_authenticated_user(payload, require_registered=True)
+            if err:
+                return
             verify_all = bool(payload.get("verify_all_100", False))
             open_b = bool(payload.get("open_browser", False))
             reason = payload.get("reason") or "Manual 1-Click GitHub Branch Sync"
@@ -2740,17 +3463,23 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/verify_all_100":
+            user, err = self._require_authenticated_user(payload, require_registered=True)
+            if err:
+                return
             open_b = bool(payload.get("open_browser", False))
             res = verify_all_100_pages_and_push(open_browser=open_b)
             self._send_json(res)
             return
 
         if route == "/api/native-runs":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
+            if err:
+                return
             fig_id = (payload.get("figure_id") or payload.get("fig_id") or "fig10").strip()
             if fig_id == "layout":
                 fig_id = "fig10"
             pnum = int(payload.get("page_num") or payload.get("page_id") or 51)
-            user_id = (payload.get("user_id") or os.environ.get("USER") or "huynguyen").strip()
+            user_id = user["user_id"]
             project_id = (payload.get("project_id") or "motion_estimator_520mhz").strip()
             run_id = (payload.get("run_id") or "").strip()
             attempt_num = int(payload.get("attempt_num") or 1)
@@ -2768,6 +3497,9 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route.startswith("/api/native-runs/"):
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
+            if err:
+                return
             sub = route[len("/api/native-runs/"):].strip("/")
             parts = sub.split("/")
             job_id = parts[0]
@@ -2795,51 +3527,29 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
                 fig_id = "fig10"
             mode = (payload.get("mode") or "native").strip()
             if mode == "educational_demo":
-                plotter_py = PRACTICE_DIR / "scripts" / "xquartz_live_plotter.py"
-                try:
-                    subprocess.Popen(
-                        [sys.executable, str(plotter_py), "--mode", "educational_demo", "--fig", fig_id, "--page", str(pnum)],
-                        stdout=subprocess.DEVNULL,
-                        stderr=subprocess.DEVNULL,
-                    )
-                except Exception:
-                    pass
                 self._send_json({
                     "ok": True,
                     "mode": "educational_demo",
                     "evidence_class": "EDUCATIONAL_SIMULATION",
                     "fig_id": fig_id,
                     "page_num": pnum,
-                    "message": f"Launched Educational Simulation Waveform Demo ({fig_id.upper()}) [EDUCATIONAL_SIMULATION].",
+                    "message": f"Educational Simulation Waveform Preview ({fig_id.upper()}) [EDUCATIONAL_SIMULATION].",
                 })
                 return
 
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
+            if err:
+                return
             native_res = V7_PLATFORM.start_native_verdi_run(
                 figure_id=fig_id,
                 page_num=pnum,
-                user_id=payload.get("user_id") or os.environ.get("USER", "huynguyen"),
+                user_id=user["user_id"],
                 project_id=payload.get("project_id") or "motion_estimator_520mhz",
                 force_new_launch=bool(payload.get("force_new_launch", False)),
             )
             ok_verified = bool(native_res.get("ok") and native_res.get("signal_rail_verified"))
             job_id = native_res.get("job_id", "")
             win_id = native_res.get("window_id") or "none"
-            ttys = broadcast_to_local_macos_terminals(
-                page_num=pnum,
-                title=f"Native Synopsys Verdi X11 Execution ({fig_id.upper()})",
-                cmd_str=f"python3 practice_from_scratch/scripts/engr852_native_verdi_bridge.py launch --figure {fig_id} --job-id {job_id}",
-                output_str=(
-                    f"[NATIVE-VERDI-X11] status={native_res.get('status')} | evidence_class={native_res.get('evidence_class')} | "
-                    f"window_id={win_id} | signal_rail_verified={ok_verified}"
-                ),
-                exit_code=0 if ok_verified else 1,
-                launch_xquartz=True,
-            )
-            log_super_agent_event(
-                "NATIVE_VERDI_PLOT",
-                f"Native Verdi ({fig_id}, Page {pnum}): status={native_res.get('status')}, window={win_id}",
-                page_num=pnum,
-            )
             self._send_json({
                 "ok": ok_verified,
                 "mode": "native",
@@ -2854,7 +3564,6 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
                 "stage_states": native_res.get("stage_states", {}),
                 "frame_url": f"/api/native-runs/{job_id}/frame.png",
                 "events_url": f"/api/native-runs/{job_id}/events",
-                "ttys": ttys,
                 "native_run": native_res,
                 "message": (
                     f"Verified Native Synopsys Verdi X11 Window ({win_id}) & Populated Waveform Rails ({fig_id.upper()}) [WAVEFORM_SIGNALS_VERIFIED]!"
@@ -2871,6 +3580,9 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/custom_project":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
             res = create_or_import_custom_project(payload)
             self._send_json(res)
             return
@@ -2881,6 +3593,9 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/custom_resource":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
             item = {
                 "category": payload.get("category") or "🌟 Student Custom Flashcard & Study Resource",
                 "source": payload.get("source") or "ENGR 852 Personal Study Note",
@@ -2903,50 +3618,32 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
                 fig_id = "fig10"
             mode = (payload.get("mode") or "native").strip()
             if mode == "educational_demo":
-                plotter_py = PRACTICE_DIR / "scripts" / "xquartz_live_plotter.py"
-                try:
-                    subprocess.Popen(
-                        [sys.executable, str(plotter_py), "--mode", "educational_demo", "--fig", fig_id, "--page", str(pnum)],
-                        stdout=subprocess.DEVNULL,
-                        stderr=subprocess.DEVNULL,
-                    )
-                except Exception:
-                    pass
                 self._send_json({
                     "ok": True,
                     "mode": "educational_demo",
                     "evidence_class": "EDUCATIONAL_SIMULATION",
                     "fig_id": fig_id,
-                    "message": f"Launched Educational Simulation Waveform Demo ({fig_id.upper()}) [EDUCATIONAL_SIMULATION].",
+                    "message": f"Educational Simulation Waveform Preview ({fig_id.upper()}) [EDUCATIONAL_SIMULATION].",
                 })
                 return
 
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
+            if err:
+                return
             native_res = V7_PLATFORM.start_native_verdi_run(
                 figure_id=fig_id,
                 page_num=pnum,
-                user_id=payload.get("user_id") or os.environ.get("USER", "huynguyen"),
+                user_id=user["user_id"],
                 project_id=payload.get("project_id") or "motion_estimator_520mhz",
                 force_new_launch=bool(payload.get("force_new_launch", False)),
             )
             ok_verified = bool(native_res.get("ok") and native_res.get("signal_rail_verified"))
             job_id = native_res.get("job_id", "")
             win_id = native_res.get("window_id") or "none"
-            ttys = broadcast_to_local_macos_terminals(
-                page_num=pnum,
-                title=f"Native Synopsys Verdi X11 Execution ({fig_id.upper()})",
-                cmd_str=f"python3 practice_from_scratch/scripts/engr852_native_verdi_bridge.py launch --figure {fig_id} --job-id {job_id}",
-                output_str=(
-                    f"[NATIVE-VERDI-X11] status={native_res.get('status')} | evidence_class={native_res.get('evidence_class')} | "
-                    f"window_id={win_id} | signal_rail_verified={ok_verified}"
-                ),
-                exit_code=0 if ok_verified else 1,
-                launch_xquartz=True,
-            )
             self._send_json({
                 "ok": ok_verified,
                 "mode": "native",
                 "job_id": job_id,
-                "ttys": ttys,
                 "fig_id": fig_id,
                 "window_id": win_id,
                 "status": native_res.get("status"),
@@ -2966,6 +3663,9 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/workspace_file":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
             ensure_practice_workspace_seeded()
             rel = (payload.get("path", "") or "").strip().lstrip("/")
             content = payload.get("content", "")
@@ -2979,13 +3679,19 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/reset_progress":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
             keep_p1 = bool(payload.get("keep_page1", False))
             res = reset_all_progress_cleanly(keep_page1=keep_p1)
             self._send_json(res)
             return
 
         if route == "/api/v7/jobs/execute":
-            user_id = (payload.get("user_id") or os.environ.get("USER") or "huynguyen").strip()
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            user_id = user["user_id"]
             project_id = (payload.get("project_id") or "motion_estimator_520mhz").strip()
             page_id = int(payload.get("page_id") or payload.get("page_num") or 1)
             step_id = (payload.get("step_id") or f"page{page_id:03d}_step").strip()
@@ -3008,6 +3714,9 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/v7/jobs/control":
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
             job_id = (payload.get("job_id") or "").strip()
             action = (payload.get("action") or "").strip().upper()
             if action == "PAUSE":
@@ -3025,8 +3734,11 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/v7/git_sync":
+            user, err = self._require_authenticated_user(payload, require_registered=True)
+            if err:
+                return
             branch = (payload.get("branch") or "manual-practice-macbook-air").strip()
-            msg = (payload.get("commit_message") or "v7.0 Evidence-Driven Sync").strip()
+            msg = (payload.get("commit_message") or "v8.0 Evidence-Driven Sync").strip()
             paths = payload.get("paths") or ["practice_from_scratch/logs", "practice_from_scratch/screenshots"]
             push_remote = bool(payload.get("push_remote", False))
             res = V7_PLATFORM.git_agent.sync_and_verify(branch, msg, paths, push_remote=push_remote)
@@ -3066,13 +3778,13 @@ def main():
     ensure_practice_workspace_seeded()
     st = build_merged_state()
     write_status_dashboards(st)
-    log_super_agent_event("SERVER_BOOT", f"ENGR 852 Evidence-Driven Studio v7.0 booted ({st.get('total_passed_pages', 0)}/100 pages)")
+    log_super_agent_event("SERVER_BOOT", f"JUNIOR DEVELOPER v8.0 & ENGR 852 Studio booted ({st.get('total_passed_pages', 0)}/100 pages)")
     t = threading.Thread(target=background_git_and_remote_sync, daemon=True)
     t.start()
     port = int(os.environ.get("ENGR852_CONSOLE_PORT", "8788"))
     bind_host = os.environ.get("ENGR852_BIND_HOST", "127.0.0.1" if os.environ.get("ENGR852_ALLOW_LAN") != "1" else "0.0.0.0")
     srv = ThreadingHTTPServer((bind_host, port), ConsoleRequestHandler)
-    print(f"[ENGR852 Evidence-Driven Studio v7.0] Listening on http://{bind_host}:{port}", flush=True)
+    print(f"[JUNIOR DEVELOPER v8.0 · ENGR 852 Studio] Listening on http://{bind_host}:{port}", flush=True)
     srv.serve_forever()
 
 
