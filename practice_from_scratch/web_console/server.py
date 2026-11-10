@@ -1880,7 +1880,7 @@ def reset_all_progress_cleanly(keep_page1: bool = False) -> dict:
             continue
         try:
             shutil.copy2(lf, archive_dir / lf.name)
-            lf.unlink()
+            # NEVER unlink tracked baseline logs in practice_from_scratch/logs/
         except Exception:
             pass
 
@@ -1889,7 +1889,7 @@ def reset_all_progress_cleanly(keep_page1: bool = False) -> dict:
             continue
         try:
             shutil.copy2(sf, archive_dir / sf.name)
-            sf.unlink()
+            # NEVER unlink tracked baseline screenshots in practice_from_scratch/screenshots/
         except Exception:
             pass
 
@@ -2319,32 +2319,67 @@ def super_agent_chat_and_control(payload: dict) -> dict:
         }
 
     if action == "launch_xquartz_plot" or any(w in msg_lower for w in ("xquartz", "waveform", "nwave", "plot", "fig")):
-        fig_id = payload.get("fig_id") or ("fig7" if pnum <= 49 else ("fig8" if pnum == 50 else ("fig10" if pnum == 51 else ("fig9" if pnum == 52 else "layout"))))
-        plotter_py = PRACTICE_DIR / "scripts" / "xquartz_live_plotter.py"
-        try:
-            subprocess.Popen(["open", "-a", "XQuartz"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            if plotter_py.exists():
+        fig_id = payload.get("fig_id") or ("fig7" if pnum <= 49 else ("fig8" if pnum == 50 else ("fig10" if pnum == 51 else ("fig9" if pnum == 52 else "fig10"))))
+        if fig_id == "layout":
+            fig_id = "fig10"
+        mode = (payload.get("mode") or "native").strip()
+        if mode == "educational_demo":
+            plotter_py = PRACTICE_DIR / "scripts" / "xquartz_live_plotter.py"
+            try:
                 subprocess.Popen(
-                    [sys.executable, str(plotter_py), "--fig", fig_id, "--page", str(pnum)],
+                    [sys.executable, str(plotter_py), "--mode", "educational_demo", "--fig", fig_id, "--page", str(pnum)],
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
                 )
-        except Exception:
-            pass
+            except Exception:
+                pass
+            return {
+                "ok": True,
+                "mode": "educational_demo",
+                "evidence_class": "EDUCATIONAL_SIMULATION",
+                "reply": f"🎓 **Educational Simulation Waveform Demo (`{fig_id.upper()}` · Page {pnum})** launched (`EDUCATIONAL_SIMULATION`).",
+                "spoken_text": f"Launching the educational waveform simulation for {fig_id} on Page {pnum}.",
+                "canvas_mode": fig_id,
+                "open_popup_plotter": True,
+                "fig_id": fig_id,
+                "diagnostics": get_super_agent_diagnostics(),
+            }
+
+        native_res = V7_PLATFORM.start_native_verdi_run(
+            figure_id=fig_id,
+            page_num=pnum,
+            user_id=payload.get("user_id") or os.environ.get("USER", "huynguyen"),
+            project_id=payload.get("project_id") or "motion_estimator_520mhz",
+            force_new_launch=bool(payload.get("force_new_launch", False)),
+        )
+        ok_verified = bool(native_res.get("ok") and native_res.get("signal_rail_verified"))
+        win_id = native_res.get("window_id") or "none"
+        sig_ver = native_res.get("signal_rail_verification", {}) or {}
+        pix_ver = sig_ver.get("pixel_rail_audit", {}) or {}
+        job_id = native_res.get("job_id", "")
         reply = (
-            f"🖥️ **XQuartz X11 & Live Step-by-Step Waveform Plotter Launched (`{fig_id.upper()}` · Page {pnum})**!\n\n"
-            f"1. **In XQuartz (`DISPLAY=:0`)**: Spawned the live X11 `xterm` waveform & telemetry plotter window.\n"
-            f"2. **In Browser Pop-Up Oscilloscope**: Plotting cycle-by-cycle `clock` (520 MHz), `count[12:0]`, `Accumulate[7:0]` (0xFF saturation bug) vs `Accumulate[15:0]` (`0x0000 / 0x0100 / 0xFF00`), `PEready[3:0]`, `newBest`, `BestDist`, and `motionX/Y`.\n"
-            f"3. **How to Collect Data in XQuartz / Verdi nWave**:\n"
-            f"   • Press **`Ctrl+W`** in Verdi to load active testbench signals into nWave.\n"
-            f"   • Press **`g`** to jump the yellow marker cursor to `count = 0x0100` (Cycle 256, Row-1 completion) or `count = 0x100F` (Cycle 4,111).\n"
-            f"   • Right-click `Accumulate` & `BestDist` → **Radix → Hexadecimal** to compare `8'hFF` vs `16'h0100 / 16'hFF00`.\n"
-            f"   • Use **File → Print / Export PNG** (or `-play scripts/verdi_nwave/{fig_id}.tcl`) to save the evidence figure!"
+            f"🖥️ **Native Synopsys Verdi X11 Verification (`{fig_id.upper()}` · Page {pnum})**: "
+            f"**`{native_res.get('status')}`** (`{native_res.get('evidence_class')}`)\n\n"
+            f"• **Job ID**: `{job_id}` · **Verdi X11 Window**: `{win_id}`\n"
+            f"• **Layer 1 (FSDB Variable Audit)**: `{sig_ver.get('fsdb_audit', {}).get('fsdb_variables_count', 0)}` variables verified\n"
+            f"• **Layer 2 (Tcl Signal Replay)**: `{sig_ver.get('tcl_signal_audit', {}).get('tcl_signals_count', 0)}` signals (`count`, `BestDist`, `motionX`, `motionY`, `Accumulate`)\n"
+            f"• **Layer 3 (nWave Pixel Rail Audit)**: `{pix_ver.get('signal_rail_bands_detected', 0)}` horizontal signal-rail bands (`{pix_ver.get('green_scanlines', 0)}` active green scanlines)\n"
+            f"• **Window-Only Redacted Preview**: `/api/native-runs/{job_id}/frame.png`"
         )
         return {
-            "ok": True,
+            "ok": ok_verified,
+            "mode": "native",
+            "job_id": job_id,
+            "native_run": native_res,
+            "evidence_class": native_res.get("evidence_class"),
+            "signal_rail_verified": ok_verified,
             "reply": reply,
-            "spoken_text": f"Launching XQuartz X11 and the live step-by-step waveform plotter for {fig_id} on Page {pnum}. Watch the signals plot cycle by cycle at 520 megahertz!",
+            "spoken_text": (
+                f"Native Synopsys Verdi verification complete for {fig_id}. "
+                f"Status is {native_res.get('status')} with {pix_ver.get('signal_rail_bands_detected', 0)} verified waveform signal rails."
+                if ok_verified
+                else f"Native Synopsys Verdi check returned {native_res.get('status')}."
+            ),
             "canvas_mode": fig_id,
             "open_popup_plotter": True,
             "fig_id": fig_id,
@@ -2571,6 +2606,51 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
                     self._send_json({"has_command": False})
             return
 
+        if route == "/api/native-runs":
+            self._send_json({
+                "ok": True,
+                "runs": list(V7_PLATFORM.native_verdi_runs.values())[-25:],
+            })
+            return
+
+        if route.startswith("/api/native-runs/"):
+            sub = route[len("/api/native-runs/"):].strip("/")
+            parts = sub.split("/")
+            job_id = parts[0]
+            if len(parts) == 1:
+                self._send_json(V7_PLATFORM.get_native_verdi_run(job_id))
+                return
+            if len(parts) == 2 and parts[1] == "events":
+                self.send_response(HTTPStatus.OK)
+                self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+                self.send_header("Cache-Control", "no-cache")
+                self.send_header("Connection", "keep-alive")
+                self._send_cors_headers()
+                self.end_headers()
+                try:
+                    run_info = V7_PLATFORM.get_native_verdi_run(job_id)
+                    events = run_info.get("events", [])
+                    for idx, ev in enumerate(events):
+                        payload_ev = {"index": idx, "job_id": job_id, **ev}
+                        self.wfile.write(f"data: {json.dumps(payload_ev)}\n\n".encode("utf-8"))
+                    self.wfile.flush()
+                except Exception:
+                    pass
+                return
+            if len(parts) == 2 and parts[1] == "frame.png":
+                run_info = V7_PLATFORM.get_native_verdi_run(job_id)
+                cand_paths = [
+                    run_info.get("annotated_capture_path"),
+                    run_info.get("redacted_capture_path"),
+                    run_info.get("capture_path"),
+                ]
+                for cp in cand_paths:
+                    if cp and Path(cp).exists():
+                        self._serve_file(Path(cp), "image/png")
+                        return
+                self.send_error(HTTPStatus.NOT_FOUND, "Native window capture not found")
+                return
+
         if route.startswith("/files/logs/"):
             fname = Path(urllib.parse.unquote(route[len("/files/logs/"):])).name
             self._serve_file(LOGS_DIR / fname, "text/plain; charset=utf-8")
@@ -2665,35 +2745,122 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             self._send_json(res)
             return
 
+        if route == "/api/native-runs":
+            fig_id = (payload.get("figure_id") or payload.get("fig_id") or "fig10").strip()
+            if fig_id == "layout":
+                fig_id = "fig10"
+            pnum = int(payload.get("page_num") or payload.get("page_id") or 51)
+            user_id = (payload.get("user_id") or os.environ.get("USER") or "huynguyen").strip()
+            project_id = (payload.get("project_id") or "motion_estimator_520mhz").strip()
+            run_id = (payload.get("run_id") or "").strip()
+            attempt_num = int(payload.get("attempt_num") or 1)
+            force_new_launch = bool(payload.get("force_new_launch", False))
+            res = V7_PLATFORM.start_native_verdi_run(
+                figure_id=fig_id,
+                page_num=pnum,
+                user_id=user_id,
+                project_id=project_id,
+                run_id=run_id,
+                attempt_num=attempt_num,
+                force_new_launch=force_new_launch,
+            )
+            self._send_json(res)
+            return
+
+        if route.startswith("/api/native-runs/"):
+            sub = route[len("/api/native-runs/"):].strip("/")
+            parts = sub.split("/")
+            job_id = parts[0]
+            if len(parts) == 2 and parts[1] == "capture":
+                res = V7_PLATFORM.capture_native_verdi_run(job_id)
+                self._send_json(res)
+                return
+            if len(parts) == 2 and parts[1] == "cancel":
+                res = V7_PLATFORM.cancel_native_verdi_run(
+                    job_id,
+                    allow_close_existing=bool(payload.get("allow_close_existing", False)),
+                )
+                self._send_json(res)
+                return
+            if len(parts) == 2 and parts[1] == "action":
+                act_name = (payload.get("action") or payload.get("action_name") or "highlight_bestdist").strip()
+                res = V7_PLATFORM.action_native_verdi_run(job_id, act_name)
+                self._send_json(res)
+                return
+
         if route == "/api/xquartz_plot":
-            pnum = int(payload.get("page_num", 49) or 49)
-            fig_id = (payload.get("fig_id") or "fig7").strip()
-            plotter_py = PRACTICE_DIR / "scripts" / "xquartz_live_plotter.py"
-            try:
-                subprocess.Popen(["open", "-a", "XQuartz"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                if plotter_py.exists():
+            pnum = int(payload.get("page_num", 51) or 51)
+            fig_id = (payload.get("fig_id") or payload.get("figure_id") or "fig10").strip()
+            if fig_id == "layout":
+                fig_id = "fig10"
+            mode = (payload.get("mode") or "native").strip()
+            if mode == "educational_demo":
+                plotter_py = PRACTICE_DIR / "scripts" / "xquartz_live_plotter.py"
+                try:
                     subprocess.Popen(
-                        [sys.executable, str(plotter_py), "--fig", fig_id, "--page", str(pnum)],
+                        [sys.executable, str(plotter_py), "--mode", "educational_demo", "--fig", fig_id, "--page", str(pnum)],
                         stdout=subprocess.DEVNULL,
                         stderr=subprocess.DEVNULL,
                     )
-            except Exception:
-                pass
+                except Exception:
+                    pass
+                self._send_json({
+                    "ok": True,
+                    "mode": "educational_demo",
+                    "evidence_class": "EDUCATIONAL_SIMULATION",
+                    "fig_id": fig_id,
+                    "page_num": pnum,
+                    "message": f"Launched Educational Simulation Waveform Demo ({fig_id.upper()}) [EDUCATIONAL_SIMULATION].",
+                })
+                return
+
+            native_res = V7_PLATFORM.start_native_verdi_run(
+                figure_id=fig_id,
+                page_num=pnum,
+                user_id=payload.get("user_id") or os.environ.get("USER", "huynguyen"),
+                project_id=payload.get("project_id") or "motion_estimator_520mhz",
+                force_new_launch=bool(payload.get("force_new_launch", False)),
+            )
+            ok_verified = bool(native_res.get("ok") and native_res.get("signal_rail_verified"))
+            job_id = native_res.get("job_id", "")
+            win_id = native_res.get("window_id") or "none"
             ttys = broadcast_to_local_macos_terminals(
                 page_num=pnum,
-                title=f"XQuartz Live Step-by-Step Waveform Plotter ({fig_id.upper()})",
-                cmd_str=f"python3 practice_from_scratch/scripts/xquartz_live_plotter.py --fig {fig_id} --page {pnum}",
-                output_str=f"[XQUARTZ-LIVE-PLOTTER] Launched X11 xterm Waveform & Layout Plotter for {fig_id.upper()} (Page {pnum}) on DISPLAY=:0!",
-                exit_code=0,
+                title=f"Native Synopsys Verdi X11 Execution ({fig_id.upper()})",
+                cmd_str=f"python3 practice_from_scratch/scripts/engr852_native_verdi_bridge.py launch --figure {fig_id} --job-id {job_id}",
+                output_str=(
+                    f"[NATIVE-VERDI-X11] status={native_res.get('status')} | evidence_class={native_res.get('evidence_class')} | "
+                    f"window_id={win_id} | signal_rail_verified={ok_verified}"
+                ),
+                exit_code=0 if ok_verified else 1,
                 launch_xquartz=True,
             )
-            log_super_agent_event("XQUARTZ_PLOT", f"Launched XQuartz live plotter for {fig_id} (Page {pnum})", page_num=pnum)
+            log_super_agent_event(
+                "NATIVE_VERDI_PLOT",
+                f"Native Verdi ({fig_id}, Page {pnum}): status={native_res.get('status')}, window={win_id}",
+                page_num=pnum,
+            )
             self._send_json({
-                "ok": True,
+                "ok": ok_verified,
+                "mode": "native",
+                "job_id": job_id,
                 "fig_id": fig_id,
                 "page_num": pnum,
+                "window_id": win_id,
+                "status": native_res.get("status"),
+                "evidence_class": native_res.get("evidence_class"),
+                "signal_rail_verified": ok_verified,
+                "signal_rail_verification": native_res.get("signal_rail_verification", {}),
+                "stage_states": native_res.get("stage_states", {}),
+                "frame_url": f"/api/native-runs/{job_id}/frame.png",
+                "events_url": f"/api/native-runs/{job_id}/events",
                 "ttys": ttys,
-                "message": f"Launched XQuartz.app & Live X11 Waveform Plotter ({fig_id.upper()}) on DISPLAY=:0!",
+                "native_run": native_res,
+                "message": (
+                    f"Verified Native Synopsys Verdi X11 Window ({win_id}) & Populated Waveform Rails ({fig_id.upper()}) [WAVEFORM_SIGNALS_VERIFIED]!"
+                    if ok_verified
+                    else f"Native Synopsys Verdi check returned {native_res.get('status')} (window={win_id}, evidence={native_res.get('evidence_class')})."
+                ),
             })
             return
 
@@ -2730,33 +2897,71 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/launch_gui":
-            pnum = int(payload.get("page_num", 1) or 1)
-            fig_id = (payload.get("fig_id") or ("fig7" if pnum <= 49 else ("fig8" if pnum == 50 else ("fig10" if pnum == 51 else ("fig9" if pnum == 52 else "layout"))))).strip()
-            plotter_py = PRACTICE_DIR / "scripts" / "xquartz_live_plotter.py"
-            try:
-                subprocess.Popen(["open", "-a", "XQuartz"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                subprocess.Popen(["open", "-a", "Terminal"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                if plotter_py.exists():
+            pnum = int(payload.get("page_num", 51) or 51)
+            fig_id = (payload.get("fig_id") or payload.get("figure_id") or ("fig7" if pnum <= 49 else ("fig8" if pnum == 50 else ("fig10" if pnum == 51 else ("fig9" if pnum == 52 else "fig10"))))).strip()
+            if fig_id == "layout":
+                fig_id = "fig10"
+            mode = (payload.get("mode") or "native").strip()
+            if mode == "educational_demo":
+                plotter_py = PRACTICE_DIR / "scripts" / "xquartz_live_plotter.py"
+                try:
                     subprocess.Popen(
-                        [sys.executable, str(plotter_py), "--fig", fig_id, "--page", str(pnum)],
+                        [sys.executable, str(plotter_py), "--mode", "educational_demo", "--fig", fig_id, "--page", str(pnum)],
                         stdout=subprocess.DEVNULL,
                         stderr=subprocess.DEVNULL,
                     )
-            except Exception:
-                pass
+                except Exception:
+                    pass
+                self._send_json({
+                    "ok": True,
+                    "mode": "educational_demo",
+                    "evidence_class": "EDUCATIONAL_SIMULATION",
+                    "fig_id": fig_id,
+                    "message": f"Launched Educational Simulation Waveform Demo ({fig_id.upper()}) [EDUCATIONAL_SIMULATION].",
+                })
+                return
+
+            native_res = V7_PLATFORM.start_native_verdi_run(
+                figure_id=fig_id,
+                page_num=pnum,
+                user_id=payload.get("user_id") or os.environ.get("USER", "huynguyen"),
+                project_id=payload.get("project_id") or "motion_estimator_520mhz",
+                force_new_launch=bool(payload.get("force_new_launch", False)),
+            )
+            ok_verified = bool(native_res.get("ok") and native_res.get("signal_rail_verified"))
+            job_id = native_res.get("job_id", "")
+            win_id = native_res.get("window_id") or "none"
             ttys = broadcast_to_local_macos_terminals(
                 page_num=pnum,
-                title="Live macOS Terminal & XQuartz Waveform Plotter Connected!",
-                cmd_str=f"open -a XQuartz && python3 practice_from_scratch/scripts/xquartz_live_plotter.py --fig {fig_id} --page {pnum}",
-                output_str="MACBOOK_TERMINAL_AND_XQUARTZ_READY\nLaunched XQuartz X11 Live Waveform Plotter & mirrored output to macOS Terminal!",
-                exit_code=0,
+                title=f"Native Synopsys Verdi X11 Execution ({fig_id.upper()})",
+                cmd_str=f"python3 practice_from_scratch/scripts/engr852_native_verdi_bridge.py launch --figure {fig_id} --job-id {job_id}",
+                output_str=(
+                    f"[NATIVE-VERDI-X11] status={native_res.get('status')} | evidence_class={native_res.get('evidence_class')} | "
+                    f"window_id={win_id} | signal_rail_verified={ok_verified}"
+                ),
+                exit_code=0 if ok_verified else 1,
                 launch_xquartz=True,
             )
             self._send_json({
-                "ok": True,
+                "ok": ok_verified,
+                "mode": "native",
+                "job_id": job_id,
                 "ttys": ttys,
                 "fig_id": fig_id,
-                "message": f"Opened XQuartz.app, spawned X11 Live Waveform Plotter ({fig_id.upper()}), and mirrored to macOS Terminal ({', '.join(ttys) if ttys else 'active session'})!",
+                "window_id": win_id,
+                "status": native_res.get("status"),
+                "evidence_class": native_res.get("evidence_class"),
+                "signal_rail_verified": ok_verified,
+                "signal_rail_verification": native_res.get("signal_rail_verification", {}),
+                "stage_states": native_res.get("stage_states", {}),
+                "frame_url": f"/api/native-runs/{job_id}/frame.png",
+                "events_url": f"/api/native-runs/{job_id}/events",
+                "native_run": native_res,
+                "message": (
+                    f"Verified Native Synopsys Verdi X11 Window ({win_id}) & Populated Waveform Rails ({fig_id.upper()}) [WAVEFORM_SIGNALS_VERIFIED]!"
+                    if ok_verified
+                    else f"Native Synopsys Verdi check returned {native_res.get('status')} (window={win_id})."
+                ),
             })
             return
 

@@ -1468,6 +1468,41 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
         </div>
       </div>
 
+      <!-- Native Synopsys Verdi 10-Stage Deterministic Controller & Interactive Teaching Actions -->
+      <div style="background:#f0fdf4;border:1.5px solid #6ee7b7;border-radius:12px;padding:10px 14px;margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span class="badge mint" id="nativeVerdiEvidenceBadge">NATIVE_EXECUTION · 3-LAYER RAIL VERIFIER READY</span>
+            <span style="font-size:12px;font-weight:800;color:#065f46;" id="popupPlotterStepStatus">
+              Click "🖥️ Spawn Real XQuartz X11 Plotter Window (:0)" to verify real Synopsys Verdi + FSDB + Tcl + nWave Signal Rails
+            </span>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="btn btn-sm btn-pink" onclick="runNativeVerdiTeachingAction('highlight_bestdist')">
+              🎯 Highlight BestDist
+            </button>
+            <button class="btn btn-sm btn-mint" onclick="runNativeVerdiTeachingAction('jump_count_0x0100')">
+              ⏱️ Jump to count 0x0100
+            </button>
+            <button class="btn btn-sm btn-lavender" onclick="runNativeVerdiTeachingAction('explain_motionx_change')">
+              🧠 Explain why motionX changed
+            </button>
+          </div>
+        </div>
+        <div id="nativeVerdi10StageBar" style="display:flex;gap:4px;flex-wrap:wrap;font-size:10.8px;font-family:var(--mono);">
+          <span class="badge lavender">1.DISCOVER</span>
+          <span class="badge lavender">2.CONNECT</span>
+          <span class="badge lavender">3.LOAD_EDA</span>
+          <span class="badge lavender">4.LOAD_FSDB</span>
+          <span class="badge lavender">5.LAUNCH_GUI</span>
+          <span class="badge lavender">6.PLOT_SIGNALS</span>
+          <span class="badge lavender">7.VERIFY_OUTPUT</span>
+          <span class="badge lavender">8.CAPTURE</span>
+          <span class="badge lavender">9.SYNC</span>
+          <span class="badge lavender">10.COMPLETE</span>
+        </div>
+      </div>
+
       <!-- Waveform / Layout Mode Selector Bar -->
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;background:#fdf4ff;padding:8px 12px;border-radius:12px;border:1px solid #f5d0fe;">
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -1479,18 +1514,25 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
           <button class="btn btn-sm" id="popPlotBtn-layout" onclick="startPopupLiveWaveformPlot('layout')">14nm Silicon Layout (8,230 Cells)</button>
         </div>
         <div style="display:flex;gap:6px;">
-          <button class="btn btn-sm btn-mint" onclick="startPopupLiveWaveformPlot(CURRENT_POPUP_FIG_ID)">↻ Replay Step-by-Step Plot</button>
+          <button class="btn btn-sm btn-mint" onclick="startPopupLiveWaveformPlot(POPUP_CURRENT_FIG)">↻ Replay Educational Demo</button>
           <button class="btn btn-sm btn-lavender" onclick="speakPopupWaveformGuide()">🔊 Voice Explain Plot</button>
         </div>
       </div>
 
-      <!-- Split Inside Pop-Up: Left = Animated Oscilloscope / Silicon Canvas | Right = Step-by-Step XQuartz & Verdi nWave Data Collection Coach -->
+      <!-- Split Inside Pop-Up: Left = Animated Oscilloscope + Window-Only Native Verdi Preview | Right = Step-by-Step XQuartz & Verdi nWave Data Collection Coach -->
       <div class="lab-split" style="grid-template-columns:minmax(480px, 58%) minmax(360px, 42%);">
         <div>
+          <div id="nativeVerdiWindowPreviewBox" style="display:none;margin-bottom:10px;background:#120721;border:2px solid #10b981;border-radius:14px;padding:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:#ecfdf5;font-size:11.8px;">
+              <b id="nativeVerdiWindowPreviewTitle">🪟 Authorized Window-Only Synopsys Verdi Capture (Redacted Paths)</b>
+              <button class="btn btn-sm" onclick="zoomImage(document.getElementById('nativeVerdiWindowPreviewImg').src)">🔍 Zoom Full-Screen</button>
+            </div>
+            <img id="nativeVerdiWindowPreviewImg" src="" alt="Native Synopsys Verdi X11 Window Capture" style="width:100%;max-height:280px;object-fit:contain;border-radius:10px;cursor:pointer;" onclick="zoomImage(this.src)">
+          </div>
           <canvas id="popupOscilloscopeCanvas" width="820" height="370" style="width:100%;height:360px;background:#120721;border-radius:14px;border:2px solid #f472b6;display:block;"></canvas>
           <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-body);background:#f0fdf4;padding:8px 12px;border-radius:10px;border:1px solid #a7f3d0;">
             <span id="popupCursorTelemetryLbl"><b>⏱️ Live Cursor Telemetry:</b> <code>clock = 520 MHz (1.923 ns)</code> · <code>count = 0x0100 (Cycle 256)</code> · <code>EXIT_CODE = 0</code></span>
-            <span class="badge mint" id="popupPlotProgressBadge">100% Plotted</span>
+            <span class="badge mint" id="popupPlotProgressBadge">EDUCATIONAL_SIMULATION</span>
           </div>
         </div>
         <div style="background:#fdf4ff;border:1.5px solid #e9d5ff;border-radius:14px;padding:13px 15px;">
@@ -1498,6 +1540,7 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
             🎓 How to Collect Waveform & Layout Data in XQuartz & Synopsys Verdi nWave
           </div>
           <div id="popupCoachStepsBox" style="font-size:12.4px;line-height:1.58;color:var(--text-body);"></div>
+          <pre id="popupLiveExecutionLog" class="code-box" style="margin-top:10px;max-height:180px;overflow-y:auto;font-size:11.2px;">Ready for Native Synopsys Verdi X11 Verification or Educational Oscilloscope Walkthrough.</pre>
         </div>
       </div>
     </div>
@@ -2936,11 +2979,11 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
           ` : ''}
           <pre class="code-box" style="font-size:11.6px;margin-bottom:10px;">${escapeHtml(g.tcl_cmd)}</pre>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-sm btn-pink" onclick="selectIdePage(${g.page_num});openLivePopupExecutionModal();startPopupLiveWaveformPlot('${escapeHtml(g.id || 'auto')}');executeCommandInWebTerminal(${JSON.stringify(g.tcl_cmd).replace(/"/g, '&quot;')}, ${g.page_num}, true);">
-              🖥️ Launch in XQuartz & Run Live (Step-by-Step Plotter)
+            <button class="btn btn-sm btn-pink" onclick="selectIdePage(${g.page_num});POPUP_CURRENT_FIG='${escapeHtml(g.id || 'fig10')}';openLivePopupExecutionModal();triggerXquartzExternalWindowPlot();">
+              🖥️ Launch in XQuartz & Run Live (Native Verdi + Rail Verifier)
             </button>
             <button class="btn btn-sm btn-mint" onclick="openLivePopupExecutionModal();startPopupLiveWaveformPlot('${escapeHtml(g.id || 'auto')}');">
-              📈 Step-by-Step Oscilloscope Walkthrough
+              📈 Educational Oscilloscope Walkthrough
             </button>
             <button class="btn btn-sm" onclick="zoomImage('${g.img_url}')">🔍 Zoom Full-Screen</button>
           </div>
@@ -3680,18 +3723,132 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
       }
     }
 
+    let ACTIVE_NATIVE_RUN_JOB_ID = '';
+
+    function renderNativeVerdi10StageBar(stageStates) {
+      const bar = document.getElementById('nativeVerdi10StageBar');
+      if (!bar) return;
+      const stages = ['DISCOVER', 'CONNECT', 'LOAD_EDA', 'LOAD_FSDB', 'LAUNCH_GUI', 'PLOT_SIGNALS', 'VERIFY_OUTPUT', 'CAPTURE', 'SYNC', 'COMPLETE'];
+      bar.innerHTML = stages.map((st, idx) => {
+        const val = (stageStates && stageStates[st]) || 'WAITING';
+        const cls = val === 'PASSED' ? 'mint' : (val === 'FAILED' ? 'coral' : (val === 'ACTIVE' ? 'pink' : 'lavender'));
+        const mark = val === 'PASSED' ? '✓' : (val === 'FAILED' ? '✗' : '');
+        return `<span class="badge ${cls}">${idx + 1}.${st}${mark ? ' ' + mark : ''}</span>`;
+      }).join('');
+    }
+
     async function triggerXquartzExternalWindowPlot() {
       const st = document.getElementById('popupPlotterStepStatus');
-      if (st) st.textContent = '🖥️ Launching XQuartz.app & Real X11 xterm Waveform Plotter Window on MacBook Air...';
+      const evBadge = document.getElementById('nativeVerdiEvidenceBadge');
+      const logEl = document.getElementById('popupLiveExecutionLog');
+      const previewBox = document.getElementById('nativeVerdiWindowPreviewBox');
+      const previewImg = document.getElementById('nativeVerdiWindowPreviewImg');
+      const previewTitle = document.getElementById('nativeVerdiWindowPreviewTitle');
+      const figMap = {
+        'fig1_8bit_trap': 'fig7',
+        'fig2_16bit_0000': 'fig10',
+        'fig6_layout_14nm': 'fig10',
+        'auto': (IDE_CURRENT_PAGE <= 49 ? 'fig7' : (IDE_CURRENT_PAGE === 50 ? 'fig8' : (IDE_CURRENT_PAGE === 52 ? 'fig9' : 'fig10')))
+      };
+      const figId = figMap[POPUP_CURRENT_FIG] || (['fig7','fig8','fig9','fig10','fig11'].includes(POPUP_CURRENT_FIG) ? POPUP_CURRENT_FIG : 'fig10');
+      if (st) st.textContent = `🖥️ Verifying Native Synopsys Verdi X11 + FSDB + Tcl + Signal Rails (${figId.toUpperCase()})...`;
       try {
-        await smartApiFetch('/api/xquartz_plot', {
+        const res = await smartApiFetch('/api/native-runs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ page_num: IDE_CURRENT_PAGE, figure_id: POPUP_CURRENT_FIG || 'fig1_8bit_trap' })
-        }, 6000);
-        if (st) st.textContent = '✓ Spawned Real XQuartz X11 Plotter Window + Mirrored to macOS Terminal.app!';
+          body: JSON.stringify({ page_num: IDE_CURRENT_PAGE, figure_id: figId })
+        }, 25000);
+        const data = await res.json();
+        ACTIVE_NATIVE_RUN_JOB_ID = data.job_id || '';
+        renderNativeVerdi10StageBar(data.stage_states || {});
+        const okVerified = Boolean(data.ok && data.signal_rail_verified);
+        const sigVer = data.signal_rail_verification || {};
+        const pixVer = sigVer.pixel_rail_audit || {};
+        if (evBadge) {
+          evBadge.className = `badge ${okVerified ? 'mint' : 'coral'}`;
+          evBadge.textContent = `${data.evidence_class || 'UNVERIFIED'} · ${data.status || 'CHECK'}`;
+        }
+        if (st) {
+          st.textContent = okVerified
+            ? `✓ WAVEFORM_SIGNALS_VERIFIED (${figId.toUpperCase()} · Window ${data.window_id} · ${pixVer.signal_rail_bands_detected || 0} Signal Rails)`
+            : `⚠ Status: ${data.status} (Evidence: ${data.evidence_class})`;
+        }
+        animateVisualPipeline(5, {
+          1: `SSH -Y & Terminal Verified ✓`,
+          2: `XQuartz Window ${data.window_id || 'none'} ✓`,
+          3: `FSDB (${(sigVer.fsdb_audit || {}).fsdb_variables_count || 0} vars) + Tcl Replay ✓`,
+          4: `${pixVer.signal_rail_bands_detected || 0} nWave Rail Bands Verified ✓`,
+          5: `Window-Only Redacted PNG Saved ✓`
+        }, okVerified);
+        if (previewBox && previewImg && data.job_id) {
+          const base = ACTIVE_API_BASE ? ACTIVE_API_BASE.replace(/\/$/, '') : '';
+          previewImg.src = `${base}/api/native-runs/${data.job_id}/frame.png?t=${Date.now()}`;
+          if (previewTitle) {
+            previewTitle.textContent = `🪟 Authorized Window-Only Synopsys Verdi Capture (${figId.toUpperCase()} · Window ${data.window_id || ''} · Redacted Home Path)`;
+          }
+          previewBox.style.display = 'block';
+        }
+        if (logEl) {
+          logEl.textContent = JSON.stringify({
+            job_id: data.job_id,
+            status: data.status,
+            evidence_class: data.evidence_class,
+            window_id: data.window_id,
+            signal_rail_verified: data.signal_rail_verified,
+            signal_rail_bands_detected: pixVer.signal_rail_bands_detected,
+            green_scanlines: pixVer.green_scanlines
+          }, null, 2);
+        }
       } catch (e) {
-        if (st) st.textContent = '✓ XQuartz X11 Display :0 Plotter Triggered!';
+        if (st) st.textContent = `⚠ Native Verdi check error: ${e.message || e}`;
+      }
+    }
+
+    async function runNativeVerdiTeachingAction(actionName) {
+      const st = document.getElementById('popupPlotterStepStatus');
+      const logEl = document.getElementById('popupLiveExecutionLog');
+      const coachBox = document.getElementById('popupCoachStepsBox');
+      const previewBox = document.getElementById('nativeVerdiWindowPreviewBox');
+      const previewImg = document.getElementById('nativeVerdiWindowPreviewImg');
+      const previewTitle = document.getElementById('nativeVerdiWindowPreviewTitle');
+      if (!ACTIVE_NATIVE_RUN_JOB_ID) {
+        await triggerXquartzExternalWindowPlot();
+      }
+      const jobId = ACTIVE_NATIVE_RUN_JOB_ID || 'fig10_teaching';
+      if (st) st.textContent = `🎯 Executing Interactive Native Verdi Teaching Action (${actionName})...`;
+      try {
+        const res = await smartApiFetch(`/api/native-runs/${jobId}/action`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: actionName })
+        }, 20000);
+        const data = await res.json();
+        if (st) st.textContent = `✓ ${data.title || actionName} (${data.evidence_class || 'NATIVE_EXECUTION'})`;
+        if (coachBox && data.explanation) {
+          coachBox.innerHTML = `
+            <div style="background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:10px;padding:10px 12px;margin-bottom:8px;">
+              <div style="font-weight:800;color:#047857;margin-bottom:4px;">🎯 ${escapeHtml(data.title || actionName)}</div>
+              <div style="font-size:12.2px;color:#065f46;">${escapeHtml(data.explanation)}</div>
+              <div style="margin-top:6px;font-family:var(--mono);font-size:11.2px;color:#047857;"><b>Tcl Command:</b> <code>${escapeHtml(data.tcl_command || '')}</code></div>
+            </div>
+          `;
+        }
+        if (previewBox && previewImg) {
+          const base = ACTIVE_API_BASE ? ACTIVE_API_BASE.replace(/\/$/, '') : '';
+          previewImg.src = `${base}/api/native-runs/${jobId}/frame.png?t=${Date.now()}`;
+          if (previewTitle) {
+            previewTitle.textContent = `🪟 Teaching-Annotated Native Synopsys Verdi Capture (${data.title || actionName})`;
+          }
+          previewBox.style.display = 'block';
+        }
+        if (logEl) {
+          logEl.textContent = JSON.stringify(data, null, 2);
+        }
+        if (data.explanation) {
+          speakSuperAgentText(data.explanation);
+        }
+      } catch (e) {
+        if (st) st.textContent = `⚠ Action error: ${e.message || e}`;
       }
     }
 
@@ -4214,12 +4371,12 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
           <div style="background:#ffffff;border:2px solid #d8b4fe;border-radius:18px;max-width:1080px;width:100%;max-height:88vh;overflow-y:auto;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,0.35);">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1.5px solid #f3e8ff;padding-bottom:12px;margin-bottom:14px;">
               <div>
-                <h2 style="margin:0;font-size:18px;color:#4c1d95;">🛡️ ENGR 852 Studio v7.0 — 7-Class Evidence Provenance, 9-Agent Architecture, 13 Acceptance Tests & V9 Sign-Off Audit</h2>
-                <p style="margin:4px 0 0 0;font-size:12.2px;color:#475569;">No fake PASS markers · Real PTY Execution · Window-Only Capture · Preserved Attempt Logs · Untouched V9 Main Checkpoint</p>
+                <h2 style="margin:0;font-size:18px;color:#4c1d95;">🛡️ ENGR 852 Studio v7.1 — 7-Class Evidence Provenance, Native Synopsys Verdi X11 Bridge, 25 Acceptance Tests (T01–T25) & V9 Sign-Off Audit</h2>
+                <p style="margin:4px 0 0 0;font-size:12.2px;color:#475569;">No fake PASS markers · Real SSH -Y Synopsys Verdi + FSDB + Tcl + 3-Layer Signal-Rail Verifier · Redacted Window-Only Capture · Untouched V9 Main Checkpoint</p>
               </div>
               <button class="btn btn-sm btn-pink" onclick="document.getElementById('v7EvidenceAcceptanceModal').style.display='none'">✕ Close</button>
             </div>
-            <div id="v7ModalBodyContent" style="font-size:12.5px;color:#1e293b;line-height:1.55;">Running 13 fault-injection acceptance tests (T01–T13) and loading V9 sign-off audit...</div>
+            <div id="v7ModalBodyContent" style="font-size:12.5px;color:#1e293b;line-height:1.55;">Running 25 fault-injection & native Verdi acceptance tests (T01–T25) and loading V9 sign-off audit...</div>
           </div>
         `;
         document.body.appendChild(existing);
