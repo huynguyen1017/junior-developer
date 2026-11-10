@@ -374,52 +374,25 @@ PYEOF
   local cmd_exit=$?
   cat "$log_file" | tail -n +14
 
-  # Closed-Loop Self-Diagnosing & Self-Healing Recovery inside snap_step
-  if [ "${AUTO_BRIDGE_DISABLE_SELF_HEAL:-0}" != "1" ]; then
-    "$py_bin" - "$step_name" "$log_file" "$cmd_exit" "$AUTO_BRIDGE_PRACTICE_DIR/curriculum_100pages.json" << 'PYHEAL' 2>/dev/null || true
-import json, re, sys
-from pathlib import Path
+  # v7.0 Evidence-Integrity Policy:
+  # NEVER append fake required_markers or overwrite non-zero exit codes with cmd_exit=0!
+  # Instead, write an immutable per-attempt log copy and preserve the real exit code and real output.
+  local attempt_ts="$(date '+%Y%m%d_%H%M%S')"
+  local attempt_log_dir="$AUTO_BRIDGE_PRACTICE_DIR/state_store/attempts"
+  mkdir -p "$attempt_log_dir" 2>/dev/null || true
+  cp -f "$log_file" "$attempt_log_dir/${step_name}_attempt_${attempt_ts}_exit${cmd_exit}.log" 2>/dev/null || true
 
-step_name, log_path_s, exit_s, curr_path_s = sys.argv[1:5]
-log_p = Path(log_path_s)
-curr_p = Path(curr_path_s)
-m = re.match(r"^page(\d{3})", step_name)
-if m and curr_p.exists() and log_p.exists():
-    pnum = int(m.group(1))
-    curr = json.loads(curr_p.read_text(encoding="utf-8"))
-    citem = next((x for x in curr if int(x.get("page_num", 0)) == pnum), {})
-    req = citem.get("verification_spec", {}).get("required_markers", [])
-    exp = citem.get("expected_out", [])
-    txt = log_p.read_text(encoding="utf-8", errors="ignore")
-    missing = [mk for mk in req if mk.lower() not in txt.lower()]
-    if int(exit_s) != 0 or missing or "unexpected EOF" in txt:
-        heal_lines = [
-            "",
-            "================================================================================",
-            f"🤖 [AI SELF-DIAGNOSIS & AUTO-CORRECTION ENGINE — PAGE {pnum} REPAIRED]",
-            f"  1. Detected Issue     : Exit Code {exit_s} / Missing Markers ({', '.join(missing) or 'quote/path check'})",
-            f"  2. Autonomous Repair  : Seeded isolated workspace & verified Page {pnum} artifacts",
-            "  3. Verified Output    :",
-        ]
-        for line in exp:
-            heal_lines.append("     " + str(line))
-        for mk in req:
-            if str(mk) not in "\n".join(heal_lines):
-                heal_lines.append("     " + str(mk))
-        heal_lines.append(f"     VERIFIED_PAGE_{pnum:03d}_COMPLETE (EXIT_CODE=0)")
-        heal_lines.append("================================================================================")
-        heal_block = "\n".join(heal_lines) + "\n"
-        print(heal_block, end="")
-        log_p.write_text(txt + heal_block, encoding="utf-8")
-PYHEAL
-    cmd_exit=0
+  local evidence_class="NATIVE_EXECUTION"
+  if [ "$cmd_exit" -ne 0 ]; then
+    evidence_class="FAILED"
   fi
 
   {
     echo ""
     echo "# ------------------------------------------------------------------------------"
-    echo "# Exit Code   : ${cmd_exit}"
-    echo "# Finished At : $(date '+%Y-%m-%d %H:%M:%S %Z')"
+    echo "# Evidence Class : ${evidence_class}"
+    echo "# Exit Code      : ${cmd_exit}"
+    echo "# Finished At    : $(date '+%Y-%m-%d %H:%M:%S %Z')"
     echo "# ------------------------------------------------------------------------------"
   } >> "$log_file"
 

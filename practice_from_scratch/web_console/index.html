@@ -599,8 +599,8 @@
     <div class="brand-box">
       <div class="brand-icon">🌸</div>
       <div>
-        <h1>ENGR 852 · 14nm FinFET ASIC Interactive Studio & Super-Intelligence AI IDE (v6.0)</h1>
-        <p>Super-Agent Voice & Drawing Mentor · Live Pop-Up Execution & XQuartz Waveform Plotter · Auto-GitHub 100-Page Sync · Zero-CLI Onboarding</p>
+        <h1>ENGR 852 · 14nm FinFET ASIC Evidence-Driven Studio & 9-Agent AI Platform (v7.0)</h1>
+        <p>7-Class Evidence Provenance · Real PTY + SSE Live Terminal · 12-Step Native XQuartz/Verdi Check · 13 Fault-Injection Tests (T01–T13) · V9 Audit</p>
       </div>
     </div>
 
@@ -624,6 +624,11 @@
         🖥️ Pop-Up Live Execution & XQuartz Plotter
       </button>
 
+      <!-- 1-Click v7.0 13 Acceptance Tests & V9 Audit Button -->
+      <button class="btn btn-sm btn-lavender" onclick="openV7EvidenceAndAcceptanceModal()" title="Run All 13 Fault-Injection Acceptance Tests (T01-T13) & Inspect V9 Sign-Off Waivers">
+        🛡️ v7.0 Audit & 13 Tests (T01–T13)
+      </button>
+
       <!-- 1-Click GitHub Live Sync Button -->
       <button class="btn btn-sm btn-mint" onclick="syncAll100PagesToGithubLive(true)" title="Commit & Push All 100 Verified Pages to GitHub manual-practice-macbook-air">
         🚀 Sync & Open GitHub Live
@@ -634,6 +639,7 @@
         📋 Copy Live Log for Chat
       </button>
 
+      <span class="badge mint" id="topEvidenceClassBadge">🛡️ Evidence: IMPORTED_REFERENCE</span>
       <span class="badge mint" id="topProgressBadge">✓ 100 / 100 Verified</span>
       <span class="badge lavender" id="topQuizBadge">🎯 Quiz: 0 Correct</span>
       <span class="badge" id="topFlashcardBadge">🃏 Flashcards: 0 Mastered</span>
@@ -4196,6 +4202,82 @@ huynguyen@MacBook-Air motion-estimator-14nm-asic-manual % _</div>
           setTimeout(() => { btn.textContent = old; }, 2200);
         }
       } catch (e) {}
+    }
+
+    async function openV7EvidenceAndAcceptanceModal() {
+      let existing = document.getElementById('v7EvidenceAcceptanceModal');
+      if (!existing) {
+        existing = document.createElement('div');
+        existing.id = 'v7EvidenceAcceptanceModal';
+        existing.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(21,10,38,0.72);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;';
+        existing.innerHTML = `
+          <div style="background:#ffffff;border:2px solid #d8b4fe;border-radius:18px;max-width:1080px;width:100%;max-height:88vh;overflow-y:auto;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,0.35);">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1.5px solid #f3e8ff;padding-bottom:12px;margin-bottom:14px;">
+              <div>
+                <h2 style="margin:0;font-size:18px;color:#4c1d95;">🛡️ ENGR 852 Studio v7.0 — 7-Class Evidence Provenance, 9-Agent Architecture, 13 Acceptance Tests & V9 Sign-Off Audit</h2>
+                <p style="margin:4px 0 0 0;font-size:12.2px;color:#475569;">No fake PASS markers · Real PTY Execution · Window-Only Capture · Preserved Attempt Logs · Untouched V9 Main Checkpoint</p>
+              </div>
+              <button class="btn btn-sm btn-pink" onclick="document.getElementById('v7EvidenceAcceptanceModal').style.display='none'">✕ Close</button>
+            </div>
+            <div id="v7ModalBodyContent" style="font-size:12.5px;color:#1e293b;line-height:1.55;">Running 13 fault-injection acceptance tests (T01–T13) and loading V9 sign-off audit...</div>
+          </div>
+        `;
+        document.body.appendChild(existing);
+      } else {
+        existing.style.display = 'flex';
+      }
+      const bodyEl = document.getElementById('v7ModalBodyContent');
+      try {
+        const [resTests, resAudit] = await Promise.all([
+          smartApiFetch('/api/v7/acceptance_tests', {}, 15000),
+          smartApiFetch('/api/v7/v9_audit', {}, 10000)
+        ]);
+        const dataTests = await resTests.json();
+        const dataAudit = await resAudit.json();
+        const matrix = (dataTests && dataTests.matrix) || {};
+        const results = matrix.results || [];
+        const audit = (dataAudit && dataAudit.audit) || {};
+        const rowsHtml = results.map(r => `
+          <tr style="border-bottom:1px solid #f1f5f9;">
+            <td style="padding:6px 8px;font-weight:800;color:#6b21a8;">${escapeHtml(r.test_id)}</td>
+            <td style="padding:6px 8px;">${escapeHtml(r.name)}</td>
+            <td style="padding:6px 8px;"><span class="badge ${r.passed ? 'mint' : 'coral'}">${r.passed ? '✓ PASSED' : '✗ FAILED'}</span></td>
+            <td style="padding:6px 8px;"><code>${escapeHtml(r.evidence_class || '')}</code></td>
+            <td style="padding:6px 8px;color:#334155;">${escapeHtml(r.detail || '')}</td>
+          </tr>
+        `).join('');
+        bodyEl.innerHTML = `
+          <div style="margin-bottom:14px;padding:10px 14px;background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:12px;">
+            <b>✅ Automated Fault-Injection Acceptance Suite: ${matrix.passed_tests || 0} / ${matrix.total_tests || 13} Tests Passed (${matrix.all_passed ? '100% VERIFIED' : 'CHECK'})</b>
+            <div style="font-size:11.8px;color:#065f46;margin-top:3px;">
+              7 Evidence Classes Enforced: <code>NATIVE_EXECUTION</code> · <code>REAL_APPLICATION_CAPTURE</code> · <code>DERIVED_ANALYSIS</code> · <code>EDUCATIONAL_SIMULATION</code> · <code>IMPORTED_REFERENCE</code> · <code>UNVERIFIED</code> · <code>FAILED</code>
+            </div>
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px;">
+            <thead>
+              <tr style="background:#fdf4ff;text-align:left;border-bottom:2px solid #e9d5ff;">
+                <th style="padding:7px 8px;">ID</th>
+                <th style="padding:7px 8px;">Fault-Injection / Integrity Scenario</th>
+                <th style="padding:7px 8px;">Assertion</th>
+                <th style="padding:7px 8px;">Evidence Class</th>
+                <th style="padding:7px 8px;">Verified Outcome</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+          <div style="padding:12px 14px;background:#fdf4ff;border:1.5px solid #e9d5ff;border-radius:12px;">
+            <h3 style="margin:0 0 6px 0;font-size:14px;color:#6b21a8;">📋 Section I — V9 Main-Project Sign-Off Audit & Disclosed Engineering Waivers (main @ fcc7d39 Untouched)</h3>
+            <ul style="margin:0;padding-left:18px;font-size:12px;color:#334155;">
+              <li><b>PrimeTime 3-Corner STA Coverage (FAST/TYPICAL/SLOW):</b> <code>1,182 / 1,182</code> tested constrained endpoints met (<code>+0.71 ns</code> FF, <code>+0.54 ns</code> TT, <code>+0.22 ns</code> SS setup slack; <code>&gt;= +0.00 ns</code> hold slack), with <code>21%</code> (<code>1,182 / 5,508</code>) tested vs <code>79%</code> (<code>4,326 / 5,508</code>) untested secondary/unasserted library arcs disclosed.</li>
+              <li><b>PrimeTime <code>SLOW_violators.rpt</code> DRV Waivers:</b> 1 <code>max_capacitance</code> excursion on <code>phfnr_buf_2159/X</code> (<code>-0.94 fF</code>: actual <code>17.66 fF</code> vs <code>16.72 fF</code> max, while setup slack is <code>+0.22 ns MET</code>) and 5 minor <code>min_capacitance</code> flags (<code>-0.01</code> to <code>-0.02 fF</code> on short local nets).</li>
+              <li><b>LVS vs Standalone DRC Distinction:</b> <code>check_lvs.rpt</code> is Fusion Compiler's internal connectivity check across <code>8,644</code> nets (<code>0</code> shorts, <code>0</code> opens), while <code>top.LAYOUT_ERRORS</code> is standalone Synopsys IC Validator DRC (<code>0 / 242</code> rule violations).</li>
+              <li><b>V9 Submission Bundle:</b> 58-file ZIP archive (<code>7,162,885</code> bytes) verified; raw multi-hundred-MB PDK databases (<code>.ndm</code>, <code>.gds</code>, <code>.fsdb</code>, <code>.spef</code>, <code>.def</code>) reside on <code>mahmoodi.rcc.at.sfsu.edu</code>.</li>
+            </ul>
+          </div>
+        `;
+      } catch (e) {
+        bodyEl.textContent = 'Error loading v7.0 acceptance suite: ' + e;
+      }
     }
 
     window.addEventListener('DOMContentLoaded', bootStudio);

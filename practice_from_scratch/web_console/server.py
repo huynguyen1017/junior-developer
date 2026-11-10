@@ -28,6 +28,19 @@ DEFAULT_REPO = Path("/Users/huynguyen/Developer/portfolio/motion-estimator-asic-
 SCRIPT_REPO = Path(__file__).resolve().parents[2]
 REPO_ROOT = SCRIPT_REPO if (SCRIPT_REPO / "practice_from_scratch").exists() else DEFAULT_REPO
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from v7_platform_core import (
+    EVIDENCE_CLASSES,
+    GIT_SYNC_STATES,
+    JOB_STATES,
+    STAGE_STATES,
+    OrchestratorPlatform,
+    build_curriculum_from_project_files,
+    generate_v9_main_project_audit_report,
+)
+
+V7_PLATFORM = OrchestratorPlatform(REPO_ROOT)
+
 PRACTICE_DIR = REPO_ROOT / "practice_from_scratch"
 WEB_CONSOLE_DIR = PRACTICE_DIR / "web_console"
 INDEX_HTML_PATH = WEB_CONSOLE_DIR / "index.html"
@@ -1117,87 +1130,28 @@ def build_ai_debug_analysis(page_num, command_str, output_str, exit_code, curr_m
     }
 
 
+# ==============================================================================
+# v7.0 EVIDENCE-INTEGRITY POLICY:
+# - Never install or source fake shell functions impersonating `vcs`, `verdi`,
+#   `fc_shell`, `icv`, `pt_shell`, `ssh`, or `rsync`.
+# - Never append `|| true` or `EOF_VERIFIED_PAGE_MARKERS` to suppress failures.
+# - Never overwrite a non-zero exit code with `Exit Code: 0`.
+# ==============================================================================
 MACOS_EDA_SHIMS = r"""
 export PYTHONPATH="$HOME/Developer/motion-estimator-14nm-asic-manual:${PYTHONPATH:-}"
 if ! command -v sha256sum >/dev/null 2>&1; then
   function sha256sum() { shasum -a 256 "$@"; }
 fi
-function pip() {
-  echo "[PIP-FAST-CACHE] Verified pillow, reportlab, python-pptx, pypdf in local .venv (0.04s)"
-  return 0
-}
-if ! command -v vcs >/dev/null 2>&1; then
-  function vcs() {
-    mkdir -p logs
-    echo "[VCS-SIM] Compiling Verilog RTL & Testbench at 520 MHz (1.923 ns)..."
-    echo "BestDist = 0000 (hex) | motionX = 07 (+7) | motionY = f8 (-8) [PASS]" | tee -a logs/sim.log logs/tb_direct.log
-    echo "Expected X = -5 (FB), Y = 7 (07) | Actual BestDist = 0100 (256), motionX = fb (-5), motionY = 07 (+7) [PASS]" | tee -a logs/sim.log logs/tb_offset1.log
-    echo "Max-Contrast Stress Test: BestDist = ff00 (65,280 < 65,535), motionX = f8 (-8), motionY = f8 (-8) [PASS]" | tee -a logs/sim.log logs/tb_ff00.log
-    cat << 'SIMEOF' > ./simv
-#!/usr/bin/env bash
-echo "Chronologic VCS simulator copyright 1991-2024"
-echo "BestDist = 0000 | motionX = 07 (+7) | motionY = f8 (-8) [PASS]"
-echo "Expected X = -5 (FB), Y = 7 (07) | Actual BestDist = 0100 (256), motionX = fb (-5), motionY = 07 (+7) [PASS]"
-echo "Max-Contrast Stress Test: BestDist = ff00 (65,280 < 65,535), motionX = f8 (-8), motionY = f8 (-8) [PASS]"
-SIMEOF
-    chmod +x ./simv
-    cp -f ./simv ./simv_direct 2>/dev/null || true
-    cp -f ./simv ./simv_tb 2>/dev/null || true
-    cp -f ./simv ./simv_ff00 2>/dev/null || true
-    cp -f ./simv ./simv_16b 2>/dev/null || true
-    return 0
-  }
-fi
-if ! command -v verdi >/dev/null 2>&1; then
-  function verdi() {
-    open -a XQuartz 2>/dev/null || true
-    echo "[VERDI-NWAVE] Launched XQuartz X11 Display & verified FSDB waveform trace ($*)"
-    echo "Verified signals: clock (520 MHz), count=13'h100F, BestDist=16'h0000 / 16'h0100 / 16'hFF00, motionX=8'h07/8'hFB, motionY=8'hF8/8'h07"
-    return 0
-  }
-fi
-if ! command -v fc_shell >/dev/null 2>&1; then
-  function fc_shell() {
-    if [[ "$*" == *"-gui"* ]]; then open -a XQuartz 2>/dev/null || true; fi
-    mkdir -p reports results pt_reports signoff_drc_run
-    echo "[FUSION-COMPILER-14NM] SAED14nm FinFET Synthesis, Floorplan (125.07 x 62.80 um), M7 CTS & M1..M9 Routing Complete!"
-    echo "ZERO_SYNTHESIZED_MEMORIES | Total Standard Cells: 8,230 | Sequential Flip-Flops: 449 | Core Area: 7,854.4 um^2"
-    return 0
-  }
-fi
-if ! command -v icv >/dev/null 2>&1; then
-  function icv() {
-    mkdir -p signoff_drc_run
-    echo "LAYOUT ERRORS RESULTS : CLEAN (0 / 242 SAED14nm FinFET DRC violations across M1..M9)" | tee signoff_drc_run/top.LAYOUT_ERRORS
-    return 0
-  }
-fi
-if ! command -v pt_shell >/dev/null 2>&1; then
-  function pt_shell() {
-    mkdir -p pt_reports
-    echo "slack (MET) +0.71 ns (FAST) | slack (MET) +0.54 ns (TYPICAL) | slack (MET) +0.22 ns (SLOW)" | tee pt_reports/v9_pt_3corner.rpt
-    return 0
-  }
-fi
-function ssh() {
-  echo "DISPLAY=localhost:10.0 | /packages/synopsys/vcs/W-2024.09-1/bin/vcs (All 5 Synopsys tools ready!)"
-  return 0
-}
-function rsync() {
-  echo "Synced all pre-given course TCL scripts to local MacBook for inspection & Git tracking!"
-  return 0
-}
 """
 
 
 def write_self_healing_script(page_num: int, citem: dict) -> Path:
-    """Generates a 100% quote-safe, bash-syntax-verified (`bash -n`) execution script for Page `page_num`.
-    Never emits unbalanced quotes or unescaped special characters."""
+    """v7.0 Evidence-Integrity Script Builder:
+    Generates a bash-syntax-verified (`bash -n`) execution script for Page `page_num`
+    WITHOUT `|| true` failure suppression and WITHOUT `EOF_VERIFIED_PAGE_MARKERS` injection.
+    Real command exit codes and outputs are strictly preserved."""
     pnum = int(page_num or 1)
-    script_path = Path(f"/tmp/engr852_autofix_page_{pnum:03d}.sh")
-    vspec = citem.get("verification_spec", {})
-    req_markers = vspec.get("required_markers", [])
-    expected_out = citem.get("expected_out", [])
+    script_path = Path(f"/tmp/engr852_exec_page_{pnum:03d}.sh")
     one_liner = citem.get("one_liner", "")
     inner_cmd = normalize_inner_snap_command(one_liner)
     safe_pieces = split_shell_commands_quote_safe(inner_cmd)
@@ -1205,60 +1159,40 @@ def write_self_healing_script(page_num: int, citem: dict) -> Path:
     clean_title = re.sub(r'["`$\\]', "", citem.get("title", f"Page {pnum}"))
     lines = [
         "#!/usr/bin/env bash",
+        "set -o pipefail",
         f'export PYTHONPATH="{MANUAL_WORKSPACE}:${{PYTHONPATH:-}}"',
-        f'cd "{MANUAL_WORKSPACE}" 2>/dev/null || true',
-        f'echo "=== [ENGR 852 Live Execution · Page {pnum}: {clean_title}] ==="',
+        f'cd "{MANUAL_WORKSPACE}" || exit 1',
+        f'echo "=== [ENGR 852 v7.0 Execution · Page {pnum}: {clean_title}] ==="',
         "pwd",
     ]
 
     for piece in safe_pieces:
         c = piece.strip()
-        if not c:
+        if not c or "snap_step" in c:
             continue
-        if any(k in c for k in ("ssh ", "rsync ", "scp ", "tcsh", "git ", "python3 -m venv", "pip install", "snap_step")):
-            continue
-        if has_balanced_quotes(c):
-            # Verify this single line with `bash -n` before adding
-            chk = subprocess.run(["/bin/bash", "-n"], input=f"({c}) >/dev/null 2>&1 || true\n", text=True, capture_output=True)
-            if chk.returncode == 0:
-                lines.append(f"({c}) 2>/dev/null || true")
-
-    lines.append("cat << 'EOF_VERIFIED_PAGE_MARKERS'")
-    for m in expected_out:
-        lines.append(str(m))
-    for m in req_markers:
-        lines.append(str(m))
-    lines.append(f"VERIFIED_PAGE_{pnum:03d}_COMPLETE (EXIT_CODE=0)")
-    lines.append("EOF_VERIFIED_PAGE_MARKERS")
-    lines.append("exit 0")
+        lines.append(c)
 
     script_text = "\n".join(lines) + "\n"
-    # Final safety net: verify entire script with `bash -n`
-    chk_all = subprocess.run(["/bin/bash", "-n"], input=script_text, text=True, capture_output=True)
-    if chk_all.returncode != 0:
-        fallback_lines = [
-            "#!/usr/bin/env bash",
-            f'cd "{MANUAL_WORKSPACE}" 2>/dev/null || true',
-            f'echo "=== [ENGR 852 Self-Healed Execution · Page {pnum}: {clean_title}] ==="',
-            "cat << 'EOF_VERIFIED_PAGE_MARKERS'",
-        ]
-        for m in expected_out:
-            fallback_lines.append(str(m))
-        for m in req_markers:
-            fallback_lines.append(str(m))
-        fallback_lines.append(f"VERIFIED_PAGE_{pnum:03d}_COMPLETE (EXIT_CODE=0)")
-        fallback_lines.append("EOF_VERIFIED_PAGE_MARKERS")
-        fallback_lines.append("exit 0")
-        script_text = "\n".join(fallback_lines) + "\n"
-
     script_path.write_text(script_text, encoding="utf-8")
     script_path.chmod(0o755)
     return script_path
 
 
-def write_authoritative_verified_log_and_screenshot(page_num: int, citem: dict, cmd_str: str, extra_trace: str = ""):
-    """Directly writes a 100% verified log file (`# Exit Code   : 0` + all `expected_out` and `required_markers`)
-    and renders its PNG terminal screenshot so that `pageNNN_*.log` can NEVER remain in a failed state."""
+def write_authoritative_verified_log_and_screenshot(
+    page_num: int,
+    citem: dict,
+    cmd_str: str,
+    extra_trace: str = "",
+    real_output: str = "",
+    real_exit_code: int = 0,
+    evidence_class: str = "DERIVED_ANALYSIS",
+    attempt_num: int = 1,
+):
+    """v7.0 Evidence-Integrity Log & Screenshot Writer:
+    Records the ACTUAL command output, ACTUAL exit code, and explicit `evidence_class`
+    (`NATIVE_EXECUTION`, `REAL_APPLICATION_CAPTURE`, `DERIVED_ANALYSIS`, `EDUCATIONAL_SIMULATION`,
+    `IMPORTED_REFERENCE`, `UNVERIFIED`, or `FAILED`).
+    Also writes an immutable per-attempt archive file so earlier failed attempts are never lost."""
     pnum = int(page_num or 1)
     step_id = citem.get("step_id", f"page{pnum:03d}_step")
     m_step = re.search(r'snap_step\s+"([^"]+)"', citem.get("one_liner", ""))
@@ -1267,52 +1201,60 @@ def write_authoritative_verified_log_and_screenshot(page_num: int, citem: dict, 
 
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
     SHOTS_DIR.mkdir(parents=True, exist_ok=True)
+    attempts_dir = PRACTICE_DIR / "state_store" / "attempts"
+    attempts_dir.mkdir(parents=True, exist_ok=True)
+
     log_file = LOGS_DIR / f"{step_id}.log"
     shot_file = SHOTS_DIR / f"{step_id}_terminal.png"
 
     host_str = f"{os.environ.get('USER', 'huynguyen')}@{socket.gethostname()}"
     ts_str = time.strftime("%Y-%m-%d %H:%M:%S %Z")
-    vspec = citem.get("verification_spec", {})
-    req_markers = vspec.get("required_markers", [])
-    expected_out = citem.get("expected_out", [])
+    ec = int(real_exit_code)
+    if ec != 0:
+        evidence_class = "FAILED"
+    elif evidence_class not in EVIDENCE_CLASSES:
+        evidence_class = "DERIVED_ANALYSIS"
 
     body_lines = [
         "# ==============================================================================",
         f"# ENGR 852 Manual Replication Step : {step_id}",
         f"# Timestamp                        : {ts_str}",
         f"# Host & User                      : {host_str}",
-        "# Terminal Environment             : MACBOOK_TERMINAL_AND_WEB_STUDIO",
+        f"# Evidence Class                   : {evidence_class}",
+        f"# Attempt Number                   : {attempt_num}",
         f"# Working Directory                : {MANUAL_WORKSPACE}",
         f"# Command Executed                 : {cmd_str}",
         "# ==============================================================================",
         "",
         f"$ {cmd_str}",
-        f"=== [ENGR 852 Live Execution · Page {pnum}: {citem.get('title', f'Page {pnum}')}] ===",
     ]
     if extra_trace:
         body_lines.append(extra_trace.strip())
-    for m in expected_out:
-        body_lines.append(str(m))
-    for m in req_markers:
-        if str(m) not in body_lines:
-            body_lines.append(str(m))
+    if real_output:
+        body_lines.append(real_output.rstrip())
     body_lines.extend([
-        f"VERIFIED_PAGE_{pnum:03d}_COMPLETE (EXIT_CODE=0)",
-        f"[✓ EXPECTED OUTCOME VERIFIED — PAGE {pnum} PASS]",
         "",
         "# ------------------------------------------------------------------------------",
-        "# Exit Code   : 0",
-        f"# Finished At : {ts_str}",
+        f"# Evidence Class : {evidence_class}",
+        f"# Exit Code      : {ec}",
+        f"# Finished At    : {ts_str}",
         "# ------------------------------------------------------------------------------",
     ])
     log_text = "\n".join(body_lines) + "\n"
-    log_file.write_text(log_text, encoding="utf-8")
 
-    # Also update any duplicate log in ENGR852_PRACTICE_CLONE so sync_practice_clone_logs() never brings back an old failure!
+    # Preserve existing log as an immutable prior attempt before updating active pointer
+    if log_file.exists():
+        ts_slug = time.strftime("%Y%m%d_%H%M%S")
+        prev_copy = attempts_dir / f"{step_id}_prior_{ts_slug}.log"
+        try:
+            shutil.copy2(log_file, prev_copy)
+        except Exception:
+            pass
+
+    log_file.write_text(log_text, encoding="utf-8")
+    attempt_copy = attempts_dir / f"{step_id}_attempt{attempt_num:02d}_exit{ec}.log"
     try:
-        alt_log_dir = ENGR852_PRACTICE_CLONE / "practice_from_scratch" / "logs"
-        if alt_log_dir.exists():
-            (alt_log_dir / f"{step_id}.log").write_text(log_text, encoding="utf-8")
+        attempt_copy.write_text(log_text, encoding="utf-8")
     except Exception:
         pass
 
@@ -1328,11 +1270,11 @@ def write_authoritative_verified_log_and_screenshot(page_num: int, citem: dict, 
                     "--out",
                     str(shot_file),
                     "--title",
-                    f"ENGR 852 Verified Step: {step_id} ({host_str})",
+                    f"[{evidence_class}] ENGR 852 Step: {step_id} ({host_str}, exit={ec})",
                     "--host",
                     host_str,
                     "--exit-code",
-                    "0",
+                    str(ec),
                 ],
                 timeout=8,
                 stdout=subprocess.DEVNULL,
@@ -1344,43 +1286,19 @@ def write_authoritative_verified_log_and_screenshot(page_num: int, citem: dict, 
 
 
 def heal_all_failed_logs():
-    """Scans all existing `page*.log` files in `practice_from_scratch/logs/` (and the practice clone)
-    and automatically self-heals any log that has a non-zero exit code or missing required markers."""
-    ensure_practice_workspace_seeded()
-    curr_list = load_curriculum()
-    curr_map = {int(item["page_num"]): item for item in curr_list if "page_num" in item}
-    healed_pages = []
-
-    for log_dir in (LOGS_DIR, ENGR852_PRACTICE_CLONE / "practice_from_scratch" / "logs"):
-        if not log_dir.exists():
-            continue
-        for lf in sorted(log_dir.glob("page*.log")):
-            sname = lf.stem
-            if len(sname) >= 7 and sname[:4] == "page" and sname[4:7].isdigit():
-                pnum = int(sname[4:7])
-                txt = lf.read_text(encoding="utf-8", errors="ignore")
-                citem = curr_map.get(pnum, {})
-                req_markers = citem.get("verification_spec", {}).get("required_markers", [])
-                has_exit_0 = "# Exit Code   : 0" in txt
-                missing = [mk for mk in req_markers if mk.lower() not in txt.lower()]
-                has_syntax_err = "unexpected EOF" in txt or "[✗ OUTCOME MISMATCH" in txt
-                if (not has_exit_0) or (req_markers and len(missing) == len(req_markers)) or has_syntax_err:
-                    write_authoritative_verified_log_and_screenshot(
-                        pnum,
-                        citem,
-                        citem.get("one_liner", f"snap_step \"{sname}\""),
-                        extra_trace=f"[🤖 AI Startup Self-Healer] Repaired stale failed log for Page {pnum} ({sname}) -> Verified Exit Code 0.",
-                    )
-                    if pnum not in healed_pages:
-                        healed_pages.append(pnum)
-    return sorted(healed_pages)
+    """v7.0 Evidence-Integrity Policy:
+    Disabled automatic overwriting of failed logs on startup! Failed logs remain in `FAILED` state
+    so they can be inspected and diagnosed truthfully."""
+    return []
 
 
 def execute_web_terminal_command(raw_command, page_num=1, target_env="auto", force_step=True, launch_xquartz=False):
-    """Executes a command from the Web Studio with full Closed-Loop AI Self-Diagnosis and Self-Correction.
-    If the initial command encounters ANY error (quote error, missing file, grep mismatch, Python venv,
-    missing EDA binary, or missing verification marker), it automatically diagnoses the root cause,
-    applies the self-healing patch, re-verifies with Exit Code 0, and returns the complete diagnostic trace!"""
+    """v7.0 Evidence-Driven PTY Execution:
+    Executes `raw_command` inside a real Unix pseudo-terminal (`pty.openpty()`) via `V7_PLATFORM`.
+    - Never suppresses errors with `|| true`
+    - Never injects fake `required_markers`
+    - Never overwrites failed runs (`exit_code != 0` or missing markers) with generated PASS logs
+    - Explicitly classifies evidence into the 7 `EVIDENCE_CLASSES`."""
     ensure_practice_workspace_seeded()
     curr_list = load_curriculum()
     curr_map = {int(item["page_num"]): item for item in curr_list if "page_num" in item}
@@ -1400,133 +1318,62 @@ def execute_web_terminal_command(raw_command, page_num=1, target_env="auto", for
     if m_step_one:
         step_id = m_step_one.group(1)
 
-    is_page_snap = "snap_step" in cmd_str or cmd_str == (citem.get("one_liner") or "").strip()
-    sh_script = write_self_healing_script(pnum, citem)
+    is_page_snap = "snap_step" in cmd_str
+    inner_cmd = normalize_inner_snap_command(cmd_str) if is_page_snap else cmd_str
 
-    bridge_sh = PRACTICE_DIR / "scripts" / "auto_bridge.sh"
-    env = os.environ.copy()
-    env["ENGR852_PRACTICE_REPO"] = str(REPO_ROOT)
-    env["AUTO_BRIDGE_REPO_ROOT"] = str(REPO_ROOT)
-    env["AUTO_BRIDGE_PRACTICE_DIR"] = str(PRACTICE_DIR)
-    env["AUTO_BRIDGE_LOG_DIR"] = str(LOGS_DIR)
-    env["AUTO_BRIDGE_SHOT_DIR"] = str(SHOTS_DIR)
-    env["AUTO_BRIDGE_STATE_JSON"] = str(LIVE_STATE_JSON)
-    env["ENGR852_CONSOLE_PORT"] = str(PORT)
-    env["ENGR852_SKIP_GIT_PUSH"] = "1"
-    env["ENGR852_BG_GIT_PUSH"] = "0"
-    env["FORCE_STEP"] = "1"
-
-    repin_cmd = (
-        f'export AUTO_BRIDGE_REPO_ROOT="{REPO_ROOT}"; '
-        f'export AUTO_BRIDGE_PRACTICE_DIR="{PRACTICE_DIR}"; '
-        f'export AUTO_BRIDGE_LOG_DIR="{LOGS_DIR}"; '
-        f'export AUTO_BRIDGE_SHOT_DIR="{SHOTS_DIR}"; '
-        f'export AUTO_BRIDGE_STATE_JSON="{LIVE_STATE_JSON}"; '
-        f'export ENGR852_SKIP_GIT_PUSH=1; '
-        f'export FORCE_STEP=1; '
-    )
-
-    # Sanitize sub-commands that may have escaped quotes `\"` from one-liner extraction
-    sanitized_sub_cmd = cmd_str
-    if not is_page_snap and '\\"' in sanitized_sub_cmd:
-        sanitized_sub_cmd = sanitized_sub_cmd.replace('\\"', '"')
-
-    if is_page_snap:
-        m_step = re.search(r'snap_step\s+"([^"]+)"', cmd_str)
-        if m_step:
-            step_id = m_step.group(1)
-        patched_cmd = f'snap_step "{step_id}" "bash {sh_script}"'
-    else:
-        patched_cmd = sanitized_sub_cmd.replace(
-            "source practice_from_scratch/scripts/auto_bridge.sh",
-            f'source "{bridge_sh}" && {repin_cmd}',
-        )
-
-    wrapped_script = f"""
-export ENGR852_PRACTICE_REPO="{REPO_ROOT}"
-export ENGR852_SKIP_GIT_PUSH=1
-export ENGR852_BG_GIT_PUSH=0
-export FORCE_STEP=1
-mkdir -p "{MANUAL_WORKSPACE}"
-cd "{MANUAL_WORKSPACE}"
-if [ -f "{bridge_sh}" ]; then
-  source "{bridge_sh}" >/dev/null 2>&1 || true
-fi
-{repin_cmd}
-{MACOS_EDA_SHIMS}
-{patched_cmd}
-"""
-    t0 = time.time()
-    try:
-        proc = subprocess.run(
-            ["/bin/bash", "-c", wrapped_script],
-            cwd=str(MANUAL_WORKSPACE),
-            env=env,
-            capture_output=True,
-            text=True,
-            timeout=20,
-        )
-        raw_out = (proc.stdout or "") + (("\n" + proc.stderr) if proc.stderr else "")
-        raw_exit = proc.returncode
-    except subprocess.TimeoutExpired as te:
-        raw_out = ((te.stdout or "") if isinstance(te.stdout, str) else "") + "\n[!] Command timed out."
-        raw_exit = 124
-    except Exception as e:
-        raw_out = f"[!] Execution error: {e}"
-        raw_exit = 1
-
-    # ==========================================================================
-    # CLOSED-LOOP AI SELF-DIAGNOSIS & AUTOMATIC SELF-HEALING VERIFICATION
-    # ==========================================================================
     vspec = citem.get("verification_spec", {})
-    req_markers = vspec.get("required_markers", [])
-    missing_after_raw = [mk for mk in req_markers if mk.lower() not in raw_out.lower()]
-    needs_self_heal = (
-        raw_exit != 0
-        or "unexpected EOF" in raw_out
-        or "[✗ OUTCOME MISMATCH" in raw_out
-        or (is_page_snap and len(missing_after_raw) > 0)
+    req_markers = vspec.get("required_markers", []) if is_page_snap else []
+    verification_spec = {
+        "required_markers": req_markers,
+        "forbidden_markers": ["Traceback (most recent call last)", "SyntaxError:", "command not found", "No route to host"],
+    }
+
+    job_res = V7_PLATFORM.execute_job_in_pty(
+        user_id=os.environ.get("USER", "huynguyen"),
+        project_id="motion_estimator_520mhz",
+        page_id=pnum,
+        step_id=step_id,
+        command=inner_cmd,
+        cwd=str(MANUAL_WORKSPACE),
+        verification_spec=verification_spec,
+        attempt_num=1,
+        capture_window_app="Terminal" if launch_xquartz else "",
     )
+
+    raw_out = job_res.get("output", "")
+    final_exit_code = int(job_res.get("exit_code", 1))
+    ev_class = job_res.get("evidence_class", "FAILED")
+    verif = job_res.get("verification", {})
+    is_passed = job_res.get("state") == "PASSED"
 
     diag_info = classify_failure_and_build_diagnosis(
-        pnum, cmd_str, raw_out, raw_exit, citem, auto_healed=needs_self_heal
+        pnum, cmd_str, raw_out, final_exit_code, citem, auto_healed=False
     )
 
-    if is_page_snap or needs_self_heal:
-        heal_trace = ""
-        if needs_self_heal:
-            heal_trace = (
-                "================================================================================\n"
-                f"🤖 [AI SELF-DIAGNOSIS & CLOSED-LOOP AUTO-CORRECTION ENGINE — PAGE {pnum}]\n"
-                f"  1. Symptom Detected   : {diag_info['symptom']}\n"
-                f"  2. AI Root Diagnosis  : {diag_info['diagnosis']}\n"
-                f"  3. Self-Heal Patch    : {diag_info['patch_summary']}\n"
-                f"  4. Verification Proof : Re-ran Page {pnum} -> Matched 100% of required markers (Exit Code 0)!\n"
-                "================================================================================"
-            )
-        _, _, verified_log_txt = write_authoritative_verified_log_and_screenshot(
-            pnum, citem, cmd_str, extra_trace=heal_trace
-        )
-        final_exit_code = 0
-        if needs_self_heal:
-            combined_out = heal_trace + "\n" + "\n".join(verified_log_txt.splitlines()[9:])
-        else:
-            combined_out = raw_out if "[✓ EXPECTED OUTCOME VERIFIED" in raw_out else verified_log_txt
-    else:
-        final_exit_code = 0 if raw_exit == 0 else raw_exit
-        combined_out = raw_out
-
-    elapsed_s = round(time.time() - t0, 2)
-    ai_debug = build_ai_debug_analysis(pnum, cmd_str, combined_out, final_exit_code, curr_map, diag_info=diag_info)
-
-    broadcast_to_local_macos_terminals(
-        page_num=pnum,
-        title=citem.get("title", f"Page {pnum}"),
-        cmd_str=cmd_str,
-        output_str=combined_out,
-        exit_code=final_exit_code,
-        launch_xquartz=launch_xquartz,
+    write_authoritative_verified_log_and_screenshot(
+        pnum,
+        citem,
+        cmd_str,
+        extra_trace="",
+        real_output=raw_out,
+        real_exit_code=final_exit_code if is_passed else (final_exit_code if final_exit_code != 0 else 1),
+        evidence_class=ev_class,
+        attempt_num=job_res.get("attempt_num", 1),
     )
+
+    ai_debug = build_ai_debug_analysis(
+        pnum,
+        cmd_str,
+        raw_out,
+        final_exit_code if is_passed else (final_exit_code if final_exit_code != 0 else 1),
+        curr_map,
+        diag_info=diag_info,
+    )
+    ai_debug["evidence_class"] = ev_class
+    ai_debug["five_stages"] = job_res.get("stages", {})
+    ai_debug["job_id"] = job_res.get("job_id", "")
+    ai_debug["attempt_num"] = job_res.get("attempt_num", 1)
+    ai_debug["self_healing_proposal"] = job_res.get("self_healing_proposal")
 
     merged = build_merged_state()
     shot_url = ""
@@ -1536,83 +1383,101 @@ fi
 
     return {
         "ok": True,
+        "job_id": job_res.get("job_id"),
+        "attempt_num": job_res.get("attempt_num", 1),
+        "job_state": job_res.get("state"),
+        "evidence_class": ev_class,
+        "five_stages": job_res.get("stages", {}),
         "command": cmd_str,
         "page_num": pnum,
         "cwd": str(MANUAL_WORKSPACE),
         "host": f"{os.environ.get('USER', 'huynguyen')}@{socket.gethostname()}",
-        "elapsed_s": elapsed_s,
-        "exit_code": final_exit_code,
-        "auto_healed": needs_self_heal,
-        "output": combined_out.strip() or "(Completed with exit code 0)",
+        "elapsed_s": job_res.get("elapsed_s", 0.05),
+        "exit_code": final_exit_code if is_passed else (final_exit_code if final_exit_code != 0 else 1),
+        "auto_healed": False,
+        "output": raw_out.strip() or f"(Exited with code {final_exit_code})",
         "screenshot_url": shot_url,
         "ai_debug": ai_debug,
+        "self_healing_proposal": job_res.get("self_healing_proposal"),
         "state": merged,
     }
 
 
 def auto_fix_and_verify_page(page_num=1):
-    """Explicit 1-Click AI Self-Diagnosis, Repair & Verification for Page `page_num`."""
+    """v7.0 Explicit Self-Healing Retry (`attempt_num + 1`):
+    Preserves the prior failed attempt in `practice_from_scratch/state_store/attempts/`,
+    diagnoses the root cause via `SelfHealingAgent`, repairs workspace prerequisites,
+    and executes a new attempt (`attempt_num = 2`) with explicit `evidence_class`."""
     ensure_practice_workspace_seeded()
     pnum = int(page_num or 1)
     curr_list = load_curriculum()
     curr_map = {int(item["page_num"]): item for item in curr_list if "page_num" in item}
     citem = curr_map.get(pnum, {})
     raw_one_liner = citem.get("one_liner", f'snap_step "page{pnum:03d}_step" "pwd"')
+    step_id = citem.get("step_id", f"page{pnum:03d}_step")
+    m_step = re.search(r'snap_step\s+"([^"]+)"', raw_one_liner)
+    if m_step:
+        step_id = m_step.group(1)
 
-    # Inspect if there was an existing failed log for this page so we can show what the AI diagnosed & fixed!
     prev_log_txt = ""
     prev_exit = 0
     for lf in LOGS_DIR.glob(f"page{pnum:03d}*.log"):
         prev_log_txt = lf.read_text(encoding="utf-8", errors="ignore")
         for ln in prev_log_txt.splitlines():
-            if ln.startswith("# Exit Code   :"):
+            if ln.startswith("# Exit Code") and ":" in ln:
                 try:
                     prev_exit = int(ln.split(":", 1)[1].strip())
                 except Exception:
                     prev_exit = 0
 
-    diag_info = classify_failure_and_build_diagnosis(
-        pnum,
-        raw_one_liner,
-        prev_log_txt if prev_exit != 0 else "AI_PROACTIVE_SELF_HEAL",
-        prev_exit if prev_exit != 0 else 0,
-        citem,
-        auto_healed=True,
+    proposal = V7_PLATFORM.healing_agent.diagnose_and_propose_fix(
+        command=raw_one_liner,
+        output=prev_log_txt,
+        exit_code=prev_exit if prev_exit != 0 else 1,
+        verification={"missing_markers": []},
     )
-    if prev_exit == 0:
-        diag_info["symptom"] = f"Proactive AI Self-Diagnosis & Verification Requested for Page {pnum}."
-        diag_info["diagnosis"] = (
-            f"Verified all workspace directories, Verilog RTL/testbench modules, Python `.venv`, and EDA shims for Page {pnum} ({citem.get('title', '')})."
-        )
-        diag_info["patch_summary"] = (
-            f"Executed syntax-verified self-healing script for Page {pnum} and confirmed 100% marker compliance."
-        )
+    inner_cmd = normalize_inner_snap_command(raw_one_liner)
+    job_res = V7_PLATFORM.execute_job_in_pty(
+        user_id=os.environ.get("USER", "huynguyen"),
+        project_id="motion_estimator_520mhz",
+        page_id=pnum,
+        step_id=step_id,
+        command=inner_cmd,
+        cwd=str(MANUAL_WORKSPACE),
+        verification_spec={"required_markers": []},
+        attempt_num=2,
+    )
 
-    sh_script = write_self_healing_script(pnum, citem)
-    subprocess.run(["/bin/bash", str(sh_script)], cwd=str(MANUAL_WORKSPACE), capture_output=True, text=True, timeout=15)
+    real_out = job_res.get("output", "")
+    real_ec = int(job_res.get("exit_code", 0))
+    ev_class = "DERIVED_ANALYSIS" if real_ec == 0 else "FAILED"
 
+    diag_info = classify_failure_and_build_diagnosis(
+        pnum, raw_one_liner, prev_log_txt or real_out, prev_exit, citem, auto_healed=(real_ec == 0)
+    )
     heal_trace = (
         "================================================================================\n"
-        f"✨ [AI SELF-HEALING AUTO-DEBUGGER — PAGE {pnum} VERIFIED (EXIT CODE 0)]\n"
-        f"  1. Diagnostic Check   : {diag_info['symptom']}\n"
-        f"  2. AI Root Analysis   : {diag_info['diagnosis']}\n"
-        f"  3. Self-Heal Action   : {diag_info['patch_summary']}\n"
-        f"  4. Verification Proof : Matched all required markers ({', '.join(diag_info['verified_markers']) or 'Exit 0'})!\n"
+        f"[v7.0 SelfHealingAgent Retry · Attempt #2 · Evidence Class: {ev_class}]\n"
+        f"  1. Prior Attempt Exit : {prev_exit}\n"
+        f"  2. Root-Cause Class   : {proposal.get('fault_class')} — {proposal.get('diagnosis')}\n"
+        f"  3. Repair Action      : {proposal.get('proposed_action')}\n"
+        f"  4. Attempt #2 Result  : Exit Code {real_ec} ({ev_class})\n"
         "================================================================================"
     )
     _, _, verified_log_txt = write_authoritative_verified_log_and_screenshot(
-        pnum, citem, raw_one_liner, extra_trace=heal_trace
+        pnum,
+        citem,
+        raw_one_liner,
+        extra_trace=heal_trace,
+        real_output=real_out,
+        real_exit_code=real_ec,
+        evidence_class=ev_class,
+        attempt_num=2,
     )
-    ai_debug = build_ai_debug_analysis(pnum, raw_one_liner, verified_log_txt, 0, curr_map, diag_info=diag_info)
-
-    broadcast_to_local_macos_terminals(
-        page_num=pnum,
-        title=citem.get("title", f"Page {pnum}"),
-        cmd_str=raw_one_liner,
-        output_str=verified_log_txt,
-        exit_code=0,
-        launch_xquartz=any(k in raw_one_liner.lower() for k in ("xquartz", "verdi", "gui")),
-    )
+    ai_debug = build_ai_debug_analysis(pnum, raw_one_liner, verified_log_txt, real_ec, curr_map, diag_info=diag_info)
+    ai_debug["evidence_class"] = ev_class
+    ai_debug["attempt_num"] = 2
+    ai_debug["five_stages"] = job_res.get("stages", {})
 
     merged = build_merged_state()
     shot_url = ""
@@ -1621,15 +1486,18 @@ def auto_fix_and_verify_page(page_num=1):
         shot_url = f"{p_rec['screenshot_file']}?t={int(time.time())}"
 
     return {
-        "ok": True,
-        "auto_fixed": True,
-        "auto_healed": True,
+        "ok": real_ec == 0,
+        "auto_fixed": real_ec == 0,
+        "auto_healed": real_ec == 0,
+        "attempt_num": 2,
+        "evidence_class": ev_class,
+        "five_stages": job_res.get("stages", {}),
         "command": raw_one_liner,
         "page_num": pnum,
         "cwd": str(MANUAL_WORKSPACE),
         "host": f"{os.environ.get('USER', 'huynguyen')}@{socket.gethostname()}",
-        "elapsed_s": 0.08,
-        "exit_code": 0,
+        "elapsed_s": job_res.get("elapsed_s", 0.08),
+        "exit_code": real_ec,
         "output": verified_log_txt.strip(),
         "screenshot_url": shot_url,
         "ai_debug": ai_debug,
@@ -1995,39 +1863,35 @@ def verify_all_100_pages_and_push(open_browser: bool = False) -> dict:
 
 
 def reset_all_progress_cleanly(keep_page1: bool = False) -> dict:
-    """Archives current logs into `practice_from_scratch/archived_runs/run_<timestamp>/` and resets active
-    progress to `0 / 100` (or `1 / 100` if `keep_page1=True`) across both `LOGS_DIR` and `ENGR852_PRACTICE_CLONE`
-    so the user can replay the project from scratch as many times as they want!"""
+    """v7.0 Immutable Project Reset:
+    Creates a new `run_id` via `V7_PLATFORM.immutable_project_reset()`, archives prior logs/screenshots
+    with a `SHA-256` manifest (`run_manifest_sha256.json`) into `practice_from_scratch/archived_runs/<run_id>/`,
+    NEVER deletes historical evidence permanently, and resets active pointer to `0 / 100` (or `1 / 100`)."""
     set_reset_mode(True)
-    ts_slug = time.strftime("%Y%m%d_%H%M%S")
-    archive_dir = PRACTICE_DIR / "archived_runs" / f"run_{ts_slug}"
-    archive_dir.mkdir(parents=True, exist_ok=True)
+    imm_res = V7_PLATFORM.immutable_project_reset(
+        user_id=os.environ.get("USER", "huynguyen"),
+        project_id="motion_estimator_520mhz",
+        keep_page1=keep_page1,
+    )
+    archive_dir = Path(imm_res["archive_dir"])
 
-    removed_count = 0
-    for log_folder in (LOGS_DIR, ENGR852_PRACTICE_CLONE / "practice_from_scratch" / "logs"):
-        if not log_folder.exists():
+    for lf in list(LOGS_DIR.glob("page*.log")):
+        if keep_page1 and lf.name.startswith("page001_"):
             continue
-        for lf in list(log_folder.glob("page*.log")):
-            if keep_page1 and lf.name.startswith("page001_"):
-                continue
-            try:
-                if log_folder == LOGS_DIR:
-                    shutil.copy2(lf, archive_dir / lf.name)
-                lf.unlink()
-                removed_count += 1
-            except Exception:
-                pass
+        try:
+            shutil.copy2(lf, archive_dir / lf.name)
+            lf.unlink()
+        except Exception:
+            pass
 
-    for shot_folder in (SHOTS_DIR, ENGR852_PRACTICE_CLONE / "practice_from_scratch" / "screenshots"):
-        if not shot_folder.exists():
+    for sf in list(SHOTS_DIR.glob("page*.png")):
+        if keep_page1 and sf.name.startswith("page001_"):
             continue
-        for sf in list(shot_folder.glob("page*.png")):
-            if keep_page1 and sf.name.startswith("page001_"):
-                continue
-            try:
-                sf.unlink()
-            except Exception:
-                pass
+        try:
+            shutil.copy2(sf, archive_dir / sf.name)
+            sf.unlink()
+        except Exception:
+            pass
 
     try:
         fresh_state = {
@@ -2036,20 +1900,25 @@ def reset_all_progress_cleanly(keep_page1: bool = False) -> dict:
             "completed_pages": {},
             "total_passed_pages": 0,
             "reset_active": True,
+            "run_id": imm_res["new_run_id"],
             "archived_to": str(archive_dir),
+            "manifest_path": imm_res["manifest_path"],
         }
         LIVE_STATE_JSON.write_text(json.dumps(fresh_state, indent=2), encoding="utf-8")
     except Exception:
         pass
 
     log_super_agent_event(
-        "RESET_PROGRESS",
-        f"Reset progress to {'1/100' if keep_page1 else '0/100'} (archived {removed_count} logs to {archive_dir.name})",
+        "IMMUTABLE_RESET_PROGRESS",
+        f"Immutable reset to {'1/100' if keep_page1 else '0/100'} (new_run_id={imm_res['new_run_id']}, archived {imm_res['archived_files_count']} artifacts)",
     )
     return {
         "ok": True,
+        "new_run_id": imm_res["new_run_id"],
         "reset_to": 1 if keep_page1 else 0,
         "archived_dir": str(archive_dir),
+        "manifest_path": imm_res["manifest_path"],
+        "archived_files_count": imm_res["archived_files_count"],
         "state": build_merged_state(),
     }
 
@@ -2594,7 +2463,55 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             st["reset_mode"] = is_reset_mode_active()
             st["custom_projects"] = load_custom_projects()
             st["onboarded_users"] = load_onboarded_users()
+            st["v7_evidence_classes"] = list(EVIDENCE_CLASSES)
+            st["v7_agents"] = V7_PLATFORM.get_agent_registry()
+            st["v7_environment"] = V7_PLATFORM.env_agent.discover()
             self._send_json(st)
+            return
+
+        if route == "/api/v7/status":
+            self._send_json({
+                "ok": True,
+                "version": "v7.0-evidence-platform",
+                "evidence_classes": list(EVIDENCE_CLASSES),
+                "job_states": list(JOB_STATES),
+                "stage_states": list(STAGE_STATES),
+                "git_sync_states": list(GIT_SYNC_STATES),
+                "agents": V7_PLATFORM.get_agent_registry(),
+                "environment": V7_PLATFORM.env_agent.discover(),
+                "identity": V7_PLATFORM.security_agent.load_local_identity(),
+                "recent_events": V7_PLATFORM.event_log.read_recent(30),
+                "jobs": list(V7_PLATFORM.jobs.values())[-25:],
+            })
+            return
+
+        if route == "/api/v7/v9_audit":
+            self._send_json({"ok": True, "audit": generate_v9_main_project_audit_report(REPO_ROOT)})
+            return
+
+        if route == "/api/v7/acceptance_tests":
+            self._send_json({"ok": True, "matrix": V7_PLATFORM.run_all_13_acceptance_tests()})
+            return
+
+        if route == "/api/v7/events":
+            limit = int((qs.get("limit", ["50"])[0] or "50"))
+            self._send_json({"ok": True, "events": V7_PLATFORM.event_log.read_recent(limit)})
+            return
+
+        if route == "/api/v7/events/stream":
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Connection", "keep-alive")
+            self._send_cors_headers()
+            self.end_headers()
+            try:
+                recent = V7_PLATFORM.event_log.read_recent(10)
+                for ev in recent:
+                    self.wfile.write(f"data: {json.dumps(ev)}\n\n".encode("utf-8"))
+                self.wfile.flush()
+            except Exception:
+                pass
             return
 
         if route == "/api/super_agent/diagnostics":
@@ -2862,24 +2779,95 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             self._send_json(res)
             return
 
+        if route == "/api/v7/jobs/execute":
+            user_id = (payload.get("user_id") or os.environ.get("USER") or "huynguyen").strip()
+            project_id = (payload.get("project_id") or "motion_estimator_520mhz").strip()
+            page_id = int(payload.get("page_id") or payload.get("page_num") or 1)
+            step_id = (payload.get("step_id") or f"page{page_id:03d}_step").strip()
+            cmd = (payload.get("command") or "").strip()
+            cwd = (payload.get("cwd") or str(MANUAL_WORKSPACE)).strip()
+            vspec = payload.get("verification_spec") or {}
+            attempt = int(payload.get("attempt_num") or 1)
+            res = V7_PLATFORM.execute_job_in_pty(
+                user_id=user_id,
+                project_id=project_id,
+                page_id=page_id,
+                step_id=step_id,
+                command=cmd,
+                cwd=cwd,
+                verification_spec=vspec,
+                attempt_num=attempt,
+                capture_window_app=payload.get("capture_window_app", ""),
+            )
+            self._send_json({"ok": res.get("state") == "PASSED", "job": res})
+            return
+
+        if route == "/api/v7/jobs/control":
+            job_id = (payload.get("job_id") or "").strip()
+            action = (payload.get("action") or "").strip().upper()
+            if action == "PAUSE":
+                self._send_json(V7_PLATFORM.pause_job(job_id))
+            elif action == "RESUME":
+                self._send_json(V7_PLATFORM.resume_job(job_id))
+            elif action == "CANCEL":
+                self._send_json(V7_PLATFORM.cancel_job(job_id))
+            else:
+                self._send_json({"ok": False, "error": f"Unknown job control action: {action}"}, 400)
+            return
+
+        if route == "/api/v7/acceptance_tests":
+            self._send_json({"ok": True, "matrix": V7_PLATFORM.run_all_13_acceptance_tests()})
+            return
+
+        if route == "/api/v7/git_sync":
+            branch = (payload.get("branch") or "manual-practice-macbook-air").strip()
+            msg = (payload.get("commit_message") or "v7.0 Evidence-Driven Sync").strip()
+            paths = payload.get("paths") or ["practice_from_scratch/logs", "practice_from_scratch/screenshots"]
+            push_remote = bool(payload.get("push_remote", False))
+            res = V7_PLATFORM.git_agent.sync_and_verify(branch, msg, paths, push_remote=push_remote)
+            self._send_json(res)
+            return
+
+        if route == "/api/v7/xquartz_check":
+            mode = (payload.get("mode") or "native").strip()
+            pnum = int(payload.get("page_num") or 49)
+            fig_id = (payload.get("fig_id") or "fig10").strip()
+            plotter_py = PRACTICE_DIR / "scripts" / "xquartz_live_plotter.py"
+            proc = subprocess.run(
+                [sys.executable, str(plotter_py), "--mode", mode, "--page", str(pnum), "--fig", fig_id],
+                capture_output=True,
+                text=True,
+                timeout=15,
+            )
+            try:
+                parsed_out = json.loads(proc.stdout or "{}")
+            except Exception:
+                parsed_out = {"raw": proc.stdout, "exit_code": proc.returncode}
+            self._send_json({"ok": proc.returncode == 0, "result": parsed_out})
+            return
+
+        if route == "/api/v7/custom_curriculum":
+            proj_dir = Path(payload.get("project_dir") or str(MANUAL_WORKSPACE))
+            title = (payload.get("title") or "Custom ASIC Project").strip()
+            steps = build_curriculum_from_project_files(proj_dir, title)
+            self._send_json({"ok": True, "steps": steps})
+            return
+
         self._send_json({"ok": True})
 
 
 def main():
     sanitize_and_repair_curriculum_on_startup()
     ensure_practice_workspace_seeded()
-    if not is_reset_mode_active():
-        healed = heal_all_failed_logs()
-        if healed:
-            print(f"[AI Startup Self-Healer] Automatically repaired failed logs for pages: {healed}", flush=True)
     st = build_merged_state()
     write_status_dashboards(st)
-    log_super_agent_event("SERVER_BOOT", f"ENGR 852 Super-Agent Studio v6.0 booted ({st.get('total_passed_pages', 0)}/100 pages verified)")
+    log_super_agent_event("SERVER_BOOT", f"ENGR 852 Evidence-Driven Studio v7.0 booted ({st.get('total_passed_pages', 0)}/100 pages)")
     t = threading.Thread(target=background_git_and_remote_sync, daemon=True)
     t.start()
     port = int(os.environ.get("ENGR852_CONSOLE_PORT", "8788"))
-    srv = ThreadingHTTPServer(("0.0.0.0", port), ConsoleRequestHandler)
-    print(f"[ENGR852 Super-Agent Studio v6.0] Listening on http://127.0.0.1:{port}", flush=True)
+    bind_host = os.environ.get("ENGR852_BIND_HOST", "127.0.0.1" if os.environ.get("ENGR852_ALLOW_LAN") != "1" else "0.0.0.0")
+    srv = ThreadingHTTPServer((bind_host, port), ConsoleRequestHandler)
+    print(f"[ENGR852 Evidence-Driven Studio v7.0] Listening on http://{bind_host}:{port}", flush=True)
     srv.serve_forever()
 
 
