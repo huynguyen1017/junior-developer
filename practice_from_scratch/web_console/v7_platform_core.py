@@ -1823,58 +1823,166 @@ class OrchestratorPlatform:
         cap_info = n_state.get("capture") or {}
         fsdb_audit = n_state.get("fsdb_audit") or {}
         passed = bool(sig_verif.get("all_verified", False))
+        raw_status = str(n_state.get("status", "FAILED"))
+        is_blocked = raw_status.startswith("BLOCKED")
+        cap_sha = cap_info.get("redacted_sha256") or cap_info.get("sha256") or ""
+        x11_insp = n_state.get("local_x11_inspection") or {}
 
         stages = {
             "stage1_terminal_host": {
-                "state": "PASSED",
-                "detail": f"Authorized {resolved_user}@{socket.gethostname()} · SSH -Y to {n_state.get('remote_target')}",
+                "state": "PASSED" if x11_insp.get("xquartz_reachable", True) else "BLOCKED",
+                "detail": (
+                    f"Authorized {resolved_user}@{socket.gethostname()} · Local XQuartz DISPLAY={x11_insp.get('display', ':0')} "
+                    f"(Verdi windows={x11_insp.get('verdi_window_count', 0)}, other X11={len(x11_insp.get('non_verdi_x11_windows', []))})"
+                ),
                 "updated_at": utc_iso(),
             },
             "stage2_xquartz_verdi": {
-                "state": "PASSED" if n_state.get("window_id") else "FAILED",
+                "state": "PASSED" if n_state.get("window_id") else ("BLOCKED" if is_blocked else "FAILED"),
                 "detail": (
                     f"Verdi window {n_state.get('window_id')} ({n_state.get('window_meta', {}).get('title', '')[:64]}) · "
                     f"Signal rails verified={passed}"
+                    if n_state.get("window_id")
+                    else (n_state.get("error") or f"No active Verdi window ({raw_status})")
                 ),
                 "updated_at": utc_iso(),
             },
             "stage3_tool_execution": {
-                "state": "PASSED" if fsdb_audit.get("fsdb_verified") else "FAILED",
-                "detail": f"Verdi W-2024.09-1 loaded {n_state.get('fsdb')} ({fsdb_audit.get('fsdb_unique_variables', 0)} vars) + {n_state.get('tcl')}",
+                "state": "PASSED" if fsdb_audit.get("fsdb_verified") else ("BLOCKED" if is_blocked else "FAILED"),
+                "detail": (
+                    f"Verdi W-2024.09-1 loaded {n_state.get('fsdb')} ({fsdb_audit.get('fsdb_unique_variables', 0)} vars) + {n_state.get('tcl')}"
+                    if fsdb_audit.get("fsdb_verified")
+                    else (n_state.get("error") or f"Remote EDA preflight status: {raw_status}")
+                ),
                 "updated_at": utc_iso(),
             },
             "stage4_independent_verifier": {
-                "state": "PASSED" if passed else "FAILED",
-                "detail": sig_verif.get("pixel_metrics", {}).get("reason", n_state.get("status", "")),
+                "state": "PASSED" if passed else ("BLOCKED" if is_blocked else "FAILED"),
+                "detail": sig_verif.get("pixel_metrics", {}).get("reason") or n_state.get("error") or raw_status,
                 "updated_at": utc_iso(),
             },
             "stage5_evidence_github_sync": {
-                "state": "PASSED" if cap_info.get("sha256") else "FAILED",
-                "detail": f"Window-only PNG sha256={cap_info.get('sha256', '')[:14]}... (redacted={cap_info.get('privacy_redacted')})",
+                "state": "PASSED" if cap_sha else ("BLOCKED" if is_blocked else "FAILED"),
+                "detail": (
+                    f"Window-only PNG sha256={cap_sha[:14]}... (redacted={cap_info.get('privacy_redacted')})"
+                    if cap_sha
+                    else f"No live window capture saved ({raw_status})"
+                ),
                 "updated_at": utc_iso(),
             },
         }
         n_state["stages"] = stages
         n_state["ok"] = passed
-        n_state["state"] = "PASSED" if passed else n_state.get("status", "FAILED")
+        n_state["state"] = "PASSED" if passed else ("BLOCKED" if is_blocked else raw_status)
 
         jobs = self._load_jobs_index()
         jobs[job_id] = n_state
         self._save_jobs_index(jobs)
         append_versioned_event(
-            "NATIVE_VERDI_RUN_COMPLETED" if passed else "NATIVE_VERDI_RUN_PENDING_OR_FAILED",
+            "NATIVE_VERDI_RUN_COMPLETED" if passed else ("NATIVE_VERDI_RUN_BLOCKED" if is_blocked else "NATIVE_VERDI_RUN_PENDING_OR_FAILED"),
             "VisualDemonstrationAgent",
             {
                 "job_id": job_id,
                 "fig_id": fig_id,
                 "window_id": n_state.get("window_id"),
                 "controller_state": n_state.get("controller_state"),
+                "connection_state": n_state.get("connection_state"),
                 "status": n_state.get("status"),
                 "evidence_class": n_state.get("evidence_class"),
                 "signal_verification": sig_verif,
             },
         )
         return n_state
+
+    @property
+    def native_verdi_runs(self) -> dict[str, dict]:
+        """Returns a dictionary of all recorded Native Verdi runs indexed by job_id."""
+        import engr852_native_verdi_bridge as native_bridge
+        out: dict[str, dict] = {}
+        try:
+            if native_bridge.ROOT.is_dir():
+                for child in sorted(native_bridge.ROOT.iterdir()):
+                    jp = child / "job.json"
+                    if child.is_dir() and jp.is_file():
+                        try:
+                            data = json.loads(jp.read_text(encoding="utf-8"))
+                            jid = data.get("job_id") or child.name
+                            out[jid] = data
+                        except Exception:
+                            pass
+        except Exception:
+            pass
+        jobs = self._load_jobs_index()
+        for jid, jdata in jobs.items():
+            if isinstance(jdata, dict) and ("fig_id" in jdata or "controller_state" in jdata):
+                if jid in out and "stages" in jdata:
+                    out[jid]["stages"] = jdata["stages"]
+                elif jid not in out:
+                    out[jid] = jdata
+        return out
+
+    def list_native_verdi_runs(self, limit: int = 25) -> list[dict]:
+        runs = list(self.native_verdi_runs.values())
+        runs.sort(key=lambda r: str(r.get("created_at_utc", "")), reverse=True)
+        return runs[:limit]
+
+    def get_native_verdi_live_status(self, job_id: str | None = None, fig_id: str = "fig10") -> dict:
+        import engr852_native_verdi_bridge as native_bridge
+        try:
+            x11_env = native_bridge.inspect_local_x11_environment()
+            verdi_wins = x11_env.get("verdi_windows", []) or []
+            xterm_wins = x11_env.get("xterm_windows", []) or []
+            rec_ev = self.get_recorded_figure_evidence(fig_id)
+            base_x11 = {
+                "xquartz_running": bool(x11_env.get("xquartz_running")),
+                "display": x11_env.get("display", ":0"),
+                "xterm_window_found": len(xterm_wins) > 0,
+                "xterm_window_id": xterm_wins[0].get("window_id", "") if xterm_wins else "",
+                "verdi_window_found": len(verdi_wins) > 0,
+                "verdi_window_id": verdi_wins[0].get("window_id", "") if verdi_wins else "",
+                "local_x11_inspection": x11_env,
+                "recorded_evidence": rec_ev,
+            }
+            if job_id and str(job_id).strip():
+                p = native_bridge.state_path(str(job_id).strip())
+                if p.exists():
+                    st = native_bridge.get_live_connection_status(str(job_id).strip())
+                    jobs = self._load_jobs_index()
+                    if job_id in jobs and "stages" in jobs[job_id]:
+                        st["stages"] = jobs[job_id]["stages"]
+                    return {"ok": True, **base_x11, **st}
+            conn_state = "GUI_OPEN" if verdi_wins else "BLOCKED"
+            return {
+                "ok": True,
+                "job_id": job_id or "",
+                "fig_id": fig_id,
+                "status": "GUI_OPEN_SIGNAL_VERIFICATION_PENDING" if verdi_wins else "BLOCKED_NO_LIVE_VERDI_SESSION",
+                "connection_state": conn_state,
+                "evidence_class": "REAL_APPLICATION_CAPTURE" if verdi_wins else "BLOCKED",
+                "reason": (
+                    f"Active Verdi X11 window detected ({verdi_wins[0].get('window_id')})."
+                    if verdi_wins
+                    else "XQuartz X11 inspected: no active Synopsys Verdi/nWave window open and SFSU EDA SSH session is not connected. Showing recorded verified V9 capture separately below."
+                ),
+                **base_x11,
+            }
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
+
+    def get_recorded_figure_evidence(self, fig_id: str = "fig10") -> dict:
+        import engr852_native_verdi_bridge as native_bridge
+        try:
+            ev = native_bridge.get_recorded_figure_evidence(fig_id)
+            sha = ev.get("screenshot_sha256") or ev.get("sha256") or ""
+            return {
+                "ok": bool(ev.get("exists", True)),
+                "sha256": sha,
+                "screenshot_sha256": sha,
+                **ev,
+                "evidence": ev,
+            }
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
 
     def get_native_verdi_run(self, job_id: str) -> dict:
         import engr852_native_verdi_bridge as native_bridge

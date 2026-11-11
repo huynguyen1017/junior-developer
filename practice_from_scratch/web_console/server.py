@@ -2228,14 +2228,29 @@ def get_super_agent_diagnostics() -> dict:
     }
 
 
-def super_agent_chat_and_control(payload: dict) -> dict:
+def super_agent_chat_and_control(
+    payload: dict,
+    *,
+    user: dict | None = None,
+    headers: dict | None = None,
+    client_ip: str = "127.0.0.1",
+) -> dict:
     """Super-Intelligence AI Agent conversational mentor, live debugger, and autonomous task controller.
     Can answer any ENGR 852 / Verilog / STA / DRC / XQuartz question, draw waveform/circuit diagrams,
-    AND execute live backend actions (`sync_github`, `reset_0`, `verify_all_100`, `launch_xquartz_plot`, `create_project`)."""
+    AND execute live backend actions (`sync_github`, `reset_0`, `verify_all_100`, `launch_xquartz_plot`, `create_project`)
+    strictly when authenticated with `owner_admin` / `companion` privileges."""
     msg = (payload.get("message") or "").strip()
     pnum = int(payload.get("page_num") or 1)
     level = (payload.get("level") or "beginner").strip()
     action = (payload.get("action") or "").strip()
+    is_owner_companion = bool(user and user.get("role") in ("owner_admin", "companion") and user.get("companion_verified"))
+
+    if action and action not in ("chat", "ask", "explain", "educational_demo"):
+        if not (action == "launch_xquartz_plot" and (payload.get("mode") or "native").strip() == "educational_demo"):
+            if not is_owner_companion:
+                raise PermissionError(
+                    f"403_FORBIDDEN_OWNER_COMPANION_REQUIRED: Super-Agent control action '{action}' requires verified owner/companion role."
+                )
 
     curr_list = load_curriculum()
     curr_map = {int(x["page_num"]): x for x in curr_list if "page_num" in x}
@@ -2245,6 +2260,8 @@ def super_agent_chat_and_control(payload: dict) -> dict:
     # Check if user pasted a GitHub URL or asked to create a new project
     m_gh = re.search(r"(https?://github\.com/[^\s\"'>]+)", msg)
     if action == "create_project" or m_gh or ("new project" in msg_lower and ("create" in msg_lower or "build" in msg_lower)):
+        if not is_owner_companion:
+            raise PermissionError("403_FORBIDDEN_OWNER_COMPANION_REQUIRED: Host project creation requires owner/companion role.")
         gh_url = m_gh.group(1) if m_gh else payload.get("github_url", "")
         proj_title = payload.get("title") or (
             f"GitHub Imported ASIC ({gh_url.rstrip('/').split('/')[-1]})" if gh_url else f"Custom ASIC Project ({msg[:36]})"
@@ -2275,6 +2292,8 @@ def super_agent_chat_and_control(payload: dict) -> dict:
         }
 
     if action == "sync_github" or ("github" in msg_lower and any(w in msg_lower for w in ("push", "sync", "update", "branch"))):
+        if not is_owner_companion:
+            raise PermissionError("403_FORBIDDEN_OWNER_COMPANION_REQUIRED: GitHub push/sync requires owner/companion role.")
         sync_res = verify_all_100_pages_and_push(open_browser=bool(payload.get("open_browser", False)))
         reply = (
             f"✅ **GitHub Live Branch Sync Complete (`manual-practice-macbook-air`)**!\n\n"
@@ -2293,6 +2312,8 @@ def super_agent_chat_and_control(payload: dict) -> dict:
         }
 
     if action == "reset_0" or ("reset" in msg_lower and any(w in msg_lower for w in ("0", "fresh", "redo", "again", "start over"))):
+        if not is_owner_companion:
+            raise PermissionError("403_FORBIDDEN_OWNER_COMPANION_REQUIRED: Host progress reset requires owner/companion role.")
         rst = reset_all_progress_cleanly(keep_page1=False)
         reply = (
             f"↺ **Multi-Run Reset Complete (`0 / 100 Verified`)**!\n\n"
@@ -2311,37 +2332,29 @@ def super_agent_chat_and_control(payload: dict) -> dict:
 
     if action == "launch_xquartz_plot" or any(w in msg_lower for w in ("xquartz", "waveform", "nwave", "plot", "fig")):
         fig_id = payload.get("fig_id") or ("fig7" if pnum <= 49 else ("fig8" if pnum == 50 else ("fig10" if pnum == 51 else ("fig9" if pnum == 52 else "fig10"))))
-        if fig_id == "layout":
-            fig_id = "fig10"
         mode = (payload.get("mode") or "native").strip()
         if mode == "educational_demo":
-            plotter_py = PRACTICE_DIR / "scripts" / "xquartz_live_plotter.py"
-            try:
-                subprocess.Popen(
-                    [sys.executable, str(plotter_py), "--mode", "educational_demo", "--fig", fig_id, "--page", str(pnum)],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                )
-            except Exception:
-                pass
             return {
                 "ok": True,
                 "mode": "educational_demo",
                 "evidence_class": "EDUCATIONAL_SIMULATION",
-                "reply": f"🎓 **Educational Simulation Waveform Demo (`{fig_id.upper()}` · Page {pnum})** launched (`EDUCATIONAL_SIMULATION`).",
-                "spoken_text": f"Launching the educational waveform simulation for {fig_id} on Page {pnum}.",
+                "reply": f"🎓 **Educational Simulation Waveform Demo (`{fig_id.upper()}` · Page {pnum})** (`EDUCATIONAL_SIMULATION`).",
+                "spoken_text": f"Showing educational waveform reference for {fig_id} on Page {pnum}.",
                 "canvas_mode": fig_id,
                 "open_popup_plotter": True,
                 "fig_id": fig_id,
-                "diagnostics": get_super_agent_diagnostics(),
             }
 
+        if not is_owner_companion:
+            raise PermissionError("403_FORBIDDEN_OWNER_COMPANION_REQUIRED: Native Synopsys Verdi X11 execution requires owner/companion role.")
         native_res = V7_PLATFORM.start_native_verdi_run(
-            figure_id=fig_id,
-            page_num=pnum,
-            user_id=payload.get("user_id") or "student_user",
+            fig_id=fig_id,
+            page_id=pnum,
+            user_id=(user or {}).get("user_id") or payload.get("user_id") or "owner_huynguyen",
             project_id=payload.get("project_id") or "motion_estimator_520mhz",
-            force_new_launch=bool(payload.get("force_new_launch", False)),
+            attach_existing=not bool(payload.get("force_new_launch", False)),
+            headers=headers or {},
+            client_ip=client_ip,
         )
         ok_verified = bool(native_res.get("ok") and native_res.get("signal_rail_verified"))
         win_id = native_res.get("window_id") or "none"
@@ -2501,9 +2514,24 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def _merged_auth_headers(self) -> dict:
+        hdrs = dict(self.headers)
+        try:
+            parsed = urllib.parse.urlparse(self.path)
+            qs = urllib.parse.parse_qs(parsed.query)
+            q_tok = (qs.get("token", [""])[0] or qs.get("session_token", [""])[0] or "").strip()
+            if q_tok and not hdrs.get("Authorization") and not hdrs.get("authorization"):
+                hdrs["Authorization"] = f"Bearer {q_tok}"
+            q_comp = (qs.get("companion_secret", [""])[0] or "").strip()
+            if q_comp and not hdrs.get("X-Companion-Secret"):
+                hdrs["X-Companion-Secret"] = q_comp
+        except Exception:
+            pass
+        return hdrs
+
     def _optional_viewer_user(self):
         try:
-            u = JDEV_V8.authenticate_request(dict(self.headers))
+            u = JDEV_V8.authenticate_request(self._merged_auth_headers())
             return u
         except Exception:
             return None
@@ -2518,7 +2546,7 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
         req_uid = (payload or {}).get("user_id") if isinstance(payload, dict) else None
         try:
             user = JDEV_V8.authenticate_request(
-                dict(self.headers),
+                self._merged_auth_headers(),
                 payload_user_id=req_uid,
                 require_registered=require_registered,
                 require_owner_companion=require_owner_companion,
@@ -2777,11 +2805,42 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             self._stream_sse_subscription(user_id=user["user_id"], qs=qs)
             return
 
+        if route == "/api/v8/verdi/live-status":
+            job_id_q = (qs.get("job_id", [""])[0] or "").strip()
+            fig_id_q = (qs.get("fig_id", ["fig10"])[0] or "fig10").strip()
+            live_st = V7_PLATFORM.get_native_verdi_live_status(job_id_q, fig_id=fig_id_q)
+            rec_ev = V7_PLATFORM.get_recorded_figure_evidence(fig_id_q)
+            all_rec = {
+                fid: V7_PLATFORM.get_recorded_figure_evidence(fid)
+                for fid in ("fig7", "fig8", "fig9", "fig10", "fig11", "layout")
+            }
+            self._send_json({
+                "ok": True,
+                "live_status": live_st,
+                "selected_recorded_evidence": rec_ev,
+                "recorded_figures": all_rec,
+            })
+            return
+
+        if route == "/api/v8/figures/recorded-evidence":
+            all_rec = {
+                fid: V7_PLATFORM.get_recorded_figure_evidence(fid)
+                for fid in ("fig7", "fig8", "fig9", "fig10", "fig11", "layout")
+            }
+            self._send_json({"ok": True, "evidence_class": "RECORDED_VERIFIED_CAPTURE", "figures": all_rec})
+            return
+
+        if route.startswith("/api/v8/figures/") and route.endswith("/recorded-evidence"):
+            fid = route[len("/api/v8/figures/") : -len("/recorded-evidence")].strip("/")
+            rec_ev = V7_PLATFORM.get_recorded_figure_evidence(fid)
+            self._send_json(rec_ev, 200 if rec_ev.get("ok") else 404)
+            return
+
         # ----------------------------------------------------------------------
         # PRESERVED ENGR 852 / V7.1 ROUTES (WITH SECURITY & REDACTION HARDENING)
         # ----------------------------------------------------------------------
         if route in ("/macbook_connect.sh", "/connect"):
-            user, err = self._require_authenticated_user()
+            user, err = self._require_authenticated_user(require_owner_companion=True)
             if err:
                 return
             raw, _ = PrivacyAndSecretScanner.sanitize_text(build_macbook_connect_script())
@@ -2811,7 +2870,7 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
         if route == "/api/v7/status":
             self._send_json({
                 "ok": True,
-                "version": "v8.0-junior-developer-platform",
+                "version": "v8.0.2-junior-developer-platform",
                 "evidence_classes": list(EVIDENCE_CLASSES),
                 "job_states": list(JOB_STATES),
                 "stage_states": list(STAGE_STATES),
@@ -2828,23 +2887,34 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/v7/acceptance_tests":
+            user, err = self._require_authenticated_user(require_owner_companion=True)
+            if err:
+                return
             self._send_json({"ok": True, "matrix": V7_PLATFORM.run_all_13_acceptance_tests()})
             return
 
         if route == "/api/v7/events":
+            user, err = self._require_authenticated_user(require_owner_companion=True)
+            if err:
+                return
             limit = int((qs.get("limit", ["50"])[0] or "50"))
             self._send_json({"ok": True, "events": V7_PLATFORM.event_log.read_recent(limit)})
             return
 
         if route == "/api/v7/events/stream":
-            viewer = self._optional_viewer_user()
-            uid = viewer["user_id"] if viewer else "public_stream"
+            user, err = self._require_authenticated_user(require_owner_companion=True)
+            if err:
+                return
+            uid = user["user_id"]
             recent = V7_PLATFORM.event_log.read_recent(10)
             init_evs = [{"id": idx + 1, "type": ev.get("event_type", "V7_EVENT"), **ev} for idx, ev in enumerate(recent)]
             self._stream_sse_subscription(user_id=uid, qs=qs, initial_events=init_evs)
             return
 
         if route == "/api/super_agent/diagnostics":
+            user, err = self._require_authenticated_user(require_owner_companion=True)
+            if err:
+                return
             self._send_json(get_super_agent_diagnostics())
             return
 
@@ -2882,6 +2952,9 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/workspace_file":
+            user, err = self._require_authenticated_user(require_owner_companion=True)
+            if err:
+                return
             ensure_practice_workspace_seeded()
             rel = (qs.get("path", [""])[0] or "").strip().lstrip("/")
             target = (MANUAL_WORKSPACE / rel).resolve()
@@ -2893,7 +2966,7 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/queue_poll":
-            user, err = self._require_authenticated_user()
+            user, err = self._require_authenticated_user(require_owner_companion=True)
             if err:
                 return
             with QUEUE_LOCK:
@@ -2905,28 +2978,37 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/native-runs":
+            user, err = self._require_authenticated_user(require_owner_companion=True)
+            if err:
+                return
             self._send_json({
                 "ok": True,
-                "runs": list(V7_PLATFORM.native_verdi_runs.values())[-25:],
+                "runs": V7_PLATFORM.list_native_verdi_runs(25),
+                "live_status": V7_PLATFORM.get_native_verdi_live_status(),
             })
             return
 
         if route.startswith("/api/native-runs/"):
+            user, err = self._require_authenticated_user(require_owner_companion=True)
+            if err:
+                return
             sub = route[len("/api/native-runs/"):].strip("/")
             parts = sub.split("/")
             job_id = parts[0]
             if len(parts) == 1:
                 self._send_json(V7_PLATFORM.get_native_verdi_run(job_id))
                 return
+            if len(parts) == 2 and parts[1] == "live-status":
+                self._send_json(V7_PLATFORM.get_native_verdi_live_status(job_id))
+                return
             if len(parts) == 2 and parts[1] == "events":
-                viewer = self._optional_viewer_user()
-                uid = viewer["user_id"] if viewer else "native_run_viewer"
+                uid = user["user_id"]
                 run_info = V7_PLATFORM.get_native_verdi_run(job_id)
                 events = run_info.get("events", [])
                 init_evs = [{"id": idx + 1, "index": idx, "job_id": job_id, **ev} for idx, ev in enumerate(events)]
                 self._stream_sse_subscription(user_id=uid, qs=qs, initial_events=init_evs)
                 return
-            if len(parts) == 2 and parts[1] == "frame.png":
+            if (len(parts) == 2 and parts[1] == "frame.png") or (len(parts) == 3 and parts[1] == "artifacts" and parts[2] == "verdi_window_redacted.png"):
                 # P0 Bug B Fix: NEVER fall back to unredacted `capture_path`. Fail closed if redaction not verified!
                 run_info = V7_PLATFORM.get_native_verdi_run(job_id)
                 local_manifest_path = WEB_CONSOLE_DIR / "native_runs" / job_id / "manifest.json"
@@ -3013,6 +3095,43 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
         except Exception:
             return {}
 
+    def _handle_project_source_update(self, proj_id: str, payload: dict):
+        user, err = self._require_authenticated_user(payload)
+        if err:
+            return
+        rtl_ov = payload.get("rtl_source") if "rtl_source" in payload else (payload.get("rtl_code") if "rtl_code" in payload else None)
+        tb_ov = payload.get("tb_source") if "tb_source" in payload else (payload.get("tb_code") if "tb_code" in payload else None)
+        files_map = payload.get("files") if isinstance(payload.get("files"), dict) else None
+        if files_map:
+            if rtl_ov is None and "rtl/design.v" in files_map:
+                rtl_ov = files_map["rtl/design.v"]
+            if tb_ov is None and "tb/testbench.v" in files_map:
+                tb_ov = files_map["tb/testbench.v"]
+        try:
+            updated = JDEV_V8.update_project_sources(
+                user_id=user["user_id"],
+                project_id=proj_id,
+                rtl_source=rtl_ov,
+                tb_source=tb_ov,
+                name=payload.get("name") or payload.get("title"),
+            )
+            self._send_json({"ok": True, "project": updated})
+        except PermissionError as exc:
+            self._send_json({"ok": False, "code": str(exc).split(":", 1)[0].strip(), "error": str(exc)}, 403)
+        except ValueError as exc:
+            self._send_json({"ok": False, "code": str(exc).split(":", 1)[0].strip(), "error": str(exc)}, 400)
+
+    def do_PUT(self):
+        parsed = urllib.parse.urlparse(self.path)
+        route = parsed.path
+        payload = self._read_json_body()
+        if route.startswith("/api/v8/projects/"):
+            proj_id = route[len("/api/v8/projects/"):].strip("/")
+            if "/" not in proj_id:
+                self._handle_project_source_update(proj_id, payload)
+                return
+        self._send_json({"ok": False, "error": "Unsupported PUT route"}, 404)
+
     def do_PATCH(self):
         parsed = urllib.parse.urlparse(self.path)
         route = parsed.path
@@ -3024,6 +3143,11 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             updated = JDEV_V8.update_profile(user["user_id"], payload)
             self._send_json({"ok": True, "user": updated})
             return
+        if route.startswith("/api/v8/projects/"):
+            proj_id = route[len("/api/v8/projects/"):].strip("/")
+            if "/" not in proj_id:
+                self._handle_project_source_update(proj_id, payload)
+                return
         self._send_json({"ok": False, "error": "Unsupported PATCH route"}, 404)
 
     def do_DELETE(self):
@@ -3055,12 +3179,17 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/v8/auth/companion":
-            # Issues an owner_admin companion session only when local HMAC token or local loopback companion is used
+            # P0-2 Fix: Reject reverse-proxy headers and require cryptographic companion proof
             client_ip = self.client_address[0] if self.client_address else ""
-            if client_ip not in ("127.0.0.1", "::1"):
-                self._send_json({"ok": False, "error": "403_FORBIDDEN: Companion session only available on loopback."}, 403)
-                return
-            self._send_json(JDEV_V8.issue_owner_companion_session())
+            try:
+                res = JDEV_V8.verify_companion_request_and_issue_session(
+                    headers=dict(self.headers),
+                    payload=payload,
+                    client_ip=client_ip,
+                )
+                self._send_json(res)
+            except PermissionError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 403)
             return
 
         if route in ("/api/v8/auth/register", "/api/v8/auth/migrate-guest"):
@@ -3350,24 +3479,29 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             sub = route[len("/api/v8/projects/"):].strip("/")
             parts = sub.split("/")
             proj_id = parts[0]
+            if len(parts) == 1 or (len(parts) == 2 and parts[1] in ("save", "sources")):
+                self._handle_project_source_update(proj_id, payload)
+                return
             if len(parts) == 2 and parts[1] == "runs":
                 user, err = self._require_authenticated_user(payload)
                 if err:
                     return
+                rtl_ov = payload.get("rtl_source") if "rtl_source" in payload else (payload.get("rtl_code") if "rtl_code" in payload else None)
+                tb_ov = payload.get("tb_source") if "tb_source" in payload else (payload.get("tb_code") if "tb_code" in payload else None)
                 try:
                     run_res = JDEV_V8.execute_open_source_eda_run(
                         user_id=user["user_id"],
                         project_id=proj_id,
                         execution_mode=payload.get("execution_mode", "one_line"),
-                        rtl_override=payload.get("rtl_source") or payload.get("rtl_code") or "",
-                        tb_override=payload.get("tb_source") or payload.get("tb_code") or "",
+                        rtl_override=rtl_ov,
+                        tb_override=tb_ov,
                         run_synthesis=bool(payload.get("run_synthesis", payload.get("run_yosys", True))),
                     )
-                    self._send_json({"ok": run_res.get("state") == "PASSED", "run": run_res})
+                    self._send_json({"ok": True, "passed": run_res.get("state") == "PASSED", "run": run_res})
                 except PermissionError as exc:
-                    self._send_json({"ok": False, "error": str(exc)}, 403)
+                    self._send_json({"ok": False, "code": str(exc).split(":", 1)[0].strip(), "error": str(exc)}, 403)
                 except ValueError as exc:
-                    self._send_json({"ok": False, "error": str(exc)}, 400)
+                    self._send_json({"ok": False, "code": str(exc).split(":", 1)[0].strip(), "error": str(exc)}, 400)
                 return
             if len(parts) == 2 and parts[1] == "reset":
                 user, err = self._require_authenticated_user(payload)
@@ -3402,10 +3536,10 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         # ----------------------------------------------------------------------
-        # PRIVILEGED V7 / ENGR 852 EXECUTION ROUTES (P0 SESSION AUTH REQUIRED)
+        # PRIVILEGED V7 / ENGR 852 EXECUTION ROUTES (P0-1 OWNER/COMPANION REQUIRED)
         # ----------------------------------------------------------------------
         if route == "/api/exec_terminal":
-            user, err = self._require_authenticated_user(payload)
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
             set_reset_mode(False)
@@ -3425,7 +3559,7 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/ai_fix_page":
-            user, err = self._require_authenticated_user(payload)
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
             set_reset_mode(False)
@@ -3436,7 +3570,7 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/heal_all_failed":
-            user, err = self._require_authenticated_user(payload)
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
             set_reset_mode(False)
@@ -3449,7 +3583,7 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/github_sync":
-            user, err = self._require_authenticated_user(payload, require_registered=True)
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
             verify_all = bool(payload.get("verify_all_100", False))
@@ -3463,7 +3597,7 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/verify_all_100":
-            user, err = self._require_authenticated_user(payload, require_registered=True)
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
             open_b = bool(payload.get("open_browser", False))
@@ -3476,22 +3610,19 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             if err:
                 return
             fig_id = (payload.get("figure_id") or payload.get("fig_id") or "fig10").strip()
-            if fig_id == "layout":
-                fig_id = "fig10"
             pnum = int(payload.get("page_num") or payload.get("page_id") or 51)
             user_id = user["user_id"]
             project_id = (payload.get("project_id") or "motion_estimator_520mhz").strip()
-            run_id = (payload.get("run_id") or "").strip()
-            attempt_num = int(payload.get("attempt_num") or 1)
             force_new_launch = bool(payload.get("force_new_launch", False))
+            client_ip = self.client_address[0] if self.client_address else "127.0.0.1"
             res = V7_PLATFORM.start_native_verdi_run(
-                figure_id=fig_id,
-                page_num=pnum,
+                fig_id=fig_id,
+                page_id=pnum,
                 user_id=user_id,
                 project_id=project_id,
-                run_id=run_id,
-                attempt_num=attempt_num,
-                force_new_launch=force_new_launch,
+                attach_existing=not force_new_launch,
+                headers=self._merged_auth_headers(),
+                client_ip=client_ip,
             )
             self._send_json(res)
             return
@@ -3523,29 +3654,32 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
         if route == "/api/xquartz_plot":
             pnum = int(payload.get("page_num", 51) or 51)
             fig_id = (payload.get("fig_id") or payload.get("figure_id") or "fig10").strip()
-            if fig_id == "layout":
-                fig_id = "fig10"
             mode = (payload.get("mode") or "native").strip()
             if mode == "educational_demo":
+                rec_ev = V7_PLATFORM.get_recorded_figure_evidence(fig_id)
                 self._send_json({
                     "ok": True,
                     "mode": "educational_demo",
-                    "evidence_class": "EDUCATIONAL_SIMULATION",
+                    "evidence_class": "RECORDED_VERIFIED_CAPTURE",
                     "fig_id": fig_id,
                     "page_num": pnum,
-                    "message": f"Educational Simulation Waveform Preview ({fig_id.upper()}) [EDUCATIONAL_SIMULATION].",
+                    "recorded_evidence": rec_ev,
+                    "message": f"Recorded Verified V9 Reference Capture ({fig_id.upper()}) [RECORDED_VERIFIED_CAPTURE].",
                 })
                 return
 
             user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
+            client_ip = self.client_address[0] if self.client_address else "127.0.0.1"
             native_res = V7_PLATFORM.start_native_verdi_run(
-                figure_id=fig_id,
-                page_num=pnum,
+                fig_id=fig_id,
+                page_id=pnum,
                 user_id=user["user_id"],
                 project_id=payload.get("project_id") or "motion_estimator_520mhz",
-                force_new_launch=bool(payload.get("force_new_launch", False)),
+                attach_existing=not bool(payload.get("force_new_launch", False)),
+                headers=self._merged_auth_headers(),
+                client_ip=client_ip,
             )
             ok_verified = bool(native_res.get("ok") and native_res.get("signal_rail_verified"))
             job_id = native_res.get("job_id", "")
@@ -3574,13 +3708,16 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/user_onboard":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
+            if err:
+                return
             client_ip = self.client_address[0] if self.client_address else "127.0.0.1"
             res = onboard_user_with_permission(payload, client_ip=client_ip)
             self._send_json(res)
             return
 
         if route == "/api/custom_project":
-            user, err = self._require_authenticated_user(payload)
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
             res = create_or_import_custom_project(payload)
@@ -3588,8 +3725,20 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/super_agent/chat":
-            res = super_agent_chat_and_control(payload)
-            self._send_json(res)
+            user, err = self._require_authenticated_user(payload)
+            if err:
+                return
+            client_ip = self.client_address[0] if self.client_address else "127.0.0.1"
+            try:
+                res = super_agent_chat_and_control(
+                    payload,
+                    user=user,
+                    headers=self._merged_auth_headers(),
+                    client_ip=client_ip,
+                )
+                self._send_json(res)
+            except PermissionError as exc:
+                self._send_json({"ok": False, "error": str(exc)}, 403)
             return
 
         if route == "/api/custom_resource":
@@ -3614,28 +3763,31 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
         if route == "/api/launch_gui":
             pnum = int(payload.get("page_num", 51) or 51)
             fig_id = (payload.get("fig_id") or payload.get("figure_id") or ("fig7" if pnum <= 49 else ("fig8" if pnum == 50 else ("fig10" if pnum == 51 else ("fig9" if pnum == 52 else "fig10"))))).strip()
-            if fig_id == "layout":
-                fig_id = "fig10"
             mode = (payload.get("mode") or "native").strip()
             if mode == "educational_demo":
+                rec_ev = V7_PLATFORM.get_recorded_figure_evidence(fig_id)
                 self._send_json({
                     "ok": True,
                     "mode": "educational_demo",
-                    "evidence_class": "EDUCATIONAL_SIMULATION",
+                    "evidence_class": "RECORDED_VERIFIED_CAPTURE",
                     "fig_id": fig_id,
-                    "message": f"Educational Simulation Waveform Preview ({fig_id.upper()}) [EDUCATIONAL_SIMULATION].",
+                    "recorded_evidence": rec_ev,
+                    "message": f"Recorded Verified V9 Reference Capture ({fig_id.upper()}) [RECORDED_VERIFIED_CAPTURE].",
                 })
                 return
 
             user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
+            client_ip = self.client_address[0] if self.client_address else "127.0.0.1"
             native_res = V7_PLATFORM.start_native_verdi_run(
-                figure_id=fig_id,
-                page_num=pnum,
+                fig_id=fig_id,
+                page_id=pnum,
                 user_id=user["user_id"],
                 project_id=payload.get("project_id") or "motion_estimator_520mhz",
-                force_new_launch=bool(payload.get("force_new_launch", False)),
+                attach_existing=not bool(payload.get("force_new_launch", False)),
+                headers=self._merged_auth_headers(),
+                client_ip=client_ip,
             )
             ok_verified = bool(native_res.get("ok") and native_res.get("signal_rail_verified"))
             job_id = native_res.get("job_id", "")
@@ -3663,7 +3815,7 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/workspace_file":
-            user, err = self._require_authenticated_user(payload)
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
             ensure_practice_workspace_seeded()
@@ -3679,7 +3831,7 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/reset_progress":
-            user, err = self._require_authenticated_user(payload)
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
             keep_p1 = bool(payload.get("keep_page1", False))
@@ -3688,7 +3840,7 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/v7/jobs/execute":
-            user, err = self._require_authenticated_user(payload)
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
             user_id = user["user_id"]
@@ -3714,7 +3866,7 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/v7/jobs/control":
-            user, err = self._require_authenticated_user(payload)
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
             job_id = (payload.get("job_id") or "").strip()
@@ -3730,11 +3882,14 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/v7/acceptance_tests":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
+            if err:
+                return
             self._send_json({"ok": True, "matrix": V7_PLATFORM.run_all_13_acceptance_tests()})
             return
 
         if route == "/api/v7/git_sync":
-            user, err = self._require_authenticated_user(payload, require_registered=True)
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
                 return
             branch = (payload.get("branch") or "manual-practice-macbook-air").strip()
@@ -3746,6 +3901,9 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/v7/xquartz_check":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
+            if err:
+                return
             mode = (payload.get("mode") or "native").strip()
             pnum = int(payload.get("page_num") or 49)
             fig_id = (payload.get("fig_id") or "fig10").strip()
@@ -3764,6 +3922,9 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             return
 
         if route == "/api/v7/custom_curriculum":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
+            if err:
+                return
             proj_dir = Path(payload.get("project_dir") or str(MANUAL_WORKSPACE))
             title = (payload.get("title") or "Custom ASIC Project").strip()
             steps = build_curriculum_from_project_files(proj_dir, title)

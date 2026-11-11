@@ -808,39 +808,64 @@
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
               <div>
                 <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-                  <span class="badge mint">⚡ FREE PUBLIC OPEN-SOURCE EDA WORKER</span>
+                  <span class="badge mint">⚡ KERNEL-SANDBOXED OPEN-SOURCE EDA WORKER</span>
                   <span class="badge lavender" id="jdevProjectRunBadge">NATIVE_EXECUTION · Icarus Verilog + vvp + Yosys</span>
                 </div>
                 <h3 style="margin:4px 0 0 0;font-size:17.5px;">🔬 My Projects & Open-Source Verilog + VCD Waveform Studio</h3>
               </div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                <select id="jdevProjectSelect" onchange="jdevSelectProject(this.value)" style="padding:6px 10px;border-radius:8px;border:1.5px solid #6ee7b7;font-size:12px;font-weight:700;"></select>
-                <button class="btn btn-sm btn-pink" onclick="jdevRunOpenSourceVerilog()">▶ Run Icarus Verilog + VCD + Yosys</button>
+                <select id="jdevProjectSelect" onchange="jdevSelectProject(this.value, true)" style="padding:6px 10px;border-radius:8px;border:1.5px solid #6ee7b7;font-size:12px;font-weight:700;"></select>
+                <button class="btn btn-sm btn-mint" id="jdevSaveSourcesBtn" onclick="jdevSaveCurrentProjectSources()">💾 Save Sources</button>
+                <button class="btn btn-sm btn-pink" id="jdevRunVerilogBtn" onclick="jdevRunOpenSourceVerilog()">▶ Run Icarus Verilog + VCD + Yosys</button>
                 <button class="btn btn-sm" onclick="jdevResetCurrentProject()">↺ Reset Project (Archive)</button>
               </div>
             </div>
 
             <div class="grid-2" style="gap:10px;margin-bottom:10px;">
               <div>
-                <div style="font-size:11.8px;font-weight:800;color:#6b21a8;margin-bottom:4px;">📝 Verilog RTL Module (<code>rtl/design.v</code>)</div>
-                <textarea id="jdevRtlEditor" spellcheck="false" style="width:100%;height:155px;background:#150a26;color:#fdf2f8;border:1.5px solid #d8b4fe;border-radius:10px;padding:9px;font-family:var(--mono);font-size:11.5px;line-height:1.45;"></textarea>
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.8px;font-weight:800;color:#6b21a8;margin-bottom:4px;">
+                  <span>📝 Verilog RTL Module (<code>rtl/design.v</code>)</span>
+                  <code id="jdevRtlHashLabel" style="font-size:10.5px;color:#7e22ce;">sha256: loading...</code>
+                </div>
+                <textarea id="jdevRtlEditor" spellcheck="false" oninput="JDEV8_EDITOR_DIRTY=true" style="width:100%;height:155px;background:#150a26;color:#fdf2f8;border:1.5px solid #d8b4fe;border-radius:10px;padding:9px;font-family:var(--mono);font-size:11.5px;line-height:1.45;"></textarea>
               </div>
               <div>
-                <div style="font-size:11.8px;font-weight:800;color:#047857;margin-bottom:4px;">🧪 Self-Checking Testbench (<code>tb/design_tb.v</code>)</div>
-                <textarea id="jdevTbEditor" spellcheck="false" style="width:100%;height:155px;background:#150a26;color:#fdf2f8;border:1.5px solid #6ee7b7;border-radius:10px;padding:9px;font-family:var(--mono);font-size:11.5px;line-height:1.45;"></textarea>
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.8px;font-weight:800;color:#047857;margin-bottom:4px;">
+                  <span>🧪 Self-Checking Testbench (<code>tb/testbench.v</code>)</span>
+                  <code id="jdevTbHashLabel" style="font-size:10.5px;color:#047857;">sha256: loading...</code>
+                </div>
+                <textarea id="jdevTbEditor" spellcheck="false" oninput="JDEV8_EDITOR_DIRTY=true" style="width:100%;height:155px;background:#150a26;color:#fdf2f8;border:1.5px solid #6ee7b7;border-radius:10px;padding:9px;font-family:var(--mono);font-size:11.5px;line-height:1.45;"></textarea>
               </div>
             </div>
 
-            <!-- Interactive VCD Waveform Canvas -->
+            <!-- 7-State Verification & Schema 8.0.1 Telemetry Bar -->
+            <div id="jdevVerificationStatesBar" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;font-size:10.8px;font-family:var(--mono);">
+              <span class="badge lavender">COMPILE: PENDING</span>
+              <span class="badge lavender">SIM: PENDING</span>
+              <span class="badge lavender">VCD: PENDING</span>
+              <span class="badge lavender">ASSERTIONS: PENDING</span>
+              <span class="badge lavender">SYNTHESIS: PENDING</span>
+              <span class="badge lavender">TIMING: ILLUSTRATIVE_HEURISTIC_ESTIMATE</span>
+            </div>
+
+            <!-- Interactive VCD Waveform Canvas with Zoom, Pan & Cursor Inspection -->
             <div style="background:#120721;border:2px solid #10b981;border-radius:12px;padding:10px;margin-bottom:10px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:#ecfdf5;font-size:11.8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;color:#ecfdf5;font-size:11.8px;">
                 <b id="jdevVcdCanvasTitle">📈 Real VCD Signal Transitions (Compiled & Simulated via Icarus Verilog + vvp)</b>
-                <span class="badge mint" id="jdevVcdStatsPill">Ready to Simulate</span>
+                <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+                  <button class="btn btn-sm" style="padding:2px 7px;font-size:10.8px;" onclick="jdevZoomPanVcd(1.35, 0)">🔍+ Zoom In</button>
+                  <button class="btn btn-sm" style="padding:2px 7px;font-size:10.8px;" onclick="jdevZoomPanVcd(0.74, 0)">🔍- Zoom Out</button>
+                  <button class="btn btn-sm" style="padding:2px 7px;font-size:10.8px;" onclick="jdevZoomPanVcd(1, -0.2)">◀ Pan</button>
+                  <button class="btn btn-sm" style="padding:2px 7px;font-size:10.8px;" onclick="jdevZoomPanVcd(1, 0.2)">Pan ▶</button>
+                  <button class="btn btn-sm" style="padding:2px 7px;font-size:10.8px;" onclick="jdevResetVcdViewport()">⊞ Fit Full</button>
+                  <span class="badge mint" id="jdevVcdStatsPill">Ready to Simulate</span>
+                </div>
               </div>
-              <canvas id="jdevVcdWaveformCanvas" width="760" height="190" style="width:100%;height:180px;background:#0f0720;border-radius:8px;display:block;"></canvas>
+              <canvas id="jdevVcdWaveformCanvas" width="760" height="220" style="width:100%;height:210px;background:#0f0720;border-radius:8px;display:block;cursor:crosshair;" onclick="jdevInspectVcdCursor(event)"></canvas>
+              <div id="jdevVcdCursorReadout" style="margin-top:6px;font-family:var(--mono);font-size:11px;color:#a7f3d0;">Click anywhere on the VCD waveform above to inspect exact signal values at that timestamp.</div>
             </div>
 
-            <pre class="code-box" id="jdevRunOutputPre" style="max-height:170px;overflow-y:auto;font-size:11.4px;">Click "▶ Run Icarus Verilog + VCD + Yosys" above to compile your Verilog RTL in an isolated 0700 student sandbox, generate a real VCD waveform, and inspect gate-level Yosys synthesis stats!</pre>
+            <pre class="code-box" id="jdevRunOutputPre" style="max-height:170px;overflow-y:auto;font-size:11.4px;">Click "▶ Run Icarus Verilog + VCD + Yosys" above to compile your Verilog RTL in a kernel-sandboxed worker, generate a real VCD waveform, and inspect gate-level Yosys synthesis stats!</pre>
           </div>
         </div>
       </div>
@@ -1711,44 +1736,51 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
   </div>
 
   <!-- ====================================================================== -->
-  <!-- POP-UP LIVE VISUAL EXECUTION & XQUARTZ STEP-BY-STEP WAVEFORM THEATER   -->
-  <!-- Shows the 5-stage parallel execution + live animated XQuartz waveforms -->
+  <!-- NATIVE SYNOPSYS VERDI / NWAVE LIVE APPLICATION CAPTURE & VERIFICATION  -->
+  <!-- Zero Synthetic Canvas Waveforms — Real X11 Window Captures & Provenance-->
   <!-- ====================================================================== -->
   <div class="modal-backdrop" id="livePopupExecutionModal" style="z-index:120;">
-    <div style="width:min(1180px, 96vw);max-height:93vh;overflow-y:auto;background:#ffffff;border:3px solid #ec4899;border-radius:20px;padding:18px 22px;box-shadow:0 24px 64px rgba(46,16,101,0.55);" onclick="event.stopPropagation()">
+    <div style="width:min(1220px, 96vw);max-height:93vh;overflow-y:auto;background:#ffffff;border:3px solid #ec4899;border-radius:20px;padding:18px 22px;box-shadow:0 24px 64px rgba(46,16,101,0.55);" onclick="event.stopPropagation()">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1.5px solid #fbcfe8;padding-bottom:12px;margin-bottom:14px;">
         <div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <span class="badge mint" id="popupExecStatusBadge">🟢 LIVE PARALLEL EXECUTION & XQUARTZ OSCILLOSCOPE ACTIVE</span>
-            <span class="badge lavender" id="popupExecPageBadge">Page 1 · 520 MHz 14nm ASIC</span>
+            <span class="badge lavender" id="popupExecStatusBadge">⏳ AWAITING NATIVE VERDI / X11 VERIFICATION</span>
+            <span class="badge lavender" id="nativeVerdiConnectionStateBadge">STATE: CHECKING_X11</span>
+            <span class="badge lavender" id="popupExecPageBadge">Page 51 · 520 MHz 14nm ASIC</span>
           </div>
           <h2 style="margin:5px 0 0 0;font-size:19px;color:var(--text-main);">
-            🖥️ Live Visual Execution Pipeline & XQuartz Step-by-Step Waveform / Layout Plotter
+            🖥️ Native Synopsys Verdi / nWave Live Application Capture & Signal-Rail Verification Viewer
           </h2>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-sm btn-pink" onclick="runCurrentPageInWebTerminal(true, true)">
-            ▶ Run Current Page Live & Animate
+          <button class="btn btn-sm btn-pink" onclick="triggerXquartzExternalWindowPlot(false)">
+            🖥️ Launch / Verify Live Verdi X11 Window (:0)
           </button>
-          <button class="btn btn-sm btn-lavender" onclick="triggerXquartzExternalWindowPlot()">
-            🖥️ Spawn Real XQuartz X11 Plotter Window (:0)
+          <button class="btn btn-sm btn-mint" onclick="refreshNativeVerdiViewerCapture()">
+            🔄 Refresh Capture
+          </button>
+          <button class="btn btn-sm btn-lavender" onclick="triggerXquartzExternalWindowPlot(true)">
+            🔁 Retry / Reconnect
+          </button>
+          <button class="btn btn-sm" onclick="stopNativeVerdiLiveStream()">
+            ⏹ Stop Stream
           </button>
           <button class="btn btn-sm btn-mint" onclick="detachLivePopupToSeparateWindow()">
-            🗗 Pop Out Separate OS Browser Window
+            🗗 Pop Out Separate Browser Window
           </button>
           <button class="btn btn-sm" onclick="closeLivePopupExecutionModal()">✕ Close Window</button>
         </div>
       </div>
 
-      <!-- 5-Stage Live Parallel Execution Sequence (Truthful Initial State — No Optimistic Checkmarks!) -->
+      <!-- 5-Stage Live Parallel Execution Sequence (Truthful State Machine — No Optimistic Checkmarks!) -->
       <div class="action-pipeline" style="margin-top:0;margin-bottom:14px;">
         <div class="pipeline-step" id="pop-vstep-1">
           <div style="font-size:12px;font-weight:800;color:#be185d;">1. 💻 Terminal / Sandbox</div>
           <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-1-txt">⏳ Pending execution</div>
         </div>
         <div class="pipeline-step" id="pop-vstep-2">
-          <div style="font-size:12px;font-weight:800;color:#7e22ce;">2. 🖥️ XQuartz / VCD Waveforms</div>
-          <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-2-txt">⏳ Pending GUI / VCD check</div>
+          <div style="font-size:12px;font-weight:800;color:#7e22ce;">2. 🖥️ XQuartz / Verdi X11</div>
+          <div style="font-size:12px;color:#065f46;font-weight:700;margin-top:3px;" id="pop-vstep-2-txt">⏳ Pending X11 window check</div>
         </div>
         <div class="pipeline-step" id="pop-vstep-3">
           <div style="font-size:12px;font-weight:800;color:#be185d;">3. ⚙️ Hardware / Tool Run</div>
@@ -1768,9 +1800,9 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
       <div style="background:#f0fdf4;border:1.5px solid #6ee7b7;border-radius:12px;padding:10px 14px;margin-bottom:10px;">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <span class="badge mint" id="nativeVerdiEvidenceBadge">NATIVE_EXECUTION · 3-LAYER RAIL VERIFIER READY</span>
+            <span class="badge lavender" id="nativeVerdiEvidenceBadge">AWAITING_VERIFICATION</span>
             <span style="font-size:12px;font-weight:800;color:#065f46;" id="popupPlotterStepStatus">
-              Click "🖥️ Spawn Real XQuartz X11 Plotter Window (:0)" to verify real Synopsys Verdi + FSDB + Tcl + nWave Signal Rails
+              Checking local XQuartz (:0), SSH tunnel to mahmoodi.rcc.at.sfsu.edu, and live Synopsys Verdi X11 window...
             </span>
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -1799,44 +1831,70 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
         </div>
       </div>
 
-      <!-- Waveform / Layout Mode Selector Bar -->
+      <!-- Waveform / Layout Figure Selector Bar (Separate Live Capture vs Recorded V9 Evidence) -->
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;background:#fdf4ff;padding:8px 12px;border-radius:12px;border:1px solid #f5d0fe;">
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <button class="btn btn-sm btn-pink" id="popPlotBtn-fig7" onclick="startPopupLiveWaveformPlot('fig7')">Fig 7: 8-Bit Row-1 Saturation (0xFF)</button>
-          <button class="btn btn-sm" id="popPlotBtn-fig8" onclick="startPopupLiveWaveformPlot('fig8')">Fig 8: 8-Bit Cycle 4111 Deadlock</button>
-          <button class="btn btn-sm" id="popPlotBtn-fig10" onclick="startPopupLiveWaveformPlot('fig10')">Fig 10: 16-Bit Exact Match (0x0000)</button>
-          <button class="btn btn-sm" id="popPlotBtn-fig11" onclick="startPopupLiveWaveformPlot('fig11')">Fig 11: 16-Bit +1 LSB (0x0100)</button>
-          <button class="btn btn-sm" id="popPlotBtn-fig9" onclick="startPopupLiveWaveformPlot('fig9')">Fig 9: 16-Bit Max-Contrast (0xFF00)</button>
-          <button class="btn btn-sm" id="popPlotBtn-layout" onclick="startPopupLiveWaveformPlot('layout')">14nm Silicon Layout (8,230 Cells)</button>
+          <button class="btn btn-sm" id="popPlotBtn-fig7" onclick="selectNativeVerdiFigure('fig7', false)">Fig 7: 8-Bit Row-1 Saturation (0xFF)</button>
+          <button class="btn btn-sm" id="popPlotBtn-fig8" onclick="selectNativeVerdiFigure('fig8', false)">Fig 8: 8-Bit Cycle 4111 Deadlock</button>
+          <button class="btn btn-sm btn-pink" id="popPlotBtn-fig10" onclick="selectNativeVerdiFigure('fig10', false)">Fig 10: 16-Bit Exact Match (0x0000)</button>
+          <button class="btn btn-sm" id="popPlotBtn-fig11" onclick="selectNativeVerdiFigure('fig11', false)">Fig 11: 16-Bit +1 LSB (0x0100)</button>
+          <button class="btn btn-sm" id="popPlotBtn-fig9" onclick="selectNativeVerdiFigure('fig9', false)">Fig 9: 16-Bit Max-Contrast (0xFF00)</button>
+          <button class="btn btn-sm" id="popPlotBtn-layout" onclick="selectNativeVerdiFigure('layout', false)">14nm Silicon Layout (IC Compiler II)</button>
         </div>
         <div style="display:flex;gap:6px;">
-          <button class="btn btn-sm btn-mint" onclick="startPopupLiveWaveformPlot(POPUP_CURRENT_FIG)">↻ Replay Educational Demo</button>
-          <button class="btn btn-sm btn-lavender" onclick="speakPopupWaveformGuide()">🔊 Voice Explain Plot</button>
+          <button class="btn btn-sm btn-mint" id="viewRecordedEvidenceBtn" onclick="selectNativeVerdiFigure(POPUP_CURRENT_FIG, true)">📸 View Recorded Verified V9 Capture</button>
+          <button class="btn btn-sm btn-lavender" onclick="speakPopupWaveformGuide()">🔊 Voice Explain Signals</button>
         </div>
       </div>
 
-      <!-- Split Inside Pop-Up: Left = Animated Oscilloscope + Window-Only Native Verdi Preview | Right = Step-by-Step XQuartz & Verdi nWave Data Collection Coach -->
-      <div class="lab-split" style="grid-template-columns:minmax(480px, 58%) minmax(360px, 42%);">
-        <div>
-          <div id="nativeVerdiWindowPreviewBox" style="display:none;margin-bottom:10px;background:#120721;border:2px solid #10b981;border-radius:14px;padding:10px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:#ecfdf5;font-size:11.8px;">
-              <b id="nativeVerdiWindowPreviewTitle">🪟 Authorized Window-Only Synopsys Verdi Capture (Redacted Paths)</b>
-              <button class="btn btn-sm" onclick="zoomImage(document.getElementById('nativeVerdiWindowPreviewImg').src)">🔍 Zoom Full-Screen</button>
+      <!-- Split Inside Pop-Up: Left = Real Application Capture / Blocked Diagnostic | Right = Provenance & 17-Signal Verification Table -->
+      <div class="lab-split" style="grid-template-columns:minmax(500px, 58%) minmax(360px, 42%);">
+        <div id="nativeVerdiLiveViewerPanel">
+          <!-- Blocked / Disconnected Truthful State Card (Shown when SSH/Verdi is unavailable and Recorded mode is not selected) -->
+          <div id="nativeVerdiBlockedBanner" style="display:none;margin-bottom:10px;background:#fff1f2;border:2px solid #fda4af;border-radius:14px;padding:14px 16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+              <span class="badge coral" id="nativeVerdiBlockedCodeBadge">BLOCKED · NO_LIVE_VERDI_WINDOW</span>
+              <span style="font-size:11.5px;font-family:var(--mono);color:#9f1239;" id="nativeVerdiBlockedEnvSummary">XQuartz :0 | xterm present | Verdi: not running</span>
             </div>
-            <img id="nativeVerdiWindowPreviewImg" src="" alt="Native Synopsys Verdi X11 Window Capture" style="width:100%;max-height:280px;object-fit:contain;border-radius:10px;cursor:pointer;" onclick="zoomImage(this.src)">
+            <div style="font-size:13px;font-weight:800;color:#881337;margin-bottom:4px;" id="nativeVerdiBlockedHeadline">
+              Live Synopsys Verdi / nWave X11 Capture Blocked — Synthetic Canvas Waveforms Strictly Disabled
+            </div>
+            <div style="font-size:12.2px;color:#9f1239;line-height:1.55;margin-bottom:10px;" id="nativeVerdiBlockedReasonText">
+              No live Synopsys Verdi/nWave X11 window is currently active on DISPLAY :0, or SSH -Y to mahmoodi.rcc.at.sfsu.edu timed out (rc=255). Per engineering integrity policy, synthetic browser Canvas waveforms are never displayed as live tool evidence.
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-sm btn-pink" onclick="triggerXquartzExternalWindowPlot(true)">🔁 Retry Live SSH -Y + Verdi Launch</button>
+              <button class="btn btn-sm btn-mint" onclick="selectNativeVerdiFigure(POPUP_CURRENT_FIG, true)">📸 Inspect Recorded Verified V9 Capture Instead</button>
+            </div>
           </div>
-          <canvas id="popupOscilloscopeCanvas" width="820" height="370" style="width:100%;height:360px;background:#120721;border-radius:14px;border:2px solid #f472b6;display:block;"></canvas>
-          <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-body);background:#f0fdf4;padding:8px 12px;border-radius:10px;border:1px solid #a7f3d0;">
-            <span id="popupCursorTelemetryLbl"><b>⏱️ Live Cursor Telemetry:</b> <code>clock = 520 MHz (1.923 ns)</code> · <code>count = 0x0100 (Cycle 256)</code> · <code>EXIT_CODE = 0</code></span>
-            <span class="badge mint" id="popupPlotProgressBadge">EDUCATIONAL_SIMULATION</span>
+
+          <!-- Real Redacted X11 Window Capture OR Explicitly Labeled Recorded Verified V9 Capture -->
+          <div id="nativeVerdiWindowPreviewBox" style="margin-bottom:10px;background:#120721;border:2px solid #10b981;border-radius:14px;padding:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;color:#ecfdf5;font-size:11.8px;">
+              <b id="nativeVerdiWindowPreviewTitle">🪟 Synopsys Verdi / nWave Application Capture Viewer</b>
+              <div style="display:flex;gap:6px;align-items:center;">
+                <span class="badge mint" id="popupPlotProgressBadge">AWAITING_CAPTURE</span>
+                <button class="btn btn-sm" onclick="zoomImage(document.getElementById('nativeVerdiWindowPreviewImg').src)">🔍 Zoom Full-Screen</button>
+              </div>
+            </div>
+            <img id="nativeVerdiWindowPreviewImg" src="" alt="Synopsys Verdi / nWave Application Capture" style="width:100%;max-height:360px;object-fit:contain;border-radius:10px;cursor:pointer;display:none;" onclick="zoomImage(this.src)">
+            <div id="nativeVerdiNoImagePlaceholder" style="padding:36px 20px;text-align:center;color:#cbd5e1;font-size:12.6px;font-family:var(--mono);">
+              No live X11 frame loaded yet. Click <b>"🖥️ Launch / Verify Live Verdi X11 Window (:0)"</b> to capture a live window, or click <b>"📸 View Recorded Verified V9 Capture"</b> to inspect historical V9 evidence with SHA-256 provenance.
+            </div>
+          </div>
+
+          <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--text-body);background:#f0fdf4;padding:8px 12px;border-radius:10px;border:1px solid #a7f3d0;">
+            <span id="popupCursorTelemetryLbl"><b>⏱️ Provenance & Telemetry:</b> <code>FSDB: motion_v5_16bit_top_regression.fsdb</code> · <code>Tcl: fig10_16bit_perfect_match.tcl</code></span>
           </div>
         </div>
         <div style="background:#fdf4ff;border:1.5px solid #e9d5ff;border-radius:14px;padding:13px 15px;">
           <div style="font-size:14px;font-weight:800;color:#6b21a8;margin-bottom:6px;" id="popupCoachTitle">
-            🎓 How to Collect Waveform & Layout Data in XQuartz & Synopsys Verdi nWave
+            🔬 Artifact Provenance & 17-Signal Tcl / FSDB Verification Table
           </div>
-          <div id="popupCoachStepsBox" style="font-size:12.4px;line-height:1.58;color:var(--text-body);"></div>
-          <pre id="popupLiveExecutionLog" class="code-box" style="margin-top:10px;max-height:180px;overflow-y:auto;font-size:11.2px;">Ready for Native Synopsys Verdi X11 Verification or Educational Oscilloscope Walkthrough.</pre>
+          <div id="nativeVerdiProvenanceBox" style="font-size:11.6px;line-height:1.5;color:var(--text-body);margin-bottom:8px;"></div>
+          <div id="nativeVerdiSignalTableBox" style="max-height:210px;overflow-y:auto;margin-bottom:8px;border:1px solid #e9d5ff;border-radius:8px;background:#ffffff;padding:6px;"></div>
+          <div id="popupCoachStepsBox" style="font-size:12px;line-height:1.52;color:var(--text-body);"></div>
+          <pre id="popupLiveExecutionLog" class="code-box" style="margin-top:8px;max-height:150px;overflow-y:auto;font-size:11px;">Ready for Native Synopsys Verdi X11 Verification.</pre>
         </div>
       </div>
     </div>
@@ -2022,23 +2080,60 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
       selectIdePage(IDE_CURRENT_PAGE + delta);
     }
 
-    function animateVisualPipeline(activeStep, msgMap, isAllDone) {
+    function animateVisualPipeline(activeStep, msgMap, isAllDone, stateOverrideMap) {
       for (let i = 1; i <= 5; i++) {
         ['vstep-', 'pop-vstep-'].forEach(prefix => {
           const box = document.getElementById(prefix + i);
           const txt = document.getElementById(prefix + i + '-txt');
           if (!box) return;
           box.classList.remove('active-pulse', 'done');
-          if (isAllDone || i < activeStep) {
+          box.style.borderColor = '';
+          box.style.background = '';
+          const stOv = stateOverrideMap && stateOverrideMap[i];
+          if (stOv) {
+            box.dataset.stageState = stOv;
+            if (stOv === 'PASSED') {
+              box.classList.add('done');
+            } else if (stOv === 'RUNNING' || stOv === 'VERIFYING') {
+              box.classList.add('active-pulse');
+            } else if (stOv === 'FAILED' || stOv === 'BLOCKED' || stOv === 'CANCELLED') {
+              box.style.borderColor = '#fda4af';
+              box.style.background = '#fff1f2';
+            }
+          } else if (isAllDone === true || (isAllDone !== false && i < activeStep)) {
             box.classList.add('done');
-          } else if (i === activeStep) {
+            box.dataset.stageState = 'PASSED';
+          } else if (i === activeStep && isAllDone !== false) {
             box.classList.add('active-pulse');
+            box.dataset.stageState = 'RUNNING';
+          } else if (isAllDone === false) {
+            box.style.borderColor = '#fda4af';
+            box.style.background = '#fff1f2';
+            box.dataset.stageState = 'FAILED';
+          } else {
+            box.dataset.stageState = 'PENDING';
           }
           if (msgMap && msgMap[i] && txt) {
             txt.textContent = msgMap[i];
           }
         });
       }
+    }
+
+    function updateVisualPipelineFromStages(stagesObj) {
+      if (!stagesObj || typeof stagesObj !== 'object') return;
+      const keys = ['stage1_terminal', 'stage2_gui', 'stage3_tool', 'stage4_verifier', 'stage5_artifact'];
+      const msgMap = {};
+      const stateMap = {};
+      keys.forEach((k, idx) => {
+        const s = stagesObj[k] || {};
+        const st = s.state || 'PENDING';
+        const i = idx + 1;
+        stateMap[i] = st;
+        const icon = st === 'PASSED' ? '✓' : (st === 'FAILED' ? '✗' : (st === 'BLOCKED' ? '⚠' : (st === 'RUNNING' || st === 'VERIFYING' ? '⏳' : '•')));
+        msgMap[i] = `[${st}] ${s.detail || ''} ${icon}`.trim();
+      });
+      animateVisualPipeline(0, msgMap, null, stateMap);
     }
 
     function formatLevelGuidanceHtml(pageObj) {
@@ -2569,87 +2664,42 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
         page_num: pNum,
         title: `Page ${pNum}`,
         v_stage: 'V1–V9',
-        one_liner: cmdStr || '',
-        expected_out: [`VERIFIED_PAGE_${String(pNum).padStart(3, '0')}_COMPLETE (EXIT_CODE=0)`],
-        verification_spec: { required_markers: ['PASS'] }
+        one_liner: cmdStr || ''
       };
-      const vspec = pageObj.verification_spec || {};
-      const reqMarkers = Array.isArray(vspec.required_markers) && vspec.required_markers.length
-        ? vspec.required_markers
-        : [`VERIFIED_PAGE_${String(pNum).padStart(3, '0')}`];
-      const expOut = Array.isArray(pageObj.expected_out) ? pageObj.expected_out : [];
-
-      const symptom = triggerReason || `Autonomous Self-Diagnosis & Closed-Loop Verification on Page ${pNum} (${pageObj.v_stage}).`;
-      const diagnosis = `Inspected Page ${pNum} command AST, verified balanced shell quoting, seeded isolated practice directories (~/Developer/motion-estimator-14nm-asic-manual), and validated target RTL/testbench/EDA markers.`;
-      const patchSummary = `Applied quote-safe self-healing execution script for Page ${pNum} and verified 100% of required markers with Exit Code 0.`;
-
+      const symptom = triggerReason || `Backend execution unavailable or unauthorized for Page ${pNum}.`;
+      const diagnosis = `Host PTY/XQuartz execution requires an authenticated Owner/Companion session and active backend connection. Synthetic client-side PASS fabrication is strictly disabled.`;
+      const patchSummary = `Authenticate with a valid Owner/Companion token or use the Kernel-Sandboxed Open-Source Verilog + VCD Studio above.`;
       const outLines = [
-        `================================================================================`,
-        `🤖 [AI SELF-DIAGNOSIS & CLOSED-LOOP AUTO-CORRECTION ENGINE — PAGE ${pNum}]`,
-        `  1. Symptom / Trigger  : ${symptom}`,
-        `  2. AI Root Diagnosis  : ${diagnosis}`,
-        `  3. Self-Heal Patch    : ${patchSummary}`,
-        `  4. Verification Proof : Matched ${reqMarkers.length}/${reqMarkers.length} required markers (Exit Code 0)!`,
-        `================================================================================`,
-        `$ ${cmdStr || pageObj.one_liner || 'pwd'}`,
-        `=== [ENGR 852 Live Execution · Page ${pNum}: ${pageObj.title}] ===`,
-        ...expOut,
-        ...reqMarkers.filter(m => !expOut.includes(m)),
-        `VERIFIED_PAGE_${String(pNum).padStart(3, '0')}_COMPLETE (EXIT_CODE=0)`,
-        `[✓ EXPECTED OUTCOME VERIFIED — PAGE ${pNum} PASS (EXIT CODE 0)]`
+        `[BLOCKED / UNAUTHORIZED] ${symptom}`,
+        `Diagnosis : ${diagnosis}`,
+        `Action    : ${patchSummary}`
       ];
-      const svgShot = generateClientTerminalSvgDataUri(pageObj, outLines);
-
-      if (!LIVE_STATE || typeof LIVE_STATE !== 'object') LIVE_STATE = {};
-      if (!LIVE_STATE.completed_pages) LIVE_STATE.completed_pages = {};
-      LIVE_STATE.completed_pages[String(pNum)] = {
-        page_num: pNum,
-        step_id: pageObj.step_id || `page${String(pNum).padStart(3, '0')}`,
-        status: 'PASS',
-        verification_state: 'VERIFIED_MATCH',
-        matched_markers: reqMarkers,
-        missing_markers: [],
-        exit_code: 0,
-        screenshot_file: svgShot,
-        log_excerpt: outLines.join('\n'),
-        updated_at: new Date().toLocaleTimeString()
-      };
-      const passCount = Object.values(LIVE_STATE.completed_pages).filter(v => v && v.status === 'PASS').length;
-      LIVE_STATE.total_passed_pages = passCount;
-      try {
-        localStorage.setItem('engr852_v52_healed_pages', JSON.stringify(LIVE_STATE.completed_pages));
-      } catch (e) {}
-
-      const aiDebug = {
-        page_num: pNum,
-        title: pageObj.title,
-        v_stage: pageObj.v_stage,
-        status: 'PASS',
-        headline: `🤖 AI Self-Diagnosed & Auto-Healed Page ${pNum} (PASS · Exit 0)`,
-        verification_state: 'VERIFIED_MATCH',
-        exit_code: 0,
-        matched_markers: reqMarkers,
-        missing_markers: [],
-        expected_out: expOut,
-        fault_code: 'AUTONOMOUS_SELF_HEALED_PASS',
-        auto_healed: true,
-        symptom: symptom,
-        diagnosis: diagnosis,
-        patch_summary: patchSummary,
-        root_cause: `[Self-Healed] ${diagnosis} ${patchSummary}`
-      };
-
       return {
-        ok: true,
-        auto_healed: true,
+        ok: false,
+        auto_healed: false,
         command: cmdStr || pageObj.one_liner,
         page_num: pNum,
-        elapsed_s: 0.06,
-        exit_code: 0,
+        elapsed_s: 0.0,
+        exit_code: -1,
+        error: symptom,
         output: outLines.join('\n'),
-        screenshot_url: svgShot,
-        ai_debug: aiDebug,
-        state: LIVE_STATE
+        ai_debug: {
+          page_num: pNum,
+          title: pageObj.title,
+          v_stage: pageObj.v_stage,
+          status: 'FAIL',
+          headline: `⚠ Host Execution Blocked / Unauthorized on Page ${pNum}`,
+          verification_state: 'BLOCKED_OR_UNAUTHORIZED',
+          exit_code: -1,
+          matched_markers: [],
+          missing_markers: (pageObj.verification_spec && pageObj.verification_spec.required_markers) || [],
+          fault_code: '403_OWNER_COMPANION_REQUIRED',
+          auto_healed: false,
+          symptom: symptom,
+          diagnosis: diagnosis,
+          patch_summary: patchSummary,
+          root_cause: diagnosis
+        }
       };
     }
 
@@ -2790,14 +2840,14 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
       }
 
       animateVisualPipeline(1, {
-        1: `Broadcasting command to macOS Terminal.app (/dev/ttys0*)...`,
-        2: launchXquartz ? `Opening XQuartz.app (:0)...` : `XQuartz X11 Display :0 ready`,
-        3: `Executing Page ${pNum} with AI Self-Diagnosis...`,
-        4: `Checking exit code & required markers...`,
-        5: `Rendering terminal screenshot PNG...`
-      }, false);
+        1: `[RUNNING] Broadcasting command to backend PTY...`,
+        2: launchXquartz ? `[RUNNING] Checking XQuartz.app (:0)...` : `[PENDING] XQuartz X11 Display :0`,
+        3: `[RUNNING] Executing Page ${pNum}...`,
+        4: `[PENDING] Awaiting exit code & marker verification...`,
+        5: `[PENDING] Awaiting terminal artifact...`
+      }, null, { 1: 'RUNNING', 2: launchXquartz ? 'RUNNING' : 'PENDING', 3: 'RUNNING', 4: 'PENDING', 5: 'PENDING' });
 
-      appendToTerminalScreen(`\n🌸 [Page ${pNum} Live Run — Isolated Student Terminal]\n$ ${cmdStr}`);
+      appendToTerminalScreen(`\n🌸 [Page ${pNum} Live Run — Isolated Terminal]\n$ ${cmdStr}`);
 
       let data = null;
       try {
@@ -2812,28 +2862,40 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           })
         }, 12000);
         data = await res.json();
+        if (!res.ok || (data && data.ok === false)) {
+          data = runClientSideAutonomousSelfHeal(cmdStr, pNum, (data && data.error) || `HTTP ${res.status}`);
+        }
       } catch (err) {
-        data = runClientSideAutonomousSelfHeal(cmdStr, pNum, `Multi-endpoint failover triggered In-Browser Autonomous AI Execution for Page ${pNum}.`);
+        data = runClientSideAutonomousSelfHeal(cmdStr, pNum, err.message || 'Backend connection error');
       }
 
-      appendToTerminalScreen(data.output || '(Completed with Exit Code 0)');
+      appendToTerminalScreen(data.output || data.error || '(Execution finished)');
       if (data.state) {
         LIVE_STATE = data.state;
         updateTopProgressBadges();
         populatePageDropdowns();
       }
-      const isOk = data.exit_code === 0 && (!data.ai_debug || data.ai_debug.status === 'PASS');
+      const isOk = Boolean(data.ok !== false && data.exit_code === 0 && (!data.ai_debug || data.ai_debug.status === 'PASS'));
+      const failState = (data.error && String(data.error).includes('403')) ? 'BLOCKED' : 'FAILED';
       animateVisualPipeline(5, {
-        1: isOk ? `Backend PTY process verified (Exit 0)` : `Backend PTY process finished (Exit ${data.exit_code})`,
-        2: isOk ? `Display & environment checked` : `Display check completed`,
-        3: data.auto_healed ? `AI Self-Diagnosed & Auto-Healed (${data.elapsed_s || 0.08}s)` : `Executed in ${data.elapsed_s || 0.08}s (Exit ${data.exit_code ?? 0})`,
-        4: isOk ? `Expected markers verified` : `Verification markers incomplete`,
-        5: isOk ? `Artifact manifest & log saved` : `Failure diagnostic log saved`
-      }, isOk);
+        1: isOk ? `[PASSED] Backend PTY process verified (Exit 0) ✓` : `[${failState}] ${data.error || ('Exit ' + data.exit_code)}`,
+        2: isOk ? `[PASSED] Display & environment checked ✓` : `[${failState}] Display check incomplete`,
+        3: isOk ? `[PASSED] Executed in ${data.elapsed_s || 0.08}s (Exit 0) ✓` : `[${failState}] Tool execution did not complete`,
+        4: isOk ? `[PASSED] Expected markers verified ✓` : `[${failState}] Verification markers unverified`,
+        5: isOk ? `[PASSED] Artifact manifest & log saved ✓` : `[${failState}] No verified artifact produced`
+      }, isOk, {
+        1: isOk ? 'PASSED' : failState,
+        2: isOk ? 'PASSED' : failState,
+        3: isOk ? 'PASSED' : failState,
+        4: isOk ? 'PASSED' : failState,
+        5: isOk ? 'PASSED' : failState
+      });
 
       if (pill) {
-        pill.className = 'badge mint';
-        pill.textContent = data.auto_healed ? `● AI Auto-Healed Page ${pNum} (Exit 0) ✓` : `● Verified Exit 0 (${data.elapsed_s || 0.08}s) ✓`;
+        pill.className = isOk ? 'badge mint' : 'badge coral';
+        pill.textContent = isOk
+          ? `● Verified Exit 0 (${data.elapsed_s || 0.08}s) ✓`
+          : `⚠ ${data.error ? String(data.error).slice(0, 48) : ('Exit ' + (data.exit_code ?? -1))}`;
       }
       renderPracticeIde();
       if (data.ai_debug) {
@@ -2847,7 +2909,6 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
       if (!pageObj) return;
       if (openPopup) {
         openLivePopupExecutionModal();
-        startPopupLiveWaveformPlot('auto');
       }
       executeCommandInWebTerminal(pageObj.one_liner, pageObj.page_num, launchGui);
     }
@@ -2868,12 +2929,12 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
         pill.textContent = `✨ AI Auto-Fixing Page ${pNum}...`;
       }
       animateVisualPipeline(3, {
-        1: `Broadcasting AI Fix to macOS Terminal.app...`,
-        2: `Checking XQuartz & EDA shims...`,
-        3: `Diagnosing & repairing Page ${pNum} prerequisites...`,
-        4: `Verifying expected output markers...`,
-        5: `Rendering terminal screenshot PNG...`
-      }, false);
+        1: `[RUNNING] Broadcasting AI Fix to backend PTY...`,
+        2: `[RUNNING] Checking XQuartz & EDA environment...`,
+        3: `[RUNNING] Diagnosing & repairing Page ${pNum} prerequisites...`,
+        4: `[VERIFYING] Verifying expected output markers...`,
+        5: `[PENDING] Rendering terminal screenshot PNG...`
+      }, null, { 1: 'RUNNING', 2: 'RUNNING', 3: 'RUNNING', 4: 'VERIFYING', 5: 'PENDING' });
 
       appendToTerminalScreen(`\n✨ [Self-Healing AI Auto-Debugger] Diagnosing, Repairing & Verifying Page ${pNum}...\n`);
       let data = null;
@@ -2884,28 +2945,40 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           body: JSON.stringify({ page_num: pNum })
         }, 12000);
         data = await res.json();
+        if (!res.ok || (data && data.ok === false)) {
+          const pageObj = CURRICULUM.find(p => p.page_num === pNum) || CURRICULUM[0] || {};
+          data = runClientSideAutonomousSelfHeal(pageObj.one_liner || '', pNum, (data && data.error) || `HTTP ${res.status}`);
+        }
       } catch (e) {
         const pageObj = CURRICULUM.find(p => p.page_num === pNum) || CURRICULUM[0] || {};
-        data = runClientSideAutonomousSelfHeal(pageObj.one_liner || '', pNum, `1-Click AI Self-Diagnosis & Auto-Repair on Page ${pNum}.`);
+        data = runClientSideAutonomousSelfHeal(pageObj.one_liner || '', pNum, e.message || `AI Auto-Fix backend error on Page ${pNum}`);
       }
 
-      appendToTerminalScreen(data.output || '(AI Auto-Fix Completed with Exit Code 0)');
+      appendToTerminalScreen(data.output || data.error || '(AI Auto-Fix finished)');
       if (data.state) {
         LIVE_STATE = data.state;
         updateTopProgressBadges();
         populatePageDropdowns();
       }
+      const isOk = Boolean(data.ok !== false && data.exit_code === 0);
+      const failState = (data.error && String(data.error).includes('403')) ? 'BLOCKED' : 'FAILED';
       animateVisualPipeline(5, {
-        1: `Printed live in macOS Terminal.app ✓`,
-        2: `XQuartz & environment verified ✓`,
-        3: `Self-healing patch applied (0.08s) ✓`,
-        4: `Page ${pNum} Expected Markers Verified ✓`,
-        5: `Screenshot saved & Quiz unlocked ✓`
-      }, true);
+        1: isOk ? `[PASSED] Printed live in macOS Terminal.app ✓` : `[${failState}] ${data.error || 'Terminal restricted'}`,
+        2: isOk ? `[PASSED] XQuartz & environment verified ✓` : `[${failState}] Environment check blocked`,
+        3: isOk ? `[PASSED] Self-healing patch applied ✓` : `[${failState}] Patch requires Owner/Companion auth`,
+        4: isOk ? `[PASSED] Page ${pNum} Expected Markers Verified ✓` : `[${failState}] Markers not verified`,
+        5: isOk ? `[PASSED] Screenshot saved & Quiz unlocked ✓` : `[${failState}] Artifact not saved`
+      }, isOk, {
+        1: isOk ? 'PASSED' : failState,
+        2: isOk ? 'PASSED' : failState,
+        3: isOk ? 'PASSED' : failState,
+        4: isOk ? 'PASSED' : failState,
+        5: isOk ? 'PASSED' : failState
+      });
 
       if (pill) {
-        pill.className = 'badge mint';
-        pill.textContent = `● AI Verified Page ${pNum} (Exit 0) ✓`;
+        pill.className = isOk ? 'badge mint' : 'badge coral';
+        pill.textContent = isOk ? `● AI Verified Page ${pNum} (Exit 0) ✓` : `⚠ ${data.error ? String(data.error).slice(0, 48) : 'AI Fix Blocked'}`;
       }
       renderPracticeIde();
       if (data.ai_debug) {
@@ -2923,6 +2996,10 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           body: JSON.stringify({})
         }, 10000);
         const data = await res.json();
+        if (!res.ok || (data && data.ok === false)) {
+          appendToTerminalScreen(`⚠ ${(data && data.error) || ('HTTP ' + res.status)}`);
+          return;
+        }
         if (data && data.state) {
           LIVE_STATE = data.state;
         }
@@ -2932,23 +3009,13 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           : `✅ All executed page logs are already healthy (Exit Code 0)! Running AI Verification on current Page ${IDE_CURRENT_PAGE}...`);
         await runSelfHealingAiFix();
       } catch (e) {
-        await runSelfHealingAiFix();
+        appendToTerminalScreen(`⚠ Global Self-Healer error: ${e.message}`);
       }
     }
 
     async function launchXquartzAndTerminalNow() {
-      appendToTerminalScreen(`\n🖥️ [Launching macOS XQuartz.app & Terminal.app Live Banner]...`);
-      try {
-        const res = await smartApiFetch('/api/launch_gui', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ page_num: IDE_CURRENT_PAGE })
-        }, 6000);
-        const data = await res.json();
-        appendToTerminalScreen(data.message || 'Launched XQuartz.app and broadcast live banner to open macOS Terminal tabs!');
-      } catch (e) {
-        appendToTerminalScreen(`✓ XQuartz.app (:0) & Terminal Mirror Ready!`);
-      }
+      openLivePopupExecutionModal();
+      await triggerXquartzExternalWindowPlot(false);
     }
 
     async function runBatchPagesLive(startPage, endPage) {
@@ -3277,7 +3344,7 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
         <div class="studio-card" style="margin-bottom:0;">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
             <span class="badge lavender">${escapeHtml(g.stage)} · Page ${g.page_num}</span>
-            <span class="badge mint">✓ Verified Capture</span>
+            <span class="badge mint">RECORDED_VERIFIED_CAPTURE (V9)</span>
           </div>
           <h3 style="margin:0 0 6px 0;font-size:16px;">${escapeHtml(g.title)}</h3>
           <p style="margin:0 0 10px 0;font-size:12.6px;color:var(--text-body);line-height:1.52;">${escapeHtml(g.desc)}</p>
@@ -3286,11 +3353,11 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           ` : ''}
           <pre class="code-box" style="font-size:11.6px;margin-bottom:10px;">${escapeHtml(g.tcl_cmd)}</pre>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-sm btn-pink" onclick="selectIdePage(${g.page_num});POPUP_CURRENT_FIG='${escapeHtml(g.id || 'fig10')}';openLivePopupExecutionModal();triggerXquartzExternalWindowPlot();">
-              🖥️ Launch in XQuartz & Run Live (Native Verdi + Rail Verifier)
+            <button class="btn btn-sm btn-pink" onclick="selectIdePage(${g.page_num});POPUP_CURRENT_FIG='${escapeHtml(g.id || 'fig10')}';openLivePopupExecutionModal('${escapeHtml(g.id || 'fig10')}', false);triggerXquartzExternalWindowPlot(false);">
+              🖥️ Launch in XQuartz & Verify Live (Native Verdi + Rail Verifier)
             </button>
-            <button class="btn btn-sm btn-mint" onclick="openLivePopupExecutionModal();startPopupLiveWaveformPlot('${escapeHtml(g.id || 'auto')}');">
-              📈 Educational Oscilloscope Walkthrough
+            <button class="btn btn-sm btn-mint" onclick="POPUP_CURRENT_FIG='${escapeHtml(g.id || 'fig10')}';openLivePopupExecutionModal('${escapeHtml(g.id || 'fig10')}', true);">
+              📸 Inspect Recorded V9 Capture & 17-Signal Provenance
             </button>
             <button class="btn btn-sm" onclick="zoomImage('${g.img_url}')">🔍 Zoom Full-Screen</button>
           </div>
@@ -3958,21 +4025,8 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
         DISCOVERED_RESOURCES = [];
       }
 
-      // Automatically heal any failed logs on boot!
-      const hasFailed = Object.values((LIVE_STATE && LIVE_STATE.completed_pages) || {}).some(v => v && v.status === 'FAIL');
-      if (hasFailed) {
-        try {
-          const hRes = await smartApiFetch('/api/heal_all_failed', { method: 'POST' }, 6000);
-          const hJson = await hRes.json();
-          if (hJson && hJson.state) LIVE_STATE = hJson.state;
-        } catch (e) {
-          Object.keys((LIVE_STATE && LIVE_STATE.completed_pages) || {}).forEach(k => {
-            if (LIVE_STATE.completed_pages[k] && LIVE_STATE.completed_pages[k].status === 'FAIL') {
-              runClientSideAutonomousSelfHeal('', parseInt(k, 10), `Startup Self-Healer repaired Page ${k} Exit Code 2.`);
-            }
-          });
-        }
-      }
+      // Do NOT fabricate client-side PASS states on startup; preserve real backend state.
+      localStorage.removeItem('engr852_v52_healed_pages');
 
       buildCompleteFlashcardDeck();
       populatePageDropdowns();
@@ -4015,37 +4069,66 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
     }
 
     /* ====================================================================== */
-    /* v6.0 SUPER-INTELLIGENCE AI AGENT, POP-UP LIVE OSCILLOSCOPE & XQUARTZ,  */
-    /* VOICE COACH, WHITEBOARD CANVAS, GITHUB SYNC, ONBOARDING & MULTI-RESET  */
+    /* v8.0.2 NATIVE SYNOPSYS VERDI / NWAVE LIVE APPLICATION CAPTURE VIEWER   */
+    /* Zero Synthetic Canvas Waveforms — Real X11 Captures & V9 Provenance    */
     /* ====================================================================== */
+    window.__FAKE_OSCILLOSCOPE_INVOCATIONS = 0;
     let POPUP_PLOT_TIMER = null;
-    let POPUP_CURRENT_FIG = 'auto';
+    let POPUP_CURRENT_FIG = 'fig10';
+    let POPUP_VIEW_RECORDED_MODE = false;
+    let ACTIVE_NATIVE_RUN_JOB_ID = '';
 
-    function openLivePopupExecutionModal() {
+    function resolveCanonicalFigId(rawFigId) {
+      const figMap = {
+        'fig1_8bit_trap': 'fig7',
+        'fig2_16bit_0000': 'fig10',
+        'fig6_layout_14nm': 'layout',
+        'auto': (IDE_CURRENT_PAGE <= 49 ? 'fig7' : (IDE_CURRENT_PAGE === 50 ? 'fig8' : (IDE_CURRENT_PAGE === 52 ? 'fig9' : (IDE_CURRENT_PAGE >= 61 ? 'layout' : 'fig10'))))
+      };
+      const mapped = figMap[rawFigId] || rawFigId || 'fig10';
+      return ['fig7', 'fig8', 'fig9', 'fig10', 'fig11', 'layout'].includes(mapped) ? mapped : 'fig10';
+    }
+
+    function updatePopupFigButtonsUI(figId) {
+      ['fig7', 'fig8', 'fig9', 'fig10', 'fig11', 'layout'].forEach(fid => {
+        const b = document.getElementById('popPlotBtn-' + fid);
+        if (b) b.classList.toggle('btn-pink', fid === figId);
+      });
+    }
+
+    function openLivePopupExecutionModal(figOverride, preferRecorded) {
       const m = document.getElementById('livePopupExecutionModal');
       if (m) m.classList.add('open');
-      startPopupLiveWaveformPlot(POPUP_CURRENT_FIG || 'auto');
+      const targetFig = resolveCanonicalFigId(figOverride || POPUP_CURRENT_FIG || 'auto');
+      selectNativeVerdiFigure(targetFig, Boolean(preferRecorded));
     }
 
     function closeLivePopupExecutionModal() {
       const m = document.getElementById('livePopupExecutionModal');
       if (m) m.classList.remove('open');
+      stopNativeVerdiLiveStream();
+    }
+
+    function stopNativeVerdiLiveStream() {
       if (POPUP_PLOT_TIMER) {
         clearInterval(POPUP_PLOT_TIMER);
         POPUP_PLOT_TIMER = null;
       }
-    }
-
-    function detachLivePopupToSeparateWindow() {
-      const w = window.open(window.location.href, 'ENGR852_Live_Popup_Plotter', 'width=1180,height=820,menubar=no,toolbar=no,location=no,status=no');
-      if (w) {
-        w.addEventListener('load', () => {
-          try { w.openLivePopupExecutionModal(); } catch (e) {}
-        });
+      const connBadge = document.getElementById('nativeVerdiConnectionStateBadge');
+      if (connBadge && connBadge.textContent.includes('STREAMING')) {
+        connBadge.className = 'badge lavender';
+        connBadge.textContent = 'STATE: DISCONNECTED (STREAM STOPPED)';
       }
     }
 
-    let ACTIVE_NATIVE_RUN_JOB_ID = '';
+    function detachLivePopupToSeparateWindow() {
+      const w = window.open(window.location.href, 'ENGR852_Native_Verdi_Viewer', 'width=1220,height=840,menubar=no,toolbar=no,location=no,status=no');
+      if (w) {
+        w.addEventListener('load', () => {
+          try { w.openLivePopupExecutionModal(POPUP_CURRENT_FIG, POPUP_VIEW_RECORDED_MODE); } catch (e) {}
+        });
+      }
+    }
 
     function renderNativeVerdi10StageBar(stageStates) {
       const bar = document.getElementById('nativeVerdi10StageBar');
@@ -4053,76 +4136,356 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
       const stages = ['DISCOVER', 'CONNECT', 'LOAD_EDA', 'LOAD_FSDB', 'LAUNCH_GUI', 'PLOT_SIGNALS', 'VERIFY_OUTPUT', 'CAPTURE', 'SYNC', 'COMPLETE'];
       bar.innerHTML = stages.map((st, idx) => {
         const val = (stageStates && stageStates[st]) || 'WAITING';
-        const cls = val === 'PASSED' ? 'mint' : (val === 'FAILED' ? 'coral' : (val === 'ACTIVE' ? 'pink' : 'lavender'));
-        const mark = val === 'PASSED' ? '✓' : (val === 'FAILED' ? '✗' : '');
+        const cls = val === 'PASSED' ? 'mint' : (val === 'FAILED' || val === 'BLOCKED' ? 'coral' : (val === 'ACTIVE' ? 'pink' : 'lavender'));
+        const mark = val === 'PASSED' ? '✓' : (val === 'FAILED' ? '✗' : (val === 'BLOCKED' ? '⚠' : ''));
         return `<span class="badge ${cls}">${idx + 1}.${st}${mark ? ' ' + mark : ''}</span>`;
       }).join('');
     }
 
-    async function triggerXquartzExternalWindowPlot() {
+    function renderNativeVerdiProvenanceAndSignals(provenanceObj, signalsList) {
+      const provBox = document.getElementById('nativeVerdiProvenanceBox');
+      const sigBox = document.getElementById('nativeVerdiSignalTableBox');
+      if (provBox) {
+        const p = provenanceObj || {};
+        provBox.innerHTML = `
+          <div style="background:#ffffff;border:1px solid #d8b4fe;border-radius:8px;padding:8px 10px;font-family:var(--mono);font-size:10.8px;">
+            <div><b>• Evidence Class:</b> <code>${escapeHtml(p.evidence_class || 'UNVERIFIED')}</code> | <b>Status:</b> <code>${escapeHtml(p.status || 'UNKNOWN')}</code></div>
+            <div><b>• Figure / Tool:</b> <code>${escapeHtml((p.fig_id || POPUP_CURRENT_FIG).toUpperCase())}</code> | <b>Window ID:</b> <code>${escapeHtml(p.window_id || 'none')}</code></div>
+            <div><b>• FSDB Database:</b> <code>${escapeHtml(p.fsdb || 'N/A')}</code></div>
+            <div><b>• Tcl Script:</b> <code>${escapeHtml(p.tcl_script || 'N/A')}</code></div>
+            <div><b>• Captured UTC:</b> <code>${escapeHtml(p.captured_at_utc || 'N/A')}</code></div>
+            <div><b>• Artifact SHA-256:</b> <code>${escapeHtml((p.screenshot_sha256 || 'N/A').slice(0, 32))}...</code></div>
+          </div>
+        `;
+      }
+      if (sigBox) {
+        const rows = Array.isArray(signalsList) ? signalsList : [];
+        if (!rows.length) {
+          sigBox.innerHTML = `<div style="font-size:11.2px;color:var(--text-muted);padding:6px;">No signal rail verification records loaded for this view.</div>`;
+        } else {
+          sigBox.innerHTML = `
+            <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:10.4px;">
+              <thead>
+                <tr style="background:#f3e8ff;text-align:left;">
+                  <th style="padding:3px 5px;">Signal</th>
+                  <th style="padding:3px 5px;">Width</th>
+                  <th style="padding:3px 5px;">Radix</th>
+                  <th style="padding:3px 5px;">Added</th>
+                  <th style="padding:3px 5px;">Observed Values</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows.map(r => `
+                  <tr style="border-bottom:1px solid #f5d0fe;">
+                    <td style="padding:3px 5px;font-weight:700;">${escapeHtml(String(r.requested_signal || '').split('/').pop())}</td>
+                    <td style="padding:3px 5px;">${escapeHtml(String(r.bit_width || 1))}-b</td>
+                    <td style="padding:3px 5px;">${escapeHtml(String(r.radix || 'HEX'))}</td>
+                    <td style="padding:3px 5px;color:${r.added_ok ? '#047857' : '#be123c'};font-weight:700;">${r.added_ok ? '✓ YES' : '✗ NO'}</td>
+                    <td style="padding:3px 5px;">${escapeHtml(JSON.stringify(r.observed_values || {}))}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+      }
+    }
+
+    async function selectNativeVerdiFigure(figId, preferRecorded) {
+      const cleanFig = resolveCanonicalFigId(figId);
+      POPUP_CURRENT_FIG = cleanFig;
+      POPUP_VIEW_RECORDED_MODE = Boolean(preferRecorded);
+      updatePopupFigButtonsUI(cleanFig);
+
+      const pageBadge = document.getElementById('popupExecPageBadge');
+      if (pageBadge) pageBadge.textContent = `Page ${IDE_CURRENT_PAGE} · ${cleanFig.toUpperCase()} · 520 MHz 14nm ASIC`;
+
+      const topBadge = document.getElementById('popupExecStatusBadge');
+      const connBadge = document.getElementById('nativeVerdiConnectionStateBadge');
+      const evBadge = document.getElementById('nativeVerdiEvidenceBadge');
+      const stEl = document.getElementById('popupPlotterStepStatus');
+      const blockedBanner = document.getElementById('nativeVerdiBlockedBanner');
+      const blockedCode = document.getElementById('nativeVerdiBlockedCodeBadge');
+      const blockedEnv = document.getElementById('nativeVerdiBlockedEnvSummary');
+      const blockedReason = document.getElementById('nativeVerdiBlockedReasonText');
+      const previewImg = document.getElementById('nativeVerdiWindowPreviewImg');
+      const noImgPlaceholder = document.getElementById('nativeVerdiNoImagePlaceholder');
+      const previewTitle = document.getElementById('nativeVerdiWindowPreviewTitle');
+      const progBadge = document.getElementById('popupPlotProgressBadge');
+      const cursorLbl = document.getElementById('popupCursorTelemetryLbl');
+      const logEl = document.getElementById('popupLiveExecutionLog');
+
+      try {
+        const res = await smartApiFetch(`/api/v8/verdi/live-status?fig_id=${encodeURIComponent(cleanFig)}&job_id=${encodeURIComponent(ACTIVE_NATIVE_RUN_JOB_ID || '')}`, {}, 8000);
+        const data = await res.json();
+        const liveSt = (data && data.live_status) || {};
+        const recEv = (data && data.selected_recorded_evidence) || {};
+        const x11Env = liveSt.x11_environment || {};
+
+        if (POPUP_VIEW_RECORDED_MODE && recEv && recEv.ok) {
+          const imgUrl = recEv.recorded_image_url || recEv.web_url || '';
+          const tclName = recEv.tcl || recEv.tcl_script || 'N/A';
+          const capTs = recEv.recorded_capture_timestamp_utc || recEv.captured_at_utc || 'V9 Sign-Off';
+          if (blockedBanner) blockedBanner.style.display = 'none';
+          if (topBadge) {
+            topBadge.className = 'badge mint';
+            topBadge.textContent = `📸 RECORDED VERIFIED V9 CAPTURE (${cleanFig.toUpperCase()})`;
+          }
+          if (connBadge) {
+            connBadge.className = 'badge mint';
+            connBadge.textContent = `STATE: RECORDED_VERIFIED_CAPTURE`;
+          }
+          if (evBadge) {
+            evBadge.className = 'badge mint';
+            evBadge.textContent = `RECORDED_VERIFIED_CAPTURE · SHA-256 VERIFIED`;
+          }
+          if (stEl) {
+            stEl.textContent = `Showing Recorded Historical V9 Capture for ${cleanFig.toUpperCase()} (Captured: ${capTs} · SHA-256: ${(recEv.screenshot_sha256 || '').slice(0, 16)}...)`;
+          }
+          if (previewImg && imgUrl) {
+            previewImg.src = imgUrl + '?t=' + Date.now();
+            previewImg.style.display = 'block';
+          }
+          if (noImgPlaceholder) noImgPlaceholder.style.display = 'none';
+          if (previewTitle) {
+            previewTitle.textContent = `📸 Recorded Verified V9 Capture (${cleanFig.toUpperCase()} · ${recEv.title || ''}) [NOT A LIVE STREAM]`;
+          }
+          if (progBadge) {
+            progBadge.className = 'badge mint';
+            progBadge.textContent = 'RECORDED_VERIFIED_CAPTURE';
+          }
+          if (cursorLbl) {
+            cursorLbl.innerHTML = `<b>⏱️ Recorded V9 Provenance:</b> <code>FSDB: ${escapeHtml(recEv.fsdb || 'N/A (ICC2 Layout)')}</code> · <code>Tcl: ${escapeHtml(tclName)}</code> · <code>SHA256: ${escapeHtml((recEv.screenshot_sha256 || '').slice(0, 16))}...</code>`;
+          }
+          renderNativeVerdiProvenanceAndSignals({
+            evidence_class: 'RECORDED_VERIFIED_CAPTURE',
+            status: 'RECORDED_VERIFIED_CAPTURE',
+            fig_id: cleanFig,
+            window_id: 'V9_ARCHIVE_CAPTURE',
+            fsdb: recEv.fsdb || 'N/A (Physical Layout)',
+            tcl_script: tclName,
+            captured_at_utc: capTs,
+            screenshot_sha256: recEv.screenshot_sha256
+          }, []);
+          if (logEl) {
+            logEl.textContent = JSON.stringify(recEv, null, 2);
+          }
+          return;
+        }
+
+        // Live mode: check if a live Verdi window is actually verified or if it's BLOCKED
+        const isLiveVerified = Boolean(liveSt.verdi_window_found && (liveSt.status === 'WAVEFORM_VERIFIED' || liveSt.status === 'GUI_OPEN'));
+        if (!isLiveVerified) {
+          if (blockedBanner) blockedBanner.style.display = 'block';
+          if (blockedCode) blockedCode.textContent = `BLOCKED · ${liveSt.reason_code || 'NO_LIVE_VERDI_WINDOW'}`;
+          if (blockedEnv) {
+            blockedEnv.textContent = `XQuartz ${x11Env.display || ':0'}: ${x11Env.xquartz_running ? 'running' : 'offline'} | xterm: ${(x11Env.xterm_window_ids || []).join(',') || 'none'} | Verdi: none`;
+          }
+          if (blockedReason) {
+            blockedReason.textContent = liveSt.message || 'No live Synopsys Verdi/nWave X11 window is active on DISPLAY :0, and SSH to mahmoodi.rcc.at.sfsu.edu is unreachable. Synthetic browser Canvas waveforms are never displayed.';
+          }
+          if (topBadge) {
+            topBadge.className = 'badge coral';
+            topBadge.textContent = `⚠ LIVE NATIVE VERDI CAPTURE BLOCKED (${liveSt.reason_code || 'SSH_OR_X11_UNAVAILABLE'})`;
+          }
+          if (connBadge) {
+            connBadge.className = 'badge coral';
+            connBadge.textContent = `STATE: ${liveSt.status || 'BLOCKED'}`;
+          }
+          if (evBadge) {
+            evBadge.className = 'badge coral';
+            evBadge.textContent = `${liveSt.evidence_class || 'BLOCKED'} · ${liveSt.reason_code || 'NO_LIVE_VERDI'}`;
+          }
+          if (stEl) {
+            stEl.textContent = `⚠ Live Synopsys Verdi X11 Capture is BLOCKED (${liveSt.reason_code || 'NO_LIVE_VERDI_WINDOW'}). Click "📸 View Recorded Verified V9 Capture" to inspect archived V9 evidence.`;
+          }
+          if (previewImg) {
+            previewImg.src = '';
+            previewImg.style.display = 'none';
+          }
+          if (noImgPlaceholder) {
+            noImgPlaceholder.style.display = 'block';
+            noImgPlaceholder.innerHTML = `🚫 <b>NO LIVE SYNOPSYS VERDI X11 FRAME AVAILABLE (${escapeHtml(liveSt.status || 'BLOCKED')})</b><br>Synthetic Canvas oscilloscope waveforms have been permanently removed.<br>Connect SFSU GlobalProtect VPN + SSH -Y, or click <b>"📸 View Recorded Verified V9 Capture"</b> above.`;
+          }
+          if (progBadge) {
+            progBadge.className = 'badge coral';
+            progBadge.textContent = liveSt.status || 'BLOCKED';
+          }
+          renderNativeVerdi10StageBar({
+            DISCOVER: x11Env.xquartz_running ? 'PASSED' : 'BLOCKED',
+            CONNECT: 'BLOCKED',
+            LOAD_EDA: 'WAITING',
+            LOAD_FSDB: 'WAITING',
+            LAUNCH_GUI: 'BLOCKED',
+            PLOT_SIGNALS: 'WAITING',
+            VERIFY_OUTPUT: 'WAITING',
+            CAPTURE: 'WAITING',
+            SYNC: 'WAITING',
+            COMPLETE: 'BLOCKED'
+          });
+          updateVisualPipelineFromStages({
+            stage1_terminal: { state: 'PASSED', detail: 'Local X11 & SSH environment inspected' },
+            stage2_gui: { state: 'BLOCKED', detail: `XQuartz :0 (${(x11Env.xterm_window_ids || []).length} xterm, 0 Verdi)` },
+            stage3_tool: { state: 'BLOCKED', detail: liveSt.reason_code || 'SSH / Synopsys Verdi unavailable' },
+            stage4_verifier: { state: 'BLOCKED', detail: 'Signal rail verification blocked' },
+            stage5_artifact: { state: 'BLOCKED', detail: 'No live capture produced' }
+          });
+          renderNativeVerdiProvenanceAndSignals({
+            evidence_class: liveSt.evidence_class || 'BLOCKED',
+            status: liveSt.status || 'BLOCKED',
+            fig_id: cleanFig,
+            window_id: 'none',
+            fsdb: recEv.fsdb || 'motion_v5_16bit_top_regression.fsdb',
+            tcl_script: recEv.tcl_script || 'fig10_16bit_perfect_match.tcl',
+            captured_at_utc: 'N/A (Blocked)',
+            screenshot_sha256: 'NONE'
+          }, []);
+          if (logEl) {
+            logEl.textContent = JSON.stringify(liveSt, null, 2);
+          }
+        }
+      } catch (e) {
+        if (stEl) stEl.textContent = `⚠ Status check failed: ${e.message || e}`;
+      }
+    }
+
+    // Legacy alias kept as a safe redirect so any external caller never invokes a fake Canvas animation
+    function startPopupLiveWaveformPlot(figId) {
+      return selectNativeVerdiFigure(figId || POPUP_CURRENT_FIG || 'fig10', false);
+    }
+
+    async function refreshNativeVerdiViewerCapture() {
+      if (!ACTIVE_NATIVE_RUN_JOB_ID) {
+        return selectNativeVerdiFigure(POPUP_CURRENT_FIG, POPUP_VIEW_RECORDED_MODE);
+      }
+      try {
+        const res = await smartApiFetch(`/api/native-runs/${encodeURIComponent(ACTIVE_NATIVE_RUN_JOB_ID)}/capture`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        }, 15000);
+        const data = await res.json();
+        if (res.ok && data && data.ok) {
+          const previewImg = document.getElementById('nativeVerdiWindowPreviewImg');
+          const noImgPlaceholder = document.getElementById('nativeVerdiNoImagePlaceholder');
+          const base = ACTIVE_API_BASE ? ACTIVE_API_BASE.replace(/\/$/, '') : '';
+          const tokParam = JDEV8_SESSION_TOKEN ? `&token=${encodeURIComponent(JDEV8_SESSION_TOKEN)}` : '';
+          if (previewImg) {
+            previewImg.src = `${base}/api/native-runs/${ACTIVE_NATIVE_RUN_JOB_ID}/frame.png?t=${Date.now()}${tokParam}`;
+            previewImg.style.display = 'block';
+          }
+          if (noImgPlaceholder) noImgPlaceholder.style.display = 'none';
+        } else {
+          await selectNativeVerdiFigure(POPUP_CURRENT_FIG, false);
+        }
+      } catch (e) {
+        await selectNativeVerdiFigure(POPUP_CURRENT_FIG, false);
+      }
+    }
+
+    async function triggerXquartzExternalWindowPlot(forceNewLaunch) {
+      POPUP_VIEW_RECORDED_MODE = false;
+      const figId = resolveCanonicalFigId(POPUP_CURRENT_FIG);
       const st = document.getElementById('popupPlotterStepStatus');
+      const topBadge = document.getElementById('popupExecStatusBadge');
+      const connBadge = document.getElementById('nativeVerdiConnectionStateBadge');
       const evBadge = document.getElementById('nativeVerdiEvidenceBadge');
       const logEl = document.getElementById('popupLiveExecutionLog');
-      const previewBox = document.getElementById('nativeVerdiWindowPreviewBox');
+      const blockedBanner = document.getElementById('nativeVerdiBlockedBanner');
       const previewImg = document.getElementById('nativeVerdiWindowPreviewImg');
+      const noImgPlaceholder = document.getElementById('nativeVerdiNoImagePlaceholder');
       const previewTitle = document.getElementById('nativeVerdiWindowPreviewTitle');
-      const figMap = {
-        'fig1_8bit_trap': 'fig7',
-        'fig2_16bit_0000': 'fig10',
-        'fig6_layout_14nm': 'fig10',
-        'auto': (IDE_CURRENT_PAGE <= 49 ? 'fig7' : (IDE_CURRENT_PAGE === 50 ? 'fig8' : (IDE_CURRENT_PAGE === 52 ? 'fig9' : 'fig10')))
-      };
-      const figId = figMap[POPUP_CURRENT_FIG] || (['fig7','fig8','fig9','fig10','fig11'].includes(POPUP_CURRENT_FIG) ? POPUP_CURRENT_FIG : 'fig10');
+      const progBadge = document.getElementById('popupPlotProgressBadge');
+
+      if (connBadge) {
+        connBadge.className = 'badge pink';
+        connBadge.textContent = 'STATE: CONNECTING';
+      }
       if (st) st.textContent = `🖥️ Verifying Native Synopsys Verdi X11 + FSDB + Tcl + Signal Rails (${figId.toUpperCase()})...`;
+
       try {
         const res = await smartApiFetch('/api/native-runs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ page_num: IDE_CURRENT_PAGE, figure_id: figId })
+          body: JSON.stringify({
+            page_num: IDE_CURRENT_PAGE,
+            figure_id: figId,
+            force_new_launch: Boolean(forceNewLaunch)
+          })
         }, 25000);
         const data = await res.json();
+        if (!res.ok) {
+          if (connBadge) {
+            connBadge.className = 'badge coral';
+            connBadge.textContent = `STATE: BLOCKED (${res.status})`;
+          }
+          if (st) st.textContent = `⚠ Native Synopsys Verdi execution requires Owner/Companion authorization (${(data && data.error) || res.status}).`;
+          if (logEl) logEl.textContent = JSON.stringify(data, null, 2);
+          await selectNativeVerdiFigure(figId, false);
+          return;
+        }
+
         ACTIVE_NATIVE_RUN_JOB_ID = data.job_id || '';
         renderNativeVerdi10StageBar(data.stage_states || {});
-        const okVerified = Boolean(data.ok && data.signal_rail_verified);
+        if (data.stages) {
+          updateVisualPipelineFromStages(data.stages);
+        }
+        const okVerified = Boolean(data.ok && data.signal_rail_verified && data.status === 'WAVEFORM_VERIFIED');
         const sigVer = data.signal_rail_verification || {};
         const pixVer = sigVer.pixel_rail_audit || {};
-        if (evBadge) {
-          evBadge.className = `badge ${okVerified ? 'mint' : 'coral'}`;
-          evBadge.textContent = `${data.evidence_class || 'UNVERIFIED'} · ${data.status || 'CHECK'}`;
-        }
-        if (st) {
-          st.textContent = okVerified
-            ? `✓ WAVEFORM_SIGNALS_VERIFIED (${figId.toUpperCase()} · Window ${data.window_id} · ${pixVer.signal_rail_bands_detected || 0} Signal Rails)`
-            : `⚠ Status: ${data.status} (Evidence: ${data.evidence_class})`;
-        }
-        animateVisualPipeline(5, {
-          1: `SSH -Y & Terminal Verified ✓`,
-          2: `XQuartz Window ${data.window_id || 'none'} ✓`,
-          3: `FSDB (${(sigVer.fsdb_audit || {}).fsdb_variables_count || 0} vars) + Tcl Replay ✓`,
-          4: `${pixVer.signal_rail_bands_detected || 0} nWave Rail Bands Verified ✓`,
-          5: `Window-Only Redacted PNG Saved ✓`
-        }, okVerified);
-        if (previewBox && previewImg && data.job_id) {
-          const base = ACTIVE_API_BASE ? ACTIVE_API_BASE.replace(/\/$/, '') : '';
-          previewImg.src = `${base}/api/native-runs/${data.job_id}/frame.png?t=${Date.now()}`;
-          if (previewTitle) {
-            previewTitle.textContent = `🪟 Authorized Window-Only Synopsys Verdi Capture (${figId.toUpperCase()} · Window ${data.window_id || ''} · Redacted Home Path)`;
+
+        if (okVerified) {
+          if (blockedBanner) blockedBanner.style.display = 'none';
+          if (topBadge) {
+            topBadge.className = 'badge mint';
+            topBadge.textContent = `🟢 WAVEFORM_VERIFIED · REAL APPLICATION CAPTURE (${figId.toUpperCase()})`;
           }
-          previewBox.style.display = 'block';
+          if (connBadge) {
+            connBadge.className = 'badge mint';
+            connBadge.textContent = `STATE: WAVEFORM_VERIFIED`;
+          }
+          if (evBadge) {
+            evBadge.className = 'badge mint';
+            evBadge.textContent = `${data.evidence_class || 'REAL_APPLICATION_CAPTURE'} · ${data.status}`;
+          }
+          if (st) {
+            st.textContent = `✓ WAVEFORM_VERIFIED (${figId.toUpperCase()} · Window ${data.window_id} · ${pixVer.signal_rail_bands_detected || 0} Signal Rails)`;
+          }
+          if (progBadge) {
+            progBadge.className = 'badge mint';
+            progBadge.textContent = 'REAL_APPLICATION_CAPTURE';
+          }
+          if (previewImg && data.job_id) {
+            const base = ACTIVE_API_BASE ? ACTIVE_API_BASE.replace(/\/$/, '') : '';
+            const tokParam = JDEV8_SESSION_TOKEN ? `&token=${encodeURIComponent(JDEV8_SESSION_TOKEN)}` : '';
+            previewImg.src = `${base}/api/native-runs/${data.job_id}/frame.png?t=${Date.now()}${tokParam}`;
+            previewImg.style.display = 'block';
+          }
+          if (noImgPlaceholder) noImgPlaceholder.style.display = 'none';
+          if (previewTitle) {
+            previewTitle.textContent = `🪟 Authorized Window-Only Synopsys Verdi Capture (${figId.toUpperCase()} · Window ${data.window_id || ''} · Redacted Paths)`;
+          }
+        } else {
+          await selectNativeVerdiFigure(figId, false);
         }
+
+        renderNativeVerdiProvenanceAndSignals({
+          evidence_class: data.evidence_class || 'BLOCKED',
+          status: data.status || 'BLOCKED',
+          fig_id: figId,
+          window_id: data.window_id || 'none',
+          fsdb: ((data.launch || {}).fsdb) || 'motion_v5_16bit_top_regression.fsdb',
+          tcl_script: ((data.launch || {}).tcl_script) || 'fig10_16bit_perfect_match.tcl',
+          captured_at_utc: ((data.capture || {}).capture_timestamp_utc) || new Date().toISOString(),
+          screenshot_sha256: data.redacted_sha256 || ((data.capture || {}).redacted_sha256) || 'NONE'
+        }, ((data.capture || {}).signal_verification_records) || ((data.launch || {}).signal_verification_records) || []);
+
         if (logEl) {
-          logEl.textContent = JSON.stringify({
-            job_id: data.job_id,
-            status: data.status,
-            evidence_class: data.evidence_class,
-            window_id: data.window_id,
-            signal_rail_verified: data.signal_rail_verified,
-            signal_rail_bands_detected: pixVer.signal_rail_bands_detected,
-            green_scanlines: pixVer.green_scanlines
-          }, null, 2);
+          logEl.textContent = JSON.stringify(data, null, 2);
         }
       } catch (e) {
         if (st) st.textContent = `⚠ Native Verdi check error: ${e.message || e}`;
+        await selectNativeVerdiFigure(figId, false);
       }
     }
 
@@ -4130,11 +4493,11 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
       const st = document.getElementById('popupPlotterStepStatus');
       const logEl = document.getElementById('popupLiveExecutionLog');
       const coachBox = document.getElementById('popupCoachStepsBox');
-      const previewBox = document.getElementById('nativeVerdiWindowPreviewBox');
       const previewImg = document.getElementById('nativeVerdiWindowPreviewImg');
+      const noImgPlaceholder = document.getElementById('nativeVerdiNoImagePlaceholder');
       const previewTitle = document.getElementById('nativeVerdiWindowPreviewTitle');
       if (!ACTIVE_NATIVE_RUN_JOB_ID) {
-        await triggerXquartzExternalWindowPlot();
+        await triggerXquartzExternalWindowPlot(false);
       }
       const jobId = ACTIVE_NATIVE_RUN_JOB_ID || 'fig10_teaching';
       if (st) st.textContent = `🎯 Executing Interactive Native Verdi Teaching Action (${actionName})...`;
@@ -4145,7 +4508,11 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           body: JSON.stringify({ action: actionName })
         }, 20000);
         const data = await res.json();
-        if (st) st.textContent = `✓ ${data.title || actionName} (${data.evidence_class || 'NATIVE_EXECUTION'})`;
+        if (!res.ok || (data && data.ok === false)) {
+          if (st) st.textContent = `⚠ Teaching action blocked: ${(data && data.error) || res.status}`;
+          return;
+        }
+        if (st) st.textContent = `✓ ${data.title || actionName} (${data.evidence_class || 'REAL_APPLICATION_CAPTURE'})`;
         if (coachBox && data.explanation) {
           coachBox.innerHTML = `
             <div style="background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:10px;padding:10px 12px;margin-bottom:8px;">
@@ -4155,13 +4522,15 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
             </div>
           `;
         }
-        if (previewBox && previewImg) {
+        if (previewImg) {
           const base = ACTIVE_API_BASE ? ACTIVE_API_BASE.replace(/\/$/, '') : '';
-          previewImg.src = `${base}/api/native-runs/${jobId}/frame.png?t=${Date.now()}`;
+          const tokParam = JDEV8_SESSION_TOKEN ? `&token=${encodeURIComponent(JDEV8_SESSION_TOKEN)}` : '';
+          previewImg.src = `${base}/api/native-runs/${jobId}/frame.png?t=${Date.now()}${tokParam}`;
+          previewImg.style.display = 'block';
+          if (noImgPlaceholder) noImgPlaceholder.style.display = 'none';
           if (previewTitle) {
             previewTitle.textContent = `🪟 Teaching-Annotated Native Synopsys Verdi Capture (${data.title || actionName})`;
           }
-          previewBox.style.display = 'block';
         }
         if (logEl) {
           logEl.textContent = JSON.stringify(data, null, 2);
@@ -4172,165 +4541,6 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
       } catch (e) {
         if (st) st.textContent = `⚠ Action error: ${e.message || e}`;
       }
-    }
-
-    function startPopupLiveWaveformPlot(figId) {
-      POPUP_CURRENT_FIG = figId || 'auto';
-      const c = document.getElementById('popupOscilloscopeCanvas');
-      if (!c) return;
-      const ctx = c.getContext('2d');
-      if (POPUP_PLOT_TIMER) {
-        clearInterval(POPUP_PLOT_TIMER);
-        POPUP_PLOT_TIMER = null;
-      }
-
-      let mode = POPUP_CURRENT_FIG;
-      if (mode === 'auto') {
-        if (IDE_CURRENT_PAGE >= 13 && IDE_CURRENT_PAGE <= 22) mode = 'fig1_8bit_trap';
-        else if (IDE_CURRENT_PAGE >= 63 && IDE_CURRENT_PAGE <= 90) mode = 'fig6_layout_14nm';
-        else mode = 'fig2_16bit_0000';
-      }
-
-      const logEl = document.getElementById('popupLiveExecutionLog');
-      const stEl = document.getElementById('popupPlotterStepStatus');
-      let stepIdx = 0;
-      const totalSteps = 28;
-
-      POPUP_PLOT_TIMER = setInterval(() => {
-        stepIdx++;
-        if (stepIdx > totalSteps) {
-          clearInterval(POPUP_PLOT_TIMER);
-          POPUP_PLOT_TIMER = null;
-          if (stEl) stEl.textContent = `✓ Live Plotting Complete (${mode}) — All Signals & Metrics Verified!`;
-          return;
-        }
-        const progress = stepIdx / totalSteps;
-        if (stEl) stEl.textContent = `📈 Plotting Step ${stepIdx}/${totalSteps} (${Math.round(progress * 100)}%) · Mode: ${mode} (Page ${IDE_CURRENT_PAGE})`;
-
-        // Render oscilloscope frame
-        ctx.fillStyle = '#0f0720';
-        ctx.fillRect(0, 0, c.width, c.height);
-
-        // Grid lines
-        ctx.strokeStyle = 'rgba(244, 114, 182, 0.14)';
-        ctx.lineWidth = 1;
-        for (let x = 130; x < c.width; x += 45) {
-          ctx.beginPath(); ctx.moveTo(x, 12); ctx.lineTo(x, c.height - 12); ctx.stroke();
-        }
-        for (let y = 26; y < c.height; y += 42) {
-          ctx.beginPath(); ctx.moveTo(10, y); ctx.lineTo(c.width - 10, y); ctx.stroke();
-        }
-
-        // Title bar
-        ctx.fillStyle = '#f9a8d4';
-        ctx.font = 'bold 12px JetBrains Mono, monospace';
-        ctx.fillText(`XQUARTZ / VERDI nWAVE LIVE OSCILLOSCOPE · PAGE ${IDE_CURRENT_PAGE} · ${mode.toUpperCase()}`, 14, 20);
-
-        if (mode === 'fig6_layout_14nm') {
-          // Draw 14nm FinFET floorplan & 16 PE array step-by-step
-          ctx.strokeStyle = '#34d399';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(140, 34, 480, 210);
-          ctx.fillStyle = '#a7f3d0';
-          ctx.font = 'bold 11px Inter, sans-serif';
-          ctx.fillText('SAED14nm Core Die: 125.07 um x 62.80 um (7,854.40 um^2) · 0 / 242 DRC Violations', 150, 50);
-
-          const peVisible = Math.min(16, Math.ceil(progress * 16));
-          for (let i = 0; i < peVisible; i++) {
-            const row = Math.floor(i / 8);
-            const col = i % 8;
-            const px = 156 + col * 56;
-            const py = 62 + row * 56;
-            ctx.fillStyle = 'rgba(236, 72, 153, 0.25)';
-            ctx.fillRect(px, py, 48, 44);
-            ctx.strokeStyle = '#f472b6';
-            ctx.strokeRect(px, py, 48, 44);
-            ctx.fillStyle = '#fbcfe8';
-            ctx.font = 'bold 10px JetBrains Mono, monospace';
-            ctx.fillText(`PE${i}`, px + 11, py + 20);
-            ctx.fillText('16-b', px + 11, py + 34);
-          }
-          if (progress > 0.65) {
-            ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
-            ctx.fillRect(156, 178, 436, 52);
-            ctx.strokeStyle = '#10b981';
-            ctx.strokeRect(156, 178, 436, 52);
-            ctx.fillStyle = '#d1fae5';
-            ctx.font = 'bold 11px JetBrains Mono, monospace';
-            ctx.fillText('16-Bit Comparator + Control FSM · WNS = +0.22 ns (SS 125C) · 520 MHz Sign-Off PASS', 168, 208);
-          }
-        } else {
-          const maxX = 135 + Math.floor((c.width - 155) * progress);
-          const signals = [
-            { name: 'clock (520MHz)', y: 48, color: '#38bdf8', type: 'clk' },
-            { name: 'count[12:0]', y: 92, color: '#c084fc', type: 'bus', vals: ['0FA0', '0FAF', '0FB0', '0FB1', '0FB2', '0FB3'] },
-            { name: 'PE0..15 Dist', y: 136, color: mode === 'fig1_8bit_trap' ? '#fb7185' : '#34d399', type: 'bus',
-              vals: mode === 'fig1_8bit_trap' ? ['8hFE', '8hFF!', '8hFF!', '8hFF!', '8hFF!', '8hFF!'] : ['0000', '0100', '0400', '1000', '7F00', 'FF00'] },
-            { name: 'PEready[15:0]', y: 180, color: '#fbbf24', type: 'pulse' },
-            { name: 'BestDist[15:0]', y: 224, color: mode === 'fig1_8bit_trap' ? '#f43f5e' : '#10b981', type: 'bus',
-              vals: mode === 'fig1_8bit_trap' ? ['8hFF', '8hFF (TRAP)', '8hFF (TIE)', '8hFF', '8hFF', '8hFF'] : ['FFFF', '0100', '0000 (EXACT)', '0000', '0000', '0000'] },
-            { name: 'motionX / Y', y: 264, color: mode === 'fig1_8bit_trap' ? '#fb7185' : '#6ee7b7', type: 'bus',
-              vals: mode === 'fig1_8bit_trap' ? ['X / X', '-8 / -8 (WRONG)', '-8 / -8', '-8 / -8', '-8 / -8', '-8 / -8'] : ['0 / 0', '-3 / +2', '+4 / -4', '+7 / +7', 'PASS', 'PASS'] }
-          ];
-
-          signals.forEach(sig => {
-            ctx.fillStyle = '#f8fafc';
-            ctx.font = 'bold 11px JetBrains Mono, monospace';
-            ctx.fillText(sig.name, 12, sig.y + 4);
-
-            ctx.strokeStyle = sig.color;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            if (sig.type === 'clk') {
-              let high = false;
-              for (let x = 135; x < maxX; x += 18) {
-                const ny = high ? sig.y - 10 : sig.y + 10;
-                ctx.lineTo(x, ny);
-                ctx.lineTo(Math.min(x + 18, maxX), ny);
-                high = !high;
-              }
-              ctx.stroke();
-            } else if (sig.type === 'pulse') {
-              for (let x = 135; x < maxX; x += 90) {
-                ctx.lineTo(x, sig.y + 10);
-                ctx.lineTo(Math.min(x + 65, maxX), sig.y + 10);
-                if (x + 65 < maxX) {
-                  ctx.lineTo(x + 65, sig.y - 10);
-                  ctx.lineTo(Math.min(x + 85, maxX), sig.y - 10);
-                  ctx.lineTo(Math.min(x + 85, maxX), sig.y + 10);
-                }
-              }
-              ctx.stroke();
-            } else {
-              let segIdx = 0;
-              for (let x = 135; x < maxX; x += 95) {
-                const segEnd = Math.min(x + 90, maxX);
-                ctx.strokeRect(x, sig.y - 11, Math.max(8, segEnd - x), 22);
-                if (segEnd - x > 32) {
-                  ctx.fillStyle = sig.color;
-                  ctx.font = 'bold 10px JetBrains Mono, monospace';
-                  ctx.fillText(sig.vals[segIdx % sig.vals.length], x + 6, sig.y + 4);
-                }
-                segIdx++;
-              }
-            }
-          });
-
-          // Cursor marker at cycle 4015
-          const cursorX = Math.min(maxX, 345);
-          ctx.strokeStyle = '#f472b6';
-          ctx.setLineDash([4, 3]);
-          ctx.beginPath(); ctx.moveTo(cursorX, 24); ctx.lineTo(cursorX, c.height - 10); ctx.stroke();
-          ctx.setLineDash([]);
-        }
-
-        if (logEl && stepIdx % 4 === 0) {
-          logEl.textContent = `[EDUCATIONAL_SIMULATION · Step ${stepIdx}/${totalSteps}] In-Browser Waveform Walkthrough · Page ${IDE_CURRENT_PAGE} (${mode})\n` +
-            `  • Evidence Class   : EDUCATIONAL_SIMULATION (Browser Canvas Animation — Not a Native Tool Claim)\n` +
-            `  • Simulated Cycle  : Cycle ${3990 + stepIdx * 2} (count=13'h0FA${(stepIdx % 16).toString(16).toUpperCase()})\n` +
-            `  • Teaching Focus   : ${mode === 'fig1_8bit_trap' ? '8-bit saturation 0xFF trap illustration' : '16-bit non-saturating 0x0000/0x0100/0xFF00 datapath'}`;
-        }
-      }, 95);
     }
 
     function speakPopupWaveformGuide() {
@@ -4953,80 +5163,242 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
       }
     }
 
+    let JDEV8_LAST_LOADED_PROJECT_ID = '';
+    let JDEV8_EDITOR_DIRTY = false;
+    let JDEV8_LAST_VCD_SUMMARY = null;
+    let JDEV8_VCD_ZOOM = 1.0;
+    let JDEV8_VCD_PAN = 0.0;
+    let JDEV8_VCD_CURSOR_T = null;
+
+    function jdevBindEditorDirtyListeners() {
+      ['jdevRtlEditor', 'jdevTbEditor'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.__jdevDirtyBound) {
+          el.__jdevDirtyBound = true;
+          el.addEventListener('input', () => {
+            JDEV8_EDITOR_DIRTY = true;
+          });
+        }
+      });
+    }
+
     async function jdevLoadProjects() {
       try {
+        jdevBindEditorDirtyListeners();
         const res = await smartApiFetch('/api/v8/projects', {}, 6000);
         const data = await res.json();
         JDEV8_PROJECTS = (data && data.projects) || [];
         const sel = document.getElementById('jdevProjectSelect');
         if (sel && JDEV8_PROJECTS.length) {
           sel.innerHTML = JDEV8_PROJECTS.map(p => `<option value="${escapeHtml(p.project_id)}">${escapeHtml(p.title)} (${escapeHtml(p.project_type || 'verilog')})</option>`).join('');
+          const isInitialSelect = !JDEV8_CURRENT_PROJECT_ID;
           if (!JDEV8_CURRENT_PROJECT_ID) JDEV8_CURRENT_PROJECT_ID = JDEV8_PROJECTS[0].project_id;
           sel.value = JDEV8_CURRENT_PROJECT_ID;
-          await jdevSelectProject(JDEV8_CURRENT_PROJECT_ID);
+          await jdevSelectProject(JDEV8_CURRENT_PROJECT_ID, isInitialSelect);
         }
       } catch (e) {}
     }
 
-    async function jdevSelectProject(projectId) {
+    async function jdevSelectProject(projectId, forceReload) {
       if (!projectId) return;
+      const switchingProject = (JDEV8_LAST_LOADED_PROJECT_ID !== projectId);
       JDEV8_CURRENT_PROJECT_ID = projectId;
       try {
+        jdevBindEditorDirtyListeners();
         const res = await smartApiFetch(`/api/v8/projects/${encodeURIComponent(projectId)}`, {}, 6000);
         const data = await res.json();
         const proj = (data && data.project) || {};
         const files = proj.files || {};
         const fileKeys = Object.keys(files);
-        const rtlKey = fileKeys.find(k => k.startsWith('rtl/')) || fileKeys[0] || 'rtl/alu8.v';
-        const tbKey = fileKeys.find(k => k.startsWith('tb/')) || fileKeys[1] || 'tb/alu8_tb.v';
+        const rtlKey = fileKeys.find(k => k.startsWith('rtl/')) || fileKeys[0] || 'rtl/design.v';
+        const tbKey = fileKeys.find(k => k.startsWith('tb/')) || fileKeys[1] || 'tb/testbench.v';
+        const rtlSource = (typeof proj.rtl_source === 'string' && proj.rtl_source.length > 0)
+          ? proj.rtl_source
+          : (files[rtlKey] || '');
+        const tbSource = (typeof proj.tb_source === 'string' && proj.tb_source.length > 0)
+          ? proj.tb_source
+          : (files[tbKey] || '');
         const rtlEd = document.getElementById('jdevRtlEditor');
         const tbEd = document.getElementById('jdevTbEditor');
-        if (rtlEd && files[rtlKey]) rtlEd.value = files[rtlKey];
-        if (tbEd && files[tbKey]) tbEd.value = files[tbKey];
+        const shouldPopulate = Boolean(
+          forceReload ||
+          switchingProject ||
+          !JDEV8_EDITOR_DIRTY ||
+          (rtlEd && tbEd && !rtlEd.value && !tbEd.value)
+        );
+        if (shouldPopulate) {
+          if (rtlEd) rtlEd.value = rtlSource;
+          if (tbEd) tbEd.value = tbSource;
+          JDEV8_LAST_LOADED_PROJECT_ID = projectId;
+          JDEV8_EDITOR_DIRTY = false;
+        }
+        const rtlHashEl = document.getElementById('jdevRtlHashLabel');
+        const tbHashEl = document.getElementById('jdevTbHashLabel');
+        if (rtlHashEl) rtlHashEl.textContent = `SHA-256: ${(proj.rtl_sha256 || '—').slice(0, 16)}`;
+        if (tbHashEl) tbHashEl.textContent = `SHA-256: ${(proj.tb_sha256 || '—').slice(0, 16)}`;
       } catch (e) {}
+    }
+
+    async function jdevSaveCurrentProjectSources() {
+      if (!JDEV8_CURRENT_PROJECT_ID && JDEV8_PROJECTS.length) {
+        JDEV8_CURRENT_PROJECT_ID = JDEV8_PROJECTS[0].project_id;
+      }
+      const rtlEd = document.getElementById('jdevRtlEditor');
+      const tbEd = document.getElementById('jdevTbEditor');
+      const rtlCode = rtlEd ? rtlEd.value : '';
+      const tbCode = tbEd ? tbEd.value : '';
+      const pre = document.getElementById('jdevRunOutputPre');
+      const badge = document.getElementById('jdevProjectRunBadge');
+      try {
+        const res = await smartApiFetch(`/api/v8/projects/${encodeURIComponent(JDEV8_CURRENT_PROJECT_ID)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            rtl_source: rtlCode,
+            tb_source: tbCode
+          })
+        }, 8000);
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          if (badge) {
+            badge.className = 'badge coral';
+            badge.textContent = `SAVE REJECTED (${res.status})`;
+          }
+          if (pre) {
+            pre.textContent = `[SOURCE VALIDATION ERROR ${res.status} — ${data.code || 'INVALID_SOURCE'}]:\n${data.error || 'Empty or unsafe Verilog source rejected.'}`;
+          }
+          return null;
+        }
+        const proj = data.project || {};
+        JDEV8_EDITOR_DIRTY = false;
+        const rtlHashEl = document.getElementById('jdevRtlHashLabel');
+        const tbHashEl = document.getElementById('jdevTbHashLabel');
+        if (rtlHashEl && proj.rtl_sha256) rtlHashEl.textContent = `SHA-256: ${proj.rtl_sha256.slice(0, 16)}`;
+        if (tbHashEl && proj.tb_sha256) tbHashEl.textContent = `SHA-256: ${proj.tb_sha256.slice(0, 16)}`;
+        if (badge) {
+          badge.className = 'badge mint';
+          badge.textContent = `SOURCES SAVED · SHA-256 ${(proj.rtl_sha256 || '').slice(0, 8)}`;
+        }
+        if (pre) {
+          pre.textContent = `✓ Saved project sources for ${proj.title || JDEV8_CURRENT_PROJECT_ID}\nRTL SHA-256 : ${proj.rtl_sha256}\nTB  SHA-256 : ${proj.tb_sha256}`;
+        }
+        return proj;
+      } catch (e) {
+        if (pre) pre.textContent = 'Save project error: ' + e.message;
+        return null;
+      }
+    }
+
+    function jdevRenderVerificationStatesBar(run) {
+      const bar = document.getElementById('jdevVerificationStatesBar');
+      if (!bar || !run) return;
+      const items = [
+        { label: 'Compile', val: run.compilation_state || '—' },
+        { label: 'Sim Exec', val: run.simulation_execution_state || '—' },
+        { label: 'Waveform', val: run.waveform_generation_state || '—' },
+        { label: 'Assertions', val: run.functional_assertion_state || '—' },
+        { label: 'Numeric', val: run.numerical_outputs_state || '—' },
+        { label: 'Synthesis', val: run.synthesis_state || '—' },
+        { label: 'Timing Est.', val: run.timing_estimate_state || '—' }
+      ];
+      bar.innerHTML = items.map(it => {
+        const v = String(it.val || '');
+        const ok = /PASS|VERIFIED|COMPLETED|GENERATED|CLEAN|SYNTHESIZED/i.test(v) && !/UNVERIFIED|FAILED|ERROR/i.test(v);
+        const fail = /FAIL|ERROR|REJECT/i.test(v);
+        const bg = fail ? '#ffe4e6' : (ok ? '#d1fae5' : '#fef3c7');
+        const fg = fail ? '#be123c' : (ok ? '#065f46' : '#92400e');
+        const bd = fail ? '#fda4af' : (ok ? '#6ee7b7' : '#fcd34d');
+        return `<span style="font-size:10px;padding:2px 7px;border-radius:999px;background:${bg};color:${fg};border:1px solid ${bd};font-family:var(--font-mono);font-weight:700;">${escapeHtml(it.label)}: ${escapeHtml(v)}</span>`;
+      }).join('');
     }
 
     async function jdevRunOpenSourceVerilog() {
       if (!JDEV8_CURRENT_PROJECT_ID && JDEV8_PROJECTS.length) {
         JDEV8_CURRENT_PROJECT_ID = JDEV8_PROJECTS[0].project_id;
       }
-      const rtlCode = ((document.getElementById('jdevRtlEditor') || {}).value || '');
-      const tbCode = ((document.getElementById('jdevTbEditor') || {}).value || '');
+      const rtlEd = document.getElementById('jdevRtlEditor');
+      const tbEd = document.getElementById('jdevTbEditor');
+      const rtlCode = rtlEd ? rtlEd.value : '';
+      const tbCode = tbEd ? tbEd.value : '';
       const pre = document.getElementById('jdevRunOutputPre');
       const badge = document.getElementById('jdevProjectRunBadge');
       const statsPill = document.getElementById('jdevVcdStatsPill');
-      if (pre) pre.textContent = '⏳ Running Icarus Verilog (iverilog) + vvp simulation + Yosys synthesis in isolated 0700 sandbox...';
+      if (pre) pre.textContent = '⏳ Running Icarus Verilog (iverilog) + vvp simulation + Yosys synthesis in isolated kernel sandbox (/tmp/jdev8_isolated_workers)...';
+      updateVisualPipelineFromStages({
+        1: { state: 'RUNNING', text: 'Validating RTL & TB sources...' },
+        2: { state: 'PENDING', text: 'Waiting for VCD generation...' },
+        3: { state: 'RUNNING', text: 'Executing iverilog + vvp + yosys...' },
+        4: { state: 'PENDING', text: 'Waiting for assertion check...' },
+        5: { state: 'PENDING', text: 'Waiting for artifact hashes...' }
+      });
       try {
         const res = await smartApiFetch(`/api/v8/projects/${encodeURIComponent(JDEV8_CURRENT_PROJECT_ID)}/runs`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            rtl_source: rtlCode,
+            tb_source: tbCode,
             rtl_code: rtlCode,
             tb_code: tbCode,
             run_yosys: true
           })
         }, 18000);
         const data = await res.json();
+        if (!res.ok || (data.ok === false && !data.run)) {
+          const errMsg = data.error || `HTTP ${res.status}`;
+          if (badge) {
+            badge.className = 'badge coral';
+            badge.textContent = `REJECTED · ${data.code || res.status}`;
+          }
+          if (pre) {
+            pre.textContent = `[OPEN-SOURCE EDA SANDBOX VALIDATION / SECURITY REJECTION (${res.status})]\nCode  : ${data.code || 'VALIDATION_FAILED'}\nError : ${errMsg}`;
+          }
+          updateVisualPipelineFromStages({
+            1: { state: 'FAILED', text: 'Source rejected (' + (data.code || res.status) + ')' },
+            2: { state: 'BLOCKED', text: 'Blocked before VCD generation' },
+            3: { state: 'FAILED', text: 'Tool execution prevented' },
+            4: { state: 'FAILED', text: 'Verification failed' },
+            5: { state: 'BLOCKED', text: 'No artifacts persisted' }
+          });
+          return;
+        }
         const run = (data && data.run) || data;
+        if (run.stages) {
+          updateVisualPipelineFromStages(run.stages);
+        }
+        jdevRenderVerificationStatesBar(run);
+        const hashes = run.artifact_hashes || {};
+        const rtlHashEl = document.getElementById('jdevRtlHashLabel');
+        const tbHashEl = document.getElementById('jdevTbHashLabel');
+        if (rtlHashEl && hashes.rtl_source_sha256) rtlHashEl.textContent = `SHA-256: ${hashes.rtl_source_sha256.slice(0, 16)}`;
+        if (tbHashEl && hashes.tb_source_sha256) tbHashEl.textContent = `SHA-256: ${hashes.tb_source_sha256.slice(0, 16)}`;
+
         if (badge) {
-          badge.className = run.status === 'PASS' ? 'badge mint' : 'badge coral';
-          badge.textContent = `${run.evidence_class || 'NATIVE_EXECUTION'} · ${run.status || 'DONE'} (${run.duration_ms || 0} ms)`;
+          const isPass = run.status === 'FUNCTIONALLY_VERIFIED';
+          const isWarn = run.status === 'SIMULATION_COMPLETED';
+          badge.className = isPass ? 'badge mint' : (isWarn ? 'badge lavender' : 'badge coral');
+          badge.textContent = `${run.status || 'DONE'} · ${run.duration_ms || 0} ms (compile ${run.compile_ms || 0}ms / sim ${run.sim_ms || 0}ms / synth ${run.synth_ms || 0}ms)`;
         }
         const wf = run.waveform_summary || {};
         if (statsPill) {
-          statsPill.textContent = `${(wf.signals || []).length} VCD Signals · ${wf.transition_count || 0} Transitions`;
+          statsPill.textContent = `${(wf.signals || []).length} VCD Signals · ${wf.transition_count || 0} Transitions · Timescale ${wf.timescale || '1ns'}`;
         }
         jdevDrawVcdCanvas(wf);
         if (pre) {
+          const tv = run.tool_versions || {};
           pre.textContent = [
-            `=== [JUNIOR DEVELOPER v8.0 OPEN-SOURCE EDA SANDBOX RUN: ${run.run_id || ''}] ===`,
-            `Status         : ${run.status} (Exit Code ${run.exit_code})`,
-            `Evidence Class : ${run.evidence_class} (Toolchain: ${run.tool_name})`,
-            `--- Compiler Output ---`,
+            `=== [JUNIOR DEVELOPER v${run.schema_version || '8.0.1'} OPEN-SOURCE EDA SANDBOX RUN: ${run.run_id || ''}] ===`,
+            `Status               : ${run.status} (Overall Exit Code ${run.exit_code} | Compiler=${run.compiler_exit_code}, Sim=${run.simulator_exit_code}, Synth=${run.synthesis_exit_code})`,
+            `Evidence Class       : ${run.evidence_class} (Toolchain: ${run.tool_name})`,
+            `Durations (ms)       : Total=${run.duration_ms} ms (Compile=${run.compile_ms} ms, Sim=${run.sim_ms} ms, Synth=${run.synth_ms} ms)`,
+            `Tool Versions        : iverilog=[${tv.iverilog || 'n/a'}] | vvp=[${tv.vvp || 'n/a'}] | yosys=[${tv.yosys || 'n/a'}]`,
+            `7-State Verification : Compile=${run.compilation_state} | Sim=${run.simulation_execution_state} | VCD=${run.waveform_generation_state} | Assert=${run.functional_assertion_state} | Numeric=${run.numerical_outputs_state} | Synth=${run.synthesis_state} | Timing=${run.timing_estimate_state}`,
+            `Artifact SHA-256     : RTL=${(hashes.rtl_source_sha256 || '').slice(0, 16)}... | TB=${(hashes.tb_source_sha256 || '').slice(0, 16)}... | VCD=${(hashes.vcd_sha256 || 'none').slice(0, 16)}...`,
+            `--- Compiler Output (iverilog) ---`,
             run.compiler_output || '(clean compile — 0 errors)',
             `--- Simulation Output (vvp) ---`,
             run.simulation_output || '',
-            `--- Yosys Gate Synthesis Summary ---`,
+            `--- Yosys Gate Synthesis Summary (${run.synthesis_state}) ---`,
             run.synthesis_summary || '(not requested)'
           ].join('\n');
         }
@@ -5035,33 +5407,288 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
       }
     }
 
+    function jdevNormalizeVcdSignal(sig, idx, fallbackTransitions) {
+      if (sig && typeof sig === 'object') {
+        const name = String(sig.name || sig.signal || `sig_${idx}`);
+        const width = Number(sig.width) || (name.includes('[') ? 8 : 1);
+        const rawSamples = Array.isArray(sig.samples) ? sig.samples : [];
+        const samples = rawSamples.map((s, sIdx) => {
+          if (s && typeof s === 'object') {
+            return { t: Number(s.t !== undefined ? s.t : sIdx * 10), v: String(s.v !== undefined ? s.v : '0') };
+          }
+          return { t: sIdx * 10, v: String(s) };
+        });
+        return {
+          name,
+          symbol: String(sig.symbol || ''),
+          width,
+          type: String(sig.type || 'wire'),
+          samples
+        };
+      }
+      const name = String(sig || `sig_${idx}`);
+      const vals = (fallbackTransitions && fallbackTransitions[name]) || ['0', '1'];
+      return {
+        name,
+        symbol: '',
+        width: name.includes('[') ? 8 : 1,
+        type: 'wire',
+        samples: vals.map((v, i) => ({ t: i * 10, v: String(v) }))
+      };
+    }
+
+    function jdevFormatVcdValue(valStr, width) {
+      const s = String(valStr || '0').trim();
+      if (!s) return '0';
+      const raw = s.startsWith('b') || s.startsWith('B') ? s.slice(1) : s;
+      if (/[xzXZ]/.test(raw)) return raw.toUpperCase();
+      if (width > 1 && /^[01]+$/.test(raw)) {
+        const num = parseInt(raw, 2);
+        if (!Number.isNaN(num)) {
+          const hexDigits = Math.max(1, Math.ceil(width / 4));
+          return '0x' + num.toString(16).toUpperCase().padStart(hexDigits, '0');
+        }
+      }
+      return raw;
+    }
+
+    function jdevValueAtTime(samples, t) {
+      if (!samples || !samples.length) return '0';
+      let lastVal = samples[0].v;
+      for (let i = 0; i < samples.length; i++) {
+        if (samples[i].t <= t) {
+          lastVal = samples[i].v;
+        } else {
+          break;
+        }
+      }
+      return lastVal;
+    }
+
+    function jdevZoomPanVcd(zoomMultiplier, panDeltaFrac) {
+      JDEV8_VCD_ZOOM = Math.max(1.0, Math.min(16.0, JDEV8_VCD_ZOOM * (zoomMultiplier || 1.0)));
+      const windowFrac = 1.0 / JDEV8_VCD_ZOOM;
+      JDEV8_VCD_PAN = Math.max(0.0, Math.min(1.0 - windowFrac, JDEV8_VCD_PAN + (panDeltaFrac || 0.0) * windowFrac));
+      if (JDEV8_LAST_VCD_SUMMARY) {
+        jdevDrawVcdCanvas(JDEV8_LAST_VCD_SUMMARY);
+      }
+    }
+
+    function jdevResetVcdViewport() {
+      JDEV8_VCD_ZOOM = 1.0;
+      JDEV8_VCD_PAN = 0.0;
+      JDEV8_VCD_CURSOR_T = null;
+      if (JDEV8_LAST_VCD_SUMMARY) {
+        jdevDrawVcdCanvas(JDEV8_LAST_VCD_SUMMARY);
+      }
+    }
+
+    function jdevInspectVcdCursor(ev) {
+      const c = document.getElementById('jdevVcdWaveformCanvas');
+      if (!c || !JDEV8_LAST_VCD_SUMMARY) return;
+      const rect = c.getBoundingClientRect();
+      const scaleX = c.width / Math.max(1, rect.width);
+      const clickX = (ev.clientX - rect.left) * scaleX;
+      const plotLeft = 175;
+      const plotRight = c.width - 14;
+      if (clickX < plotLeft || clickX > plotRight) return;
+      const frac = (clickX - plotLeft) / Math.max(1, plotRight - plotLeft);
+      const totalEnd = Math.max(10, Number(JDEV8_LAST_VCD_SUMMARY.end_time) || 100);
+      const windowFrac = 1.0 / Math.max(1.0, JDEV8_VCD_ZOOM);
+      const viewStart = totalEnd * JDEV8_VCD_PAN;
+      const viewEnd = Math.max(viewStart + 1, totalEnd * (JDEV8_VCD_PAN + windowFrac));
+      JDEV8_VCD_CURSOR_T = Math.round(viewStart + frac * (viewEnd - viewStart));
+      jdevDrawVcdCanvas(JDEV8_LAST_VCD_SUMMARY);
+    }
+
     function jdevDrawVcdCanvas(wf) {
       const c = document.getElementById('jdevVcdWaveformCanvas');
       if (!c) return;
+      if (!c.__jdevCursorBound) {
+        c.__jdevCursorBound = true;
+        c.addEventListener('click', jdevInspectVcdCursor);
+      }
+      JDEV8_LAST_VCD_SUMMARY = wf || {};
       const ctx = c.getContext('2d');
       ctx.fillStyle = '#0f0720';
       ctx.fillRect(0, 0, c.width, c.height);
-      const signals = (wf && wf.signals) || ['clk', 'a[7:0]', 'b[7:0]', 'op[1:0]', 'y[15:0]', 'overflow'];
-      const transitions = (wf && wf.sample_transitions) || {};
-      const colors = ['#38bdf8', '#c084fc', '#34d399', '#fbbf24', '#f472b6', '#fb7185'];
-      signals.slice(0, 6).forEach((sig, idx) => {
-        const y = 26 + idx * 27;
-        ctx.fillStyle = '#f8fafc';
-        ctx.font = 'bold 11px JetBrains Mono, monospace';
-        ctx.fillText(sig.slice(0, 16), 10, y + 4);
-        ctx.strokeStyle = colors[idx % colors.length];
-        ctx.lineWidth = 1.8;
-        const vals = transitions[sig] || ['0', '1', '0x10', '0xFF', '0x0100'];
-        let x = 140;
-        const stepW = Math.floor((c.width - 155) / Math.max(1, vals.length));
-        vals.forEach((v) => {
-          ctx.strokeRect(x, y - 9, Math.max(24, stepW - 4), 18);
-          ctx.fillStyle = colors[idx % colors.length];
-          ctx.font = '10px JetBrains Mono, monospace';
-          ctx.fillText(String(v).slice(0, 10), x + 4, y + 4);
-          x += stepW;
+
+      const rawSignals = (wf && Array.isArray(wf.signals) && wf.signals.length)
+        ? wf.signals
+        : [];
+      const fallbackTransitions = (wf && wf.sample_transitions) || {};
+      const signals = rawSignals.map((s, idx) => jdevNormalizeVcdSignal(s, idx, fallbackTransitions));
+      const timescale = (wf && wf.timescale) || '1ns';
+
+      if (!signals.length) {
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '12px JetBrains Mono, monospace';
+        ctx.fillText('No VCD waveform signals generated in this run.', 18, 36);
+        return;
+      }
+
+      let maxSampleT = Number(wf && wf.end_time) || 0;
+      signals.forEach(s => {
+        (s.samples || []).forEach(pt => {
+          if (pt.t > maxSampleT) maxSampleT = pt.t;
         });
       });
+      const totalEnd = Math.max(10, maxSampleT);
+      const windowFrac = 1.0 / Math.max(1.0, JDEV8_VCD_ZOOM);
+      const viewStart = totalEnd * JDEV8_VCD_PAN;
+      const viewEnd = Math.max(viewStart + 1, totalEnd * (JDEV8_VCD_PAN + windowFrac));
+      const viewSpan = Math.max(1, viewEnd - viewStart);
+
+      const plotLeft = 175;
+      const plotRight = c.width - 14;
+      const plotWidth = Math.max(60, plotRight - plotLeft);
+      const timeToX = (t) => plotLeft + ((t - viewStart) / viewSpan) * plotWidth;
+
+      // Draw top time ruler bar
+      ctx.fillStyle = '#1e1b4b';
+      ctx.fillRect(0, 0, c.width, 22);
+      ctx.strokeStyle = 'rgba(148,163,184,0.3)';
+      ctx.beginPath();
+      ctx.moveTo(0, 22);
+      ctx.lineTo(c.width, 22);
+      ctx.stroke();
+
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = 'bold 10px JetBrains Mono, monospace';
+      ctx.fillText(`Signal (${timescale})`, 8, 15);
+
+      const tickCount = 6;
+      for (let i = 0; i <= tickCount; i++) {
+        const tickT = Math.round(viewStart + (i / tickCount) * viewSpan);
+        const tx = plotLeft + (i / tickCount) * plotWidth;
+        ctx.strokeStyle = 'rgba(148,163,184,0.22)';
+        ctx.beginPath();
+        ctx.moveTo(tx, 16);
+        ctx.lineTo(tx, c.height);
+        ctx.stroke();
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '9.5px JetBrains Mono, monospace';
+        ctx.fillText(`${tickT}`, Math.min(c.width - 34, Math.max(plotLeft, tx - 10)), 14);
+      }
+
+      const colors = ['#38bdf8', '#c084fc', '#34d399', '#fbbf24', '#f472b6', '#fb7185', '#60a5fa', '#a78bfa'];
+      const visibleSignals = signals.slice(0, 7);
+      const rowH = Math.max(22, Math.floor((c.height - 26) / Math.max(1, visibleSignals.length)));
+      const inspectT = JDEV8_VCD_CURSOR_T !== null ? JDEV8_VCD_CURSOR_T : totalEnd;
+
+      visibleSignals.forEach((sig, idx) => {
+        const rowTop = 24 + idx * rowH;
+        const rowMid = rowTop + Math.floor(rowH * 0.5);
+        const rowHigh = rowTop + 4;
+        const rowLow = rowTop + rowH - 5;
+        const color = colors[idx % colors.length];
+
+        // Row separator
+        ctx.strokeStyle = 'rgba(51,65,85,0.45)';
+        ctx.beginPath();
+        ctx.moveTo(0, rowTop + rowH);
+        ctx.lineTo(c.width, rowTop + rowH);
+        ctx.stroke();
+
+        // Signal label + width + cursor value
+        const widthTag = sig.width > 1 ? `[${sig.width - 1}:0]` : '';
+        const labelStr = `${sig.name}${sig.name.includes('[') ? '' : widthTag}`.slice(0, 15);
+        const valAtCursor = jdevFormatVcdValue(jdevValueAtTime(sig.samples, inspectT), sig.width);
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 10.5px JetBrains Mono, monospace';
+        ctx.fillText(labelStr, 8, rowMid + 3);
+        ctx.fillStyle = color;
+        ctx.font = '9.5px JetBrains Mono, monospace';
+        ctx.fillText(`=${valAtCursor.slice(0, 8)}`, 112, rowMid + 3);
+
+        // Build segments across [viewStart, viewEnd]
+        const samples = (sig.samples && sig.samples.length) ? sig.samples : [{ t: 0, v: '0' }];
+        const segPoints = [];
+        let startVal = jdevValueAtTime(samples, viewStart);
+        segPoints.push({ t: viewStart, v: startVal });
+        samples.forEach(pt => {
+          if (pt.t > viewStart && pt.t <= viewEnd) {
+            segPoints.push({ t: pt.t, v: pt.v });
+          }
+        });
+        segPoints.push({ t: viewEnd, v: samples[samples.length - 1].v });
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(plotLeft, rowTop, plotWidth, rowH);
+        ctx.clip();
+
+        if (sig.width === 1) {
+          ctx.lineWidth = 1.8;
+          for (let i = 0; i < segPoints.length - 1; i++) {
+            const cur = segPoints[i];
+            const nxt = segPoints[i + 1];
+            const x1 = timeToX(cur.t);
+            const x2 = timeToX(nxt.t);
+            const fmt = jdevFormatVcdValue(cur.v, 1);
+            const isX = /X/i.test(fmt);
+            const isZ = /Z/i.test(fmt);
+            const yLevel = isX || isZ ? rowMid : (fmt === '1' ? rowHigh : rowLow);
+            ctx.strokeStyle = isX ? '#ef4444' : (isZ ? '#f59e0b' : color);
+            ctx.beginPath();
+            ctx.moveTo(x1, yLevel);
+            ctx.lineTo(x2, yLevel);
+            if (i + 1 < segPoints.length - 1) {
+              const nextFmt = jdevFormatVcdValue(nxt.v, 1);
+              const nextY = /[XZ]/i.test(nextFmt) ? rowMid : (nextFmt === '1' ? rowHigh : rowLow);
+              ctx.lineTo(x2, nextY);
+            }
+            ctx.stroke();
+          }
+        } else {
+          // Multi-bit bus rendering with bevel transitions and hex value labels
+          for (let i = 0; i < segPoints.length - 1; i++) {
+            const cur = segPoints[i];
+            const nxt = segPoints[i + 1];
+            const x1 = timeToX(cur.t);
+            const x2 = timeToX(nxt.t);
+            const w = Math.max(1, x2 - x1);
+            const fmt = jdevFormatVcdValue(cur.v, sig.width);
+            const isX = /X/i.test(fmt);
+            const isZ = /Z/i.test(fmt);
+            ctx.strokeStyle = isX ? '#ef4444' : (isZ ? '#f59e0b' : color);
+            ctx.lineWidth = 1.5;
+            const bevel = Math.min(3, w * 0.25);
+            ctx.beginPath();
+            ctx.moveTo(x1, rowMid);
+            ctx.lineTo(x1 + bevel, rowHigh);
+            ctx.lineTo(x2 - bevel, rowHigh);
+            ctx.lineTo(x2, rowMid);
+            ctx.lineTo(x2 - bevel, rowLow);
+            ctx.lineTo(x1 + bevel, rowLow);
+            ctx.closePath();
+            ctx.stroke();
+            if (w >= 28) {
+              ctx.fillStyle = '#f8fafc';
+              ctx.font = '9.5px JetBrains Mono, monospace';
+              ctx.fillText(fmt.slice(0, Math.max(3, Math.floor((w - 6) / 6))), x1 + 4, rowMid + 3);
+            }
+          }
+        }
+        ctx.restore();
+      });
+
+      // Draw active cursor line if set
+      if (JDEV8_VCD_CURSOR_T !== null && JDEV8_VCD_CURSOR_T >= viewStart && JDEV8_VCD_CURSOR_T <= viewEnd) {
+        const cx = timeToX(JDEV8_VCD_CURSOR_T);
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(cx, 0);
+        ctx.lineTo(cx, c.height);
+        ctx.stroke();
+      }
+
+      const cursorEl = document.getElementById('jdevVcdCursorReadout');
+      if (cursorEl) {
+        const summaryPairs = visibleSignals.slice(0, 4).map(s => `${s.name}=${jdevFormatVcdValue(jdevValueAtTime(s.samples, inspectT), s.width)}`).join(' · ');
+        cursorEl.textContent = `Cursor @ ${inspectT} ${timescale} (Zoom ${JDEV8_VCD_ZOOM.toFixed(1)}x): ${summaryPairs}`;
+      }
     }
 
     async function jdevResetCurrentProject() {
@@ -5073,7 +5700,8 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           body: JSON.stringify({})
         }, 8000);
         const data = await res.json();
-        await jdevSelectProject(JDEV8_CURRENT_PROJECT_ID);
+        JDEV8_EDITOR_DIRTY = false;
+        await jdevSelectProject(JDEV8_CURRENT_PROJECT_ID, true);
         const pre = document.getElementById('jdevRunOutputPre');
         if (pre) pre.textContent = `✓ Project reset cleanly (Archive ID: ${(data && data.archive_id) || 'archived'}). Starter RTL & testbench restored!`;
       } catch (e) {}
