@@ -1,0 +1,87 @@
+{
+  "ok": true,
+  "job_id": "native_fig10_1794514078_573ac4",
+  "figure_id": "fig10",
+  "next_figure_id": "fig7",
+  "reason": "switch_figure_layout_to_fig7",
+  "selection_generation_id": 375,
+  "cleanup_state": "PRESERVED_FOR_USER",
+  "signal_layout_saved": true,
+  "signal_layout_path": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/state_store/native_jobs/native_fig10_1794514078_573ac4/waveform_configuration.rc",
+  "dismissed_modal_dialogs": [],
+  "terminated_ssh_pid": null,
+  "broad_kill_commands_used": false,
+  "steps": [
+    {
+      "step": 1,
+      "name": "stop_new_actions_for_old_selection",
+      "status": "COMPLETED",
+      "detail": "Superseded old selection for job=native_fig10_1794514078_573ac4 (fig10) with selection_generation_id=375",
+      "elapsed_ms": 0
+    },
+    {
+      "step": 2,
+      "name": "preserve_verified_evidence",
+      "status": "COMPLETED",
+      "detail": "Persisted 8 lifecycle manifest/log/rc files for job=native_fig10_1794514078_573ac4",
+      "elapsed_ms": 2
+    },
+    {
+      "step": 3,
+      "name": "release_viewer_subscription",
+      "status": "COMPLETED",
+      "detail": "Detached browser/pop-out viewer subscription from job=native_fig10_1794514078_573ac4 without killing shared XQuartz display",
+      "elapsed_ms": 2
+    },
+    {
+      "step": 4,
+      "name": "stop_job_capture_worker",
+      "status": "NO_WORKER_ACTIVE",
+      "detail": "On-demand XWD capture model; 0 background capture workers running",
+      "elapsed_ms": 2
+    },
+    {
+      "step": 5,
+      "name": "release_unused_gui_views",
+      "status": "COMPLETED",
+      "detail": "Checked transient modal dialogs (0 found, 0 safely dismissed via WM_DELETE_WINDOW)",
+      "elapsed_ms": 474
+    },
+    {
+      "step": 6,
+      "name": "handle_signal_file_preservation",
+      "status": "COMPLETED",
+      "detail": "Saved signal configuration to waveform_configuration.rc (1563 bytes)",
+      "elapsed_ms": 474
+    },
+    {
+      "step": 7,
+      "name": "check_remaining_session_users",
+      "status": "PRESERVED",
+      "detail": "ownership_class=VERIFIED_EVIDENCE, same_fsdb_family=False, next_fig=fig7, keep_alive=True",
+      "elapsed_ms": 474
+    },
+    {
+      "step": 8,
+      "name": "terminate_exclusively_owned_process",
+      "status": "PRESERVED_ALIVE",
+      "detail": "Session preserved (compatible FSDB family, layout view, or shared live session)",
+      "elapsed_ms": 474
+    },
+    {
+      "step": 9,
+      "name": "reconcile_state",
+      "status": "COMPLETED",
+      "detail": "Reconciled session cleanup_state=PRESERVED_FOR_USER",
+      "elapsed_ms": 474
+    },
+    {
+      "step": 10,
+      "name": "emit_cleanup_report",
+      "status": "COMPLETED",
+      "detail": "Wrote cleanup_report.json (9 steps)",
+      "elapsed_ms": 474
+    }
+  ],
+  "completed_at_utc": "2026-11-12T22:36:22.903754+00:00"
+}

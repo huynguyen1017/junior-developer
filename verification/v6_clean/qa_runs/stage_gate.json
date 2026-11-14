@@ -1,0 +1,41 @@
+{
+  "scope": "rtl",
+  "all_passed": true,
+  "gates": [
+    {
+      "name": "seven simulation runs",
+      "pass": true,
+      "detail": "7/7 exited successfully"
+    },
+    {
+      "name": "three checked baseline vectors",
+      "pass": true,
+      "detail": "Each result has an explicit failure assertion"
+    },
+    {
+      "name": "three checked corrected-top vectors",
+      "pass": true,
+      "detail": "Observed corrected RTL passes all three directed checks"
+    },
+    {
+      "name": "corrected RTL byte match",
+      "pass": true,
+      "detail": "Release RTL matches previously reviewed 16-bit implementation"
+    },
+    {
+      "name": "professor baseline preserved",
+      "pass": true,
+      "detail": "Original baseline remains separately available"
+    },
+    {
+      "name": "three-slide presentation",
+      "pass": true,
+      "detail": "ENGR852_V9_Clean_3_Contribution_Slides.pptx"
+    },
+    {
+      "name": "combined 19-slide presentation",
+      "pass": true,
+      "detail": "ENGR852_V9_Complete_19_Slides.pptx"
+    }
+  ]
+}

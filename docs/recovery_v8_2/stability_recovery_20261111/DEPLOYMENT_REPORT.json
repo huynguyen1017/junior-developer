@@ -1,0 +1,14 @@
+{
+  "status": "ROLLED_BACK",
+  "timestamp_utc": "2026-11-12T06:22:40.373929+00:00",
+  "production_pid_before": "46103",
+  "production_pid_after": "46103",
+  "staging_pid_before": "31074",
+  "staging_pid_after": "62532",
+  "production_http_200": true,
+  "staging_http_200": true,
+  "source_modified": [],
+  "design_asic_untouched": true,
+  "university_host_unreachable": "SSH_TCP_TIMEOUT",
+  "mobile_proxy_not_enabled": true
+}

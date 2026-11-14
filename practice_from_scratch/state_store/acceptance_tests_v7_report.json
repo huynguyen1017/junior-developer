@@ -1,0 +1,140 @@
+{
+  "all_passed": true,
+  "executed_at_utc": "2026-11-10T09:45:00.366+00:00",
+  "host": "iMac.local",
+  "passed_assertions": 13,
+  "results": [
+    {
+      "assertion_passed": true,
+      "detail": "Exit=2, Diagnosis=FAULT_SYNTAX_ERROR",
+      "job_id": "job_30fa476fe77b",
+      "name": "Intentional Shell/Verilog Syntax Error",
+      "observed_evidence_class": "FAILED",
+      "observed_state": "FAILED",
+      "test_id": "T01",
+      "timestamp_utc": "2026-11-10T09:44:58.906+00:00"
+    },
+    {
+      "assertion_passed": true,
+      "detail": "Exit=1, Diagnosis=FAULT_MISSING_RTL_OR_FILE",
+      "job_id": "job_bda4ef6c7cb6",
+      "name": "Missing RTL Source File",
+      "observed_evidence_class": "FAILED",
+      "observed_state": "FAILED",
+      "test_id": "T02",
+      "timestamp_utc": "2026-11-10T09:44:59.068+00:00"
+    },
+    {
+      "assertion_passed": true,
+      "detail": "Exit=1, Reason=Process failed with non-zero exit code (1).",
+      "job_id": "job_b64da6596d59",
+      "name": "Failing Hardware Testbench Assertion",
+      "observed_evidence_class": "FAILED",
+      "observed_state": "FAILED",
+      "test_id": "T03",
+      "timestamp_utc": "2026-11-10T09:44:59.228+00:00"
+    },
+    {
+      "assertion_passed": true,
+      "detail": "Simulation waveform database not found: /var/folders/xk/mqxkwfj14m5bgj0rm79strs80000gn/T/engr852_v7_acceptance_0auxfsv2/nonexistent_missing_wave.fsdb",
+      "job_id": "",
+      "name": "Missing FSDB Waveform Database",
+      "observed_evidence_class": "FAILED",
+      "observed_state": "FAILED",
+      "test_id": "T04",
+      "timestamp_utc": "2026-11-10T09:44:59.266+00:00"
+    },
+    {
+      "assertion_passed": true,
+      "detail": "Synopsys license server unavailable.",
+      "job_id": "",
+      "name": "Unavailable Synopsys SCL License",
+      "observed_evidence_class": "FAILED",
+      "observed_state": "FAILED",
+      "test_id": "T05",
+      "timestamp_utc": "2026-11-10T09:44:59.305+00:00"
+    },
+    {
+      "assertion_passed": true,
+      "detail": "SSH/X11 connection to EDA server failed.",
+      "job_id": "",
+      "name": "Broken SSH Connectivity to EDA Server",
+      "observed_evidence_class": "FAILED",
+      "observed_state": "FAILED",
+      "test_id": "T06",
+      "timestamp_utc": "2026-11-10T09:44:59.344+00:00"
+    },
+    {
+      "assertion_passed": true,
+      "detail": "XQuartz is not installed or unavailable on this Mac.",
+      "job_id": "",
+      "name": "Unavailable XQuartz Application",
+      "observed_evidence_class": "FAILED",
+      "observed_state": "BLOCKED",
+      "test_id": "T07",
+      "timestamp_utc": "2026-11-10T09:44:59.381+00:00"
+    },
+    {
+      "assertion_passed": true,
+      "detail": "Git push failed (exit 128): fatal: unable to access 'https://127.0.0.1:9/nonexistent-invalid-repo.git/': Failed to connect to 127.0.0.1 port 9 after 0 ms: Couldn't connect to server",
+      "job_id": "",
+      "name": "Failed Git Push (Unreachable/Rejected Remote)",
+      "observed_evidence_class": "FAILED",
+      "observed_state": "PUSH_FAILED",
+      "test_id": "T08",
+      "timestamp_utc": "2026-11-10T09:44:59.464+00:00"
+    },
+    {
+      "assertion_passed": true,
+      "detail": "MULTI_MAC_DIVERGENCE_DETECTED: Remote branch has commits from another Mac (e.g. iMac @ 4fe81ae vs MacBook Air @ b801452) or local worktree has uncommitted modifications. Refusing blind rebase/force-push; isolate onto per-device branch 'run-imac-1794303899'.",
+      "job_id": "",
+      "name": "Conflicting Changes Across Two Macs (iMac vs MacBook Air)",
+      "observed_evidence_class": "FAILED",
+      "observed_state": "PUSH_FAILED",
+      "test_id": "T09",
+      "timestamp_utc": "2026-11-10T09:44:59.496+00:00"
+    },
+    {
+      "assertion_passed": true,
+      "detail": "Exit=-15, State=CANCELLED",
+      "job_id": "job_3cfd844f2da2",
+      "name": "Cancelled Run Mid-Execution",
+      "observed_evidence_class": "FAILED",
+      "observed_state": "CANCELLED",
+      "test_id": "T10",
+      "timestamp_utc": "2026-11-10T09:44:59.965+00:00"
+    },
+    {
+      "assertion_passed": true,
+      "detail": "OldRun=run_20261110T084228Z_5ecc78 (ARCHIVED), NewRun=run_20261110T094459Z_b5217d (ACTIVE), PriorFailedJob=FAILED",
+      "job_id": "job_a113fc3a94af",
+      "name": "Immutable Reset + Subsequent Run Preserving Prior History & Failures",
+      "observed_evidence_class": "NATIVE_EXECUTION",
+      "observed_state": "PASSED",
+      "test_id": "T11",
+      "timestamp_utc": "2026-11-10T09:45:00.175+00:00"
+    },
+    {
+      "assertion_passed": true,
+      "detail": "Blocked Reason: Cross-user access denied: token belongs to 'forged_invalid_token', not 'unauthorized_intruder_user'",
+      "job_id": "job_a4acfebe6339",
+      "name": "Unauthorized User / Forged Token Attempting Another User's Actions",
+      "observed_evidence_class": "FAILED",
+      "observed_state": "BLOCKED",
+      "test_id": "T12",
+      "timestamp_utc": "2026-11-10T09:45:00.195+00:00"
+    },
+    {
+      "assertion_passed": true,
+      "detail": "Exit=2, MisleadingMarkerDetected=True -> MISLEADING_PASS_MARKER_REJECTED: Process exited with non-zero code (2) despite printing PASS/VERIFIED text in stdout. Independent verifier rejected PASS claim.",
+      "job_id": "job_1afc4d706cb7",
+      "name": "Misleading Expected PASS Marker in Failed Command Output (Exit Code != 0)",
+      "observed_evidence_class": "FAILED",
+      "observed_state": "FAILED",
+      "test_id": "T13",
+      "timestamp_utc": "2026-11-10T09:45:00.366+00:00"
+    }
+  ],
+  "suite_version": "7.0",
+  "total_tests": 13
+}

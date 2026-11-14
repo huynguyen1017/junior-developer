@@ -1,0 +1,9 @@
+{
+  "job_id": "fig10_v803_live_imac",
+  "figure_id": "fig10",
+  "cleanup_state": "ACTIVE",
+  "signal_layout_saved": true,
+  "signal_layout_rc_sha256": "0e2c48b4671acd6181f25e97c9263a5ccdbbfd6815d64392ff3326314a4e13d2",
+  "steps_executed": [],
+  "updated_at_utc": "2026-11-12T22:12:08.006295+00:00"
+}

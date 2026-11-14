@@ -1,0 +1,12 @@
+{
+  "job_id": "fig10_v81_recovered_e74602",
+  "figure_id": "fig10",
+  "fsdb_name": "motion_v5_16bit_top_regression.fsdb",
+  "fsdb_family": "fsdb_v5_16bit_regression",
+  "dbdir": "../simv_reg.daidir",
+  "fsdb_bytes": 252336,
+  "fsdb_sha256": "4c84034d6af389eeb21da0fdbe75816cddde88d4929e3b4a32dbd18c910379c4",
+  "fsdb_unique_variables": 200,
+  "numerical_values_verified": true,
+  "verified_at_utc": "2026-11-12T22:37:07.650814+00:00"
+}

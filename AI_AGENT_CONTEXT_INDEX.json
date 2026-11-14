@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0.0",
+  "project_name": "motion-estimator-native-verdi-studio-2026",
+  "companion_asic_repo": "https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026",
+  "live_staging_origin": "http://127.0.0.1:8789/",
+  "platform_version": "v8.3 (JUNIOR DEVELOPER v8.1 + MASTER-RECOVERY-v8.2 + Lifecycle v8.3)",
+  "asic_target": {
+    "architecture": "16-PE Systolic Full-Search Block-Matching Motion Estimator",
+    "technology": "Synopsys SAED14 FinFET RVT (14nm)",
+    "clock_frequency_mhz": 520,
+    "clock_period_ns": 1.923,
+    "frame_latency_cycles": 4111,
+    "datapath_width_bits": 16,
+    "v9_eco_clean_qor": {
+      "leaf_cell_count": 7570,
+      "combinational_cells": 7121,
+      "sequential_cells": 449,
+      "integrated_clock_gating_cells": 35,
+      "macro_count": 0,
+      "netlist_cell_area_um2": 3235.07,
+      "netlist_plus_physical_area_um2": 3507.33
+    },
+    "primetime_3corner_signoff_ns": {
+      "FAST": {"setup_slack": 0.71, "hold_slack": 0.00, "violations": 0},
+      "TYPICAL": {"setup_slack": 0.54, "hold_slack": 0.04, "violations": 0},
+      "SLOW": {"setup_slack": 0.22, "hold_slack": 0.14, "violations": 0}
+    },
+    "icv_drc": "CLEAN (SAED14nm 1p9m)"
+  },
+  "runtime": {
+    "language": "Python 3 standard library only (zero pip runtime dependencies for server.py)",
+    "entrypoint": "practice_from_scratch/web_console/server.py",
+    "quick_start_command": "ENGR852_CONSOLE_PORT=8789 python3 practice_from_scratch/web_console/server.py",
+    "database": "practice_from_scratch/state_store/junior_developer_v8.sqlite3 (sessions cleared and vacuumed for public release)",
+    "frontend_html": "practice_from_scratch/web_console/index.html"
+  },
+  "core_modules": [
+    {
+      "path": "practice_from_scratch/web_console/server.py",
+      "lines": 4449,
+      "classes": ["ConsoleRequestHandler"],
+      "responsibility": "HTTP REST/SSE server, routing for /api/v1/*, /api/v7/*, /api/v8/*, legacy /api/* endpoints"
+    },
+    {
+      "path": "practice_from_scratch/web_console/v7_platform_core.py",
+      "lines": 3897,
+      "classes": [
+        "SecurityAndAccessAgent",
+        "EnvironmentDiscoveryAgent",
+        "VerificationAgent",
+        "SelfHealingAgent",
+        "VisualDemonstrationAgent",
+        "EvidenceAndGitAgent",
+        "OrchestratorPlatform"
+      ],
+      "ten_orchestration_agents": [
+        "NetworkHealthAgent",
+        "DeviceSessionAgent",
+        "VerdiExecutionAgent",
+        "SignalVerificationAgent",
+        "PopupStreamAgent",
+        "UIStateIntegrityAgent",
+        "FailureRecoveryAgent",
+        "SecurityPrivacyAgent",
+        "MobileExperienceAgent",
+        "ReleaseVerificationAgent"
+      ]
+    },
+    {
+      "path": "practice_from_scratch/web_console/junior_developer_v8_core.py",
+      "lines": 2882,
+      "classes": ["PrivacyAndSecretScanner", "RealtimeEventBus", "JuniorDeveloperV8Platform"],
+      "responsibility": "SQLite multi-tenant auth/guest migration, Junior Connect community, Messenger, Seatbelt open-source EDA sandbox"
+    },
+    {
+      "path": "practice_from_scratch/scripts/engr852_native_verdi_bridge.py",
+      "lines": 3595,
+      "key_functions": [
+        "build_defect_d_safe_tcl_wrapper",
+        "build_signal_verification_records",
+        "remote_preflight_and_fsdb_audit",
+        "verdi_windows_detailed",
+        "format_signed_4bit_vector"
+      ]
+    },
+    {
+      "path": "practice_from_scratch/scripts/engr852_verdi_lifecycle_manager.py",
+      "lines": 1226,
+      "six_self_healing_lifecycle_agents": [
+        "NativeSessionHealthAgent",
+        "WaveformLifecycleAgent",
+        "NativeModalRecoveryAgent",
+        "OrphanResourceReconciler",
+        "GUIStateConsistencyAgent",
+        "IndependentLifecycleQAAgent"
+      ]
+    }
+  ],
+  "verification_reports": [
+    {"path": "practice_from_scratch/state_store/acceptance_tests_v7_report.json", "version": "v7.0", "result": "13/13 PASS"},
+    {"path": "practice_from_scratch/verification_reports/v7_1_acceptance_results.json", "version": "v7.1", "result": "25/25 PASS"},
+    {"path": "practice_from_scratch/verification_reports/v8_0_acceptance_results.json", "version": "v8.0", "result": "15/15 v8 + 25/25 v7.1 PASS"},
+    {"path": "practice_from_scratch/web_console/state_store/v8_1_verification_results.json", "version": "v8.1", "result": "9/9 PASS"},
+    {"path": "evidence/logs/v8_1_1_25_e2e_report.json", "version": "v8.1.1 (historical pre-v8.2 fix)", "result": "24/25 PASS (E2E-05 failed prior to v8.2)"},
+    {"path": "docs/recovery_v8_2/QA_ACCEPTANCE_MATRIX.json", "version": "v8.2", "result": "7/7 PASS + LIVE_WAVEFORM_VERIFICATION_PASS"},
+    {"path": "docs/lifecycle_v8_3/FIGURE_SWITCHING_REGRESSION_MATRIX.json", "version": "v8.3", "result": "18/18 NV + 51/51 Matrix + 100/100 Stability Loop PASS"}
+  ],
+  "waveform_artifacts": {
+    "vcd_dumps_total": 46,
+    "major_520mhz_vcds": [
+      "verification/v6_clean/motion_v5_16bit_top_regression.vcd",
+      "verification/v6_clean/motion_verification_520mhz.vcd"
+    ],
+    "screenshots_dir": "evidence/screenshots",
+    "native_jobs_captures_dir": "practice_from_scratch/state_store/native_jobs",
+    "manual_100page_logs_and_pngs": "practice_from_scratch/runs/archived_snapshot_20261112T191104Z"
+  }
+}

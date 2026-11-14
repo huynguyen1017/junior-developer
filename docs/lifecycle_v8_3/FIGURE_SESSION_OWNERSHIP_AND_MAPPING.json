@@ -1,0 +1,89 @@
+{
+  "schema_version": "v8.3",
+  "modes": {
+    "fig7": {
+      "figure_id": "fig7",
+      "title": "Figure 7 — Original 8-Bit Row-1 Saturation (0xFF Clamp)",
+      "tool_type": "verdi_nwave",
+      "fsdb_family": "fsdb_v3_8bit_saturated",
+      "fsdb": "motion_v3_all_saturated.fsdb",
+      "dbdir": "simv_sat.daidir",
+      "tcl": "fig7_orig8bit_row1.tcl",
+      "tb_top": "motion_v3_8bit_saturated_tb",
+      "compatible_figures": ["fig7", "fig8"],
+      "requires_native_verdi": true,
+      "session_strategy": "SHARED_BY_FSDB_FAMILY_OR_CLEAN_SWITCH",
+      "cleanup_policy": "SAVE_RC_AND_EVIDENCE_BEFORE_RELEASE"
+    },
+    "fig8": {
+      "figure_id": "fig8",
+      "title": "Figure 8 — Original 8-Bit Cycle 4,111 Final Deadlock",
+      "tool_type": "verdi_nwave",
+      "fsdb_family": "fsdb_v3_8bit_saturated",
+      "fsdb": "motion_v3_all_saturated.fsdb",
+      "dbdir": "simv_sat.daidir",
+      "tcl": "fig8_orig8bit_final.tcl",
+      "tb_top": "motion_v3_8bit_saturated_tb",
+      "compatible_figures": ["fig7", "fig8"],
+      "requires_native_verdi": true,
+      "session_strategy": "SHARED_BY_FSDB_FAMILY_OR_CLEAN_SWITCH",
+      "cleanup_policy": "SAVE_RC_AND_EVIDENCE_BEFORE_RELEASE"
+    },
+    "fig10": {
+      "figure_id": "fig10",
+      "title": "Figure 10 — 16-Bit Non-Saturating Exact Match (BestDist = 16'h0000)",
+      "tool_type": "verdi_nwave",
+      "fsdb_family": "fsdb_v5_16bit_regression",
+      "fsdb": "motion_v5_16bit_top_regression.fsdb",
+      "dbdir": "../simv_reg.daidir",
+      "tcl": "fig10_16bit_perfect_match.tcl",
+      "tb_top": "motion_v5_16bit_top_regression_tb",
+      "compatible_figures": ["fig10", "fig11"],
+      "requires_native_verdi": true,
+      "session_strategy": "SHARED_BY_FSDB_FAMILY_OR_CLEAN_SWITCH",
+      "cleanup_policy": "SAVE_RC_AND_EVIDENCE_BEFORE_RELEASE"
+    },
+    "fig11": {
+      "figure_id": "fig11",
+      "title": "Figure 11 — 16-Bit Non-Saturating +1 LSB Offset (BestDist = 16'h0100)",
+      "tool_type": "verdi_nwave",
+      "fsdb_family": "fsdb_v5_16bit_regression",
+      "fsdb": "motion_v5_16bit_top_regression.fsdb",
+      "dbdir": "../simv_reg.daidir",
+      "tcl": "fig11_16bit_offset_0100.tcl",
+      "tb_top": "motion_v5_16bit_top_regression_tb",
+      "compatible_figures": ["fig10", "fig11"],
+      "requires_native_verdi": true,
+      "session_strategy": "SHARED_BY_FSDB_FAMILY_OR_CLEAN_SWITCH",
+      "cleanup_policy": "SAVE_RC_AND_EVIDENCE_BEFORE_RELEASE"
+    },
+    "fig9": {
+      "figure_id": "fig9",
+      "title": "Figure 9 — 16-Bit Maximum Contrast Stress Test (BestDist = 16'hFF00 = 65,280)",
+      "tool_type": "verdi_nwave",
+      "fsdb_family": "fsdb_v6_16bit_max_contrast",
+      "fsdb": "motion_v6_16bit_max_contrast.fsdb",
+      "dbdir": "simv_max.daidir",
+      "tcl": "fig9_16bit_max_ff00.tcl",
+      "tb_top": "motion_v6_16bit_max_contrast_tb",
+      "compatible_figures": ["fig9"],
+      "requires_native_verdi": true,
+      "session_strategy": "DEDICATED_FSDB_FAMILY_CLEAN_SWITCH",
+      "cleanup_policy": "SAVE_RC_AND_EVIDENCE_BEFORE_RELEASE"
+    },
+    "layout": {
+      "figure_id": "layout",
+      "title": "14nm SAED14 FinFET Routed Silicon Layout (IC Compiler II / ICV DRC = 0/242)",
+      "tool_type": "fc_shell_icv_layout",
+      "fsdb_family": "none_physical_layout_nlib",
+      "fsdb": "N/A (SAED14nm NDM Physical Library: motion_estimator_14nm.nlib)",
+      "dbdir": "motion_estimator_14nm.nlib",
+      "tcl": "route_and_signoff.tcl",
+      "tb_top": "top",
+      "compatible_figures": ["layout"],
+      "requires_native_verdi": false,
+      "session_strategy": "SEPARATE_PHYSICAL_DESIGN_TOOL_PRESERVE_VERDI",
+      "cleanup_policy": "NEVER_MUTATE_VERDI_OR_NDM_DATABASE"
+    }
+  }
+}

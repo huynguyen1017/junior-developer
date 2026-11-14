@@ -1,0 +1,11 @@
+{
+  "job_id": "nv04_x11_fwd_disabled_test",
+  "figure_id": "fig10",
+  "tcl_script": "fig10_16bit_perfect_match.tcl",
+  "tcl_sha256": "",
+  "wvAddSignal_count": 0,
+  "tcl_signal_paths": [],
+  "signal_layout_saved_rc": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/state_store/native_jobs/nv04_x11_fwd_disabled_test/waveform_configuration.rc",
+  "signal_layout_rc_sha256": "d9f0459b2d37ec7ddd42f8cd1d0141a86f95e56064345a3824865bf7aaee0c56",
+  "verified_at_utc": "2026-11-12T22:30:20.972731+00:00"
+}

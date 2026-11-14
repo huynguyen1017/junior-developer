@@ -1,0 +1,2 @@
+[ATTACHED_AUTHORIZED_VERDI_WINDOW] window_id=0xe00006 title=<Verdi-Apex:nTraceMain:1> motion_v5_16bit_top_regression_tb motion_v5_16bit_top_regression_tb (motion_v5_16bit_top_regression_tb.sv) - /home/<redacted>/motion_v5_16bit_top_regression.fsdb
+FSDB=motion_v5_16bit_top_regression.fsdb (252336 bytes, 200 unique variables, numerical_values_verified=True)

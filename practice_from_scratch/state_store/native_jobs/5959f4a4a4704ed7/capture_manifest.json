@@ -1,0 +1,23 @@
+{
+  "job_id": "5959f4a4a4704ed7",
+  "figure_id": "fig10",
+  "window_id": "0xe00006",
+  "evidence_class": "REAL_APPLICATION_CAPTURE_NOT_SIGNAL_VERIFIED",
+  "evidence_distinction_badge": "HISTORICAL_CAPTURE_AVAILABLE",
+  "redacted_name": "verdi_window_redacted.png",
+  "redacted_sha256": "421c154b44969be78165796be0cc857851c92d84a417e05fb17d9dd238d17057",
+  "restricted_raw_sha256": "3c1aad00698e5243ea1a3d593c7e4239de3331e1d046bc919d4d739a38b63f26",
+  "privacy_redacted": true,
+  "privacy_verified": true,
+  "pixel_metrics": {
+    "verified": false,
+    "width": 1900,
+    "height": 1040,
+    "nwave_green_scanlines": 0,
+    "nwave_detected_rail_bands": 0,
+    "nwave_label_rows": 791,
+    "nwave_yellow_axis_samples": 635,
+    "reason": "nWave signal canvas appears unpopulated (rail_bands=0, green_scanlines=0)"
+  },
+  "captured_at_utc": "2026-11-12T19:42:38.261223+00:00"
+}

@@ -1,0 +1,5 @@
+qa_runs/*.simv
+*.simv
+*.fsdb
+simv*
+csrc/

@@ -1,0 +1,13 @@
+; ENGR 852 Native Synopsys Verdi Signal Configuration (LAYOUT)
+; Generated UTC: 2026-11-12T22:30:21.252651+00:00
+Magic 271485
+Revision Verdi_W-2024.09-1
+
+activeFile "v9_closure/top.dlib (top/v9_signoff_clean.design)"
+zoom 0.000000 0.000000
+ruler 0.000000
+waveformTimeUnit default
+
+addGroup "G1"
+activeDirFile "" "v9_closure/top.dlib (top/v9_signoff_clean.design)"
+addGroup "G2"

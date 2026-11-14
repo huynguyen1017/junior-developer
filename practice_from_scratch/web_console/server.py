@@ -916,10 +916,30 @@ def get_local_ips():
 
 def get_xquartz_status():
     display_env = os.environ.get("DISPLAY", "")
-    x11_sock = Path("/tmp/.X11-unix/X0").exists()
+    if not display_env:
+        try:
+            display_env = subprocess.check_output(
+                ["launchctl", "getenv", "DISPLAY"],
+                text=True,
+                stderr=subprocess.DEVNULL,
+                timeout=1.5,
+            ).strip()
+        except Exception:
+            display_env = ""
+    if not display_env:
+        cand = sorted(glob.glob("/var/run/com.apple.launchd.*/org.xquartz:0")) + sorted(
+            glob.glob("/private/tmp/com.apple.launchd.*/org.xquartz:0")
+        )
+        if cand:
+            display_env = cand[0]
+    x11_sock = (
+        Path("/tmp/.X11-unix/X0").exists()
+        or Path("/private/tmp/.X11-unix/X0").exists()
+        or (bool(display_env) and Path(display_env).exists())
+    )
     xq_running = False
     try:
-        res = subprocess.run(["pgrep", "-f", "XQuartz"], capture_output=True, text=True, timeout=1.5)
+        res = subprocess.run(["pgrep", "-f", "XQuartz|X11\\.bin|org\\.xquartz"], capture_output=True, text=True, timeout=1.5)
         xq_running = res.returncode == 0
     except Exception:
         pass
@@ -1591,15 +1611,22 @@ def build_merged_state():
         state["next_required_page"] = min(100, highest_seq + 1)
         state["total_passed_pages"] = len(done_nums)
 
-        try:
-            git_out = subprocess.check_output(
-                ["git", "-C", str(REPO_ROOT), "log", "-n", "1", "--oneline"],
-                text=True,
-                timeout=1.5,
-            ).strip()
-            state["github"]["last_commit"] = git_out
-        except Exception:
-            pass
+        if (REPO_ROOT / ".git").exists():
+            try:
+                git_out = subprocess.check_output(
+                    ["git", "-C", str(REPO_ROOT), "log", "-n", "1", "--oneline"],
+                    text=True,
+                    stderr=subprocess.DEVNULL,
+                    timeout=1.5,
+                ).strip()
+                state["github"]["last_commit"] = git_out
+                state["github"]["git_mode"] = "GIT_WORKING_TREE"
+            except Exception:
+                state["github"]["git_mode"] = "ARCHIVE_PREVIEW_NO_GIT"
+        else:
+            bv = V7_PLATFORM.env_agent.load_build_version_metadata(REPO_ROOT)
+            state["github"]["last_commit"] = f"{bv.get('source_commit_sha', 'archive')[:8]} (ARCHIVE_PREVIEW_NO_GIT · {bv.get('version', 'v8.0.3')})"
+            state["github"]["git_mode"] = "ARCHIVE_PREVIEW_NO_GIT"
 
         gallery_specs = [
             {
@@ -1724,6 +1751,24 @@ def sync_and_push_to_github(reason: str = "Live Studio Sync", open_browser: bool
         out_trace = []
         ok_push = False
         commit_sha = ""
+        if not (REPO_ROOT / ".git").exists():
+            bv = V7_PLATFORM.env_agent.load_build_version_metadata(REPO_ROOT)
+            LAST_GIT_PUSH_INFO["last_push_at"] = ts_str
+            LAST_GIT_PUSH_INFO["last_commit"] = bv.get("source_commit_sha", "ARCHIVE_PREVIEW_NO_GIT")
+            LAST_GIT_PUSH_INFO["status"] = "ARCHIVE_PREVIEW_NO_GIT"
+            return {
+                "ok": False,
+                "pushed_remote": False,
+                "git_mode": "ARCHIVE_PREVIEW_NO_GIT",
+                "github_sync_supported": False,
+                "commit": bv.get("source_commit_sha", ""),
+                "pushed_at": ts_str,
+                "total_passed_pages": total_passed,
+                "branch": bv.get("branch", "ARCHIVE_PREVIEW_NO_GIT"),
+                "github_url": repo_url,
+                "trace": "ARCHIVE_PREVIEW_NO_GIT: Running from portable snapshot without .git directory; GitHub push is disabled.",
+                "state": build_merged_state(),
+            }
         try:
             # Ensure we are on manual-practice-macbook-air
             subprocess.run(
@@ -2175,18 +2220,32 @@ def get_super_agent_diagnostics() -> dict:
     git_status_short = ""
     git_branch = "manual-practice-macbook-air"
     git_last_5 = ""
-    try:
-        git_branch = subprocess.check_output(
-            ["git", "-C", str(REPO_ROOT), "rev-parse", "--abbrev-ref", "HEAD"], text=True, timeout=2
-        ).strip()
-        git_status_short = subprocess.check_output(
-            ["git", "-C", str(REPO_ROOT), "status", "-s"], text=True, timeout=3
-        ).strip()
-        git_last_5 = subprocess.check_output(
-            ["git", "-C", str(REPO_ROOT), "log", "-n", "5", "--oneline"], text=True, timeout=3
-        ).strip()
-    except Exception:
-        pass
+    if (REPO_ROOT / ".git").exists():
+        try:
+            git_branch = subprocess.check_output(
+                ["git", "-C", str(REPO_ROOT), "rev-parse", "--abbrev-ref", "HEAD"],
+                text=True,
+                stderr=subprocess.DEVNULL,
+                timeout=2,
+            ).strip()
+            git_status_short = subprocess.check_output(
+                ["git", "-C", str(REPO_ROOT), "status", "-s"],
+                text=True,
+                stderr=subprocess.DEVNULL,
+                timeout=3,
+            ).strip()
+            git_last_5 = subprocess.check_output(
+                ["git", "-C", str(REPO_ROOT), "log", "-n", "5", "--oneline"],
+                text=True,
+                stderr=subprocess.DEVNULL,
+                timeout=3,
+            ).strip()
+        except Exception:
+            pass
+    else:
+        bv = V7_PLATFORM.env_agent.load_build_version_metadata(REPO_ROOT)
+        git_branch = f"ARCHIVE_PREVIEW_NO_GIT ({bv.get('branch', 'v8.0.3')})"
+        git_last_5 = f"{bv.get('source_commit_sha', 'archive')[:8]} Portable Archive Snapshot ({bv.get('version', 'v8.0.3')})"
 
     chat_report_lines = [
         "=== 🤖 ENGR 852 SUPER-AGENT v6.0 LIVE DIAGNOSTIC & TELEMETRY SNAPSHOT ===",
@@ -2450,7 +2509,7 @@ ALLOWED_CORS_ORIGINS = {
 def sanitize_payload_recursive(obj, preserve_keys=None):
     """Recursively scrubs any private usernames, paths, SSH targets, or private IPs from JSON responses
     while preserving explicit session/CSRF token keys returned to the authenticated user."""
-    preserve = preserve_keys or {"session_token", "csrf_token", "token"}
+    preserve = preserve_keys or {"session_token", "csrf_token", "token", "pairing_token", "hmac_secret"}
     if isinstance(obj, dict):
         out = {}
         for k, v in obj.items():
@@ -2542,21 +2601,67 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
         *,
         require_registered: bool = False,
         require_owner_companion: bool = False,
+        require_csrf: bool = False,
     ):
         req_uid = (payload or {}).get("user_id") if isinstance(payload, dict) else None
+        merged_hdrs = self._merged_auth_headers()
         try:
             user = JDEV_V8.authenticate_request(
-                self._merged_auth_headers(),
+                merged_hdrs,
                 payload_user_id=req_uid,
                 require_registered=require_registered,
                 require_owner_companion=require_owner_companion,
             )
+            if require_csrf and user.get("csrf_token"):
+                hdr_csrf = (
+                    self.headers.get("X-CSRF-Token")
+                    or merged_hdrs.get("X-CSRF-Token")
+                    or merged_hdrs.get("x-csrf-token")
+                    or ((payload or {}).get("csrf_token") if isinstance(payload, dict) else "")
+                    or ""
+                ).strip()
+                if not hdr_csrf or hdr_csrf != user.get("csrf_token"):
+                    self._send_json(
+                        {
+                            "ok": False,
+                            "error_code": "CSRF_VALIDATION_FAILED",
+                            "error": "403_FORBIDDEN: Missing or invalid X-CSRF-Token for mutating owner/companion operation.",
+                        },
+                        403,
+                    )
+                    return None, 403
             return user, None
         except PermissionError as exc:
             msg = str(exc)
             code = 403 if "403_" in msg else 401
             self._send_json({"ok": False, "error": msg}, code)
             return None, code
+
+    def _resolve_internal_test_fault(self, qs: dict) -> str | None:
+        """P0-04 Fix: Public GET routes NEVER honor `simulated_fault`.
+        Fault simulation is strictly restricted to internal test runners that supply both
+        `X-ENGR852-Internal-Test-Mode: 1` AND verified owner/companion credentials."""
+        raw_fault = (qs.get("simulated_fault", [""])[0] or "").strip()
+        if not raw_fault:
+            return None
+        if os.environ.get("JDEV8_DISABLE_TEST_FAULT_HEADER") == "1":
+            return None
+        merged_hdrs = self._merged_auth_headers()
+        test_hdr = (
+            self.headers.get("X-ENGR852-Internal-Test-Mode")
+            or merged_hdrs.get("X-ENGR852-Internal-Test-Mode")
+            or merged_hdrs.get("x-engr852-internal-test-mode")
+            or ""
+        ).strip()
+        if test_hdr != "1":
+            return None
+        try:
+            u = JDEV_V8.authenticate_request(merged_hdrs, require_owner_companion=True)
+            if u and u.get("eda_companion_authorized"):
+                return raw_fault
+        except Exception:
+            pass
+        return None
 
     def _stream_sse_subscription(self, user_id: str, qs: dict, initial_events: list | None = None):
         """Continuous real-time SSE subscription with monotonic `id:`, `Last-Event-ID` replay,
@@ -2805,10 +2910,40 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             self._stream_sse_subscription(user_id=user["user_id"], qs=qs)
             return
 
-        if route == "/api/v8/verdi/live-status":
+        if route in ("/api/v8/verdi/live-status", "/api/v7/native-verdi/live-status"):
+            # MASTER-RECOVERY-v8.2: Reject explicit invalid/forged Authorization tokens or unauthorized cross-user queries
+            merged_hdrs = self._merged_auth_headers()
+            auth_hdr = (merged_hdrs.get("Authorization") or merged_hdrs.get("authorization") or "").strip()
+            req_user_q = (qs.get("user_id", [""])[0] or "").strip()
+            if auth_hdr or req_user_q:
+                try:
+                    u = JDEV_V8.authenticate_request(
+                        merged_hdrs,
+                        payload_user_id=req_user_q or None,
+                        require_owner_companion=bool(req_user_q),
+                    )
+                    if auth_hdr and not u:
+                        self._send_json({"ok": False, "error": "401_UNAUTHORIZED: Invalid session or companion token."}, 401)
+                        return
+                except PermissionError as exc:
+                    msg = str(exc)
+                    self._send_json({"ok": False, "error": msg}, 403 if "403_" in msg else 401)
+                    return
+
             job_id_q = (qs.get("job_id", [""])[0] or "").strip()
             fig_id_q = (qs.get("fig_id", ["fig10"])[0] or "fig10").strip()
-            live_st = V7_PLATFORM.get_native_verdi_live_status(job_id_q, fig_id=fig_id_q)
+            raw_sim_fault = (qs.get("simulated_fault", [""])[0] or "").strip()
+            sim_fault_q = self._resolve_internal_test_fault(qs)
+            sel_dev_q = (qs.get("selected_device", [""])[0] or "").strip() or None
+            live_st = V7_PLATFORM.get_native_verdi_live_status(
+                job_id=job_id_q,
+                fig_id=fig_id_q,
+                simulated_fault=sim_fault_q,
+                selected_device=sel_dev_q,
+            )
+            if not live_st.get("ok", True) and live_st.get("error_code") == "UNKNOWN_FIGURE_ID":
+                self._send_json(live_st, 404)
+                return
             rec_ev = V7_PLATFORM.get_recorded_figure_evidence(fig_id_q)
             all_rec = {
                 fid: V7_PLATFORM.get_recorded_figure_evidence(fid)
@@ -2816,10 +2951,207 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             }
             self._send_json({
                 "ok": True,
+                "version": "v8.2",
+                "simulated_fault_rejected": bool(raw_sim_fault and not sim_fault_q),
+                **live_st,
                 "live_status": live_st,
                 "selected_recorded_evidence": rec_ev,
                 "recorded_figures": all_rec,
             })
+            return
+
+        if route == "/api/v8/agents/status":
+            fig_id_q = (qs.get("fig_id", ["fig10"])[0] or "fig10").strip()
+            self._send_json(V7_PLATFORM.get_v8_2_ten_agent_orchestration_status(fig_id=fig_id_q))
+            return
+
+        if route == "/api/v8/verdi/lifecycle":
+            fig_id_q = (qs.get("fig_id", ["fig10"])[0] or "fig10").strip()
+            self._send_json(V7_PLATFORM.get_native_verdi_lifecycle_status(fig_id=fig_id_q))
+            return
+
+        if route == "/api/v8/network/health":
+            fig_id_q = (qs.get("fig_id", ["fig10"])[0] or "fig10").strip()
+            force_q = (qs.get("force", ["0"])[0] or "0").strip() == "1"
+            self._send_json(V7_PLATFORM.get_network_health_telemetry(fig_id=fig_id_q, force_probe=force_q))
+            return
+
+        if route == "/api/v1/native-jobs":
+            user, err = self._require_authenticated_user(require_owner_companion=True)
+            if err:
+                return
+            self._send_json({
+                "ok": True,
+                "jobs": V7_PLATFORM.list_native_verdi_runs(25),
+            })
+            return
+
+        if route.startswith("/api/v1/native-jobs/"):
+            user, err = self._require_authenticated_user(require_owner_companion=True)
+            if err:
+                return
+            sub = route[len("/api/v1/native-jobs/"):].strip("/")
+            parts = sub.split("/")
+            job_id = parts[0]
+            if len(parts) == 1:
+                run_info = V7_PLATFORM.get_native_verdi_run(job_id)
+                if not run_info or not run_info.get("ok", False):
+                    self._send_json({"ok": False, "error_code": "JOB_NOT_FOUND", "error": f"Unknown native job_id: {job_id}"}, 404)
+                    return
+                self._send_json(run_info)
+                return
+            if len(parts) == 2 and parts[1] == "events":
+                run_info = V7_PLATFORM.get_native_verdi_run(job_id)
+                if not run_info or not run_info.get("ok", False):
+                    self._send_json({"ok": False, "error_code": "JOB_NOT_FOUND", "error": f"Unknown native job_id: {job_id}"}, 404)
+                    return
+                job_obj = run_info.get("job") if isinstance(run_info.get("job"), dict) else run_info
+                evs = job_obj.get("events", [])
+                if (qs.get("stream", ["0"])[0] == "1") or ("text/event-stream" in (self.headers.get("Accept") or "")):
+                    init_evs = [{"id": idx + 1, "index": idx, "job_id": job_id, **ev} for idx, ev in enumerate(evs)]
+                    self._stream_sse_subscription(user_id=user["user_id"], qs=qs, initial_events=init_evs)
+                else:
+                    self._send_json({
+                        "ok": True,
+                        "job_id": job_id,
+                        "state": job_obj.get("state") or job_obj.get("status", "UNKNOWN"),
+                        "status": job_obj.get("status", "UNKNOWN"),
+                        "events": evs,
+                    })
+                return
+
+        if route in ("/api/v8/verdi/preflight", "/api/v7/native-verdi/preflight"):
+            import engr852_native_verdi_bridge as native_bridge
+            fig_id_q = (qs.get("fig_id", ["fig10"])[0] or "fig10").strip()
+            raw_sim_fault = (qs.get("simulated_fault", [""])[0] or "").strip()
+            sim_fault_q = self._resolve_internal_test_fault(qs)
+            sel_dev_q = (qs.get("selected_device", [""])[0] or "").strip() or None
+            reg = V7_PLATFORM.get_device_registry(fig_id=fig_id_q)
+            eff_dev = sel_dev_q or reg.get("selected_device_id", "imac")
+            hb = V7_PLATFORM._get_device_heartbeat(eff_dev) if eff_dev != "imac" else None
+            pf = native_bridge.run_network_and_eda_preflight(
+                fig_id=fig_id_q,
+                check_remote_eda=True,
+                simulated_fault=sim_fault_q,
+                selected_device=eff_dev,
+                remote_device_heartbeat=hb,
+            )
+            pf["simulated_fault_rejected"] = bool(raw_sim_fault and not sim_fault_q)
+            self._send_json(pf)
+            return
+
+        if route in ("/api/v8/figures/metadata", "/api/v7/native-verdi/figures-metadata"):
+            self._send_json(V7_PLATFORM.get_all_figures_metadata())
+            return
+
+        if route == "/api/v8/devices/registry":
+            fig_id_q = (qs.get("fig_id", ["fig10"])[0] or "fig10").strip()
+            self._send_json(V7_PLATFORM.get_device_registry(fig_id=fig_id_q))
+            return
+
+        if route == "/api/v8/build-version":
+            bv = V7_PLATFORM.env_agent.load_build_version_metadata(REPO_ROOT)
+            git_st = V7_PLATFORM.env_agent.discover_git_repo_state(REPO_ROOT)
+            self._send_json({
+                "ok": True,
+                "build_version": bv,
+                "git_state": git_st,
+                "git_mode": git_st.get("git_mode", "ARCHIVE_PREVIEW_NO_GIT"),
+            })
+            return
+
+        if route == "/api/v8/checkpoint":
+            cp_file = WEB_CONSOLE_DIR / "state_store" / "v8_1_development_checkpoint.json"
+            if cp_file.is_file():
+                try:
+                    self._send_json(json.loads(cp_file.read_text(encoding="utf-8")))
+                    return
+                except Exception:
+                    pass
+            self._send_json({"ok": False, "error": "404_NOT_FOUND: v8.1 development checkpoint not found."}, 404)
+            return
+
+        if route == "/api/v8/traceability-matrix":
+            tm_file = WEB_CONSOLE_DIR / "state_store" / "v8_1_traceability_matrix.json"
+            if tm_file.is_file():
+                try:
+                    self._send_json(json.loads(tm_file.read_text(encoding="utf-8")))
+                    return
+                except Exception:
+                    pass
+            self._send_json({"ok": False, "error": "404_NOT_FOUND: v8.1 traceability matrix not found."}, 404)
+            return
+
+        if route == "/api/v8/verdi/live-frame.png":
+            # P0-05 Fix: Require explicit job_id (NEVER default to fig10_v803_live_imac) and validate figure/state
+            job_id_q = (qs.get("job_id", [""])[0] or "").strip()
+            fig_id_q = (qs.get("fig_id", [""])[0] or "").strip().lower()
+            if not job_id_q:
+                self._send_json(
+                    {
+                        "ok": False,
+                        "error_code": "MISSING_JOB_ID",
+                        "error": "400_BAD_REQUEST: Explicit job_id query parameter is required for /api/v8/verdi/live-frame.png (no default fig10 fallback).",
+                    },
+                    400,
+                )
+                return
+            run_info = V7_PLATFORM.get_native_verdi_run(job_id_q)
+            if not run_info or not run_info.get("ok", False):
+                self._send_json({"ok": False, "error_code": "JOB_NOT_FOUND", "error": "404_NOT_FOUND: Native Verdi run not found."}, 404)
+                return
+            job_obj = run_info.get("job") if isinstance(run_info.get("job"), dict) else run_info
+            job_fig = str(job_obj.get("fig_id") or "").strip().lower()
+            if fig_id_q and job_fig and fig_id_q != job_fig:
+                self._send_json(
+                    {
+                        "ok": False,
+                        "error_code": "FIGURE_JOB_MISMATCH",
+                        "error": f"409_CONFLICT: Job '{job_id_q}' belongs to figure '{job_fig}', not requested figure '{fig_id_q}'.",
+                    },
+                    409,
+                )
+                return
+            job_status = str(job_obj.get("status") or "").strip()
+            if job_status not in ("WAVEFORM_SIGNALS_VERIFIED", "WAVEFORM_VERIFIED"):
+                self._send_json(
+                    {
+                        "ok": False,
+                        "error_code": "UNVERIFIED_WAVEFORM_STATE",
+                        "error": f"422_UNVERIFIED_STATE: Job '{job_id_q}' is in state '{job_status}', not WAVEFORM_SIGNALS_VERIFIED.",
+                    },
+                    422,
+                )
+                return
+            cap_obj = job_obj.get("capture") if isinstance(job_obj.get("capture"), dict) else job_obj
+            priv_redacted = cap_obj.get("privacy_redacted") if "privacy_redacted" in cap_obj else job_obj.get("privacy_redacted")
+            priv_verified = cap_obj.get("privacy_verified", True) if "privacy_verified" in cap_obj else job_obj.get("privacy_verified", True)
+            if not (priv_redacted is True and priv_verified is True):
+                self._send_json(
+                    {
+                        "ok": False,
+                        "error_code": "PRIVACY_CAPTURE_BLOCKED",
+                        "error": "422_PRIVACY_REDACTION_REQUIRED: Unredacted window captures are strictly blocked from web delivery.",
+                    },
+                    422,
+                )
+                return
+            cand_paths = [
+                cap_obj.get("redacted_path") or cap_obj.get("redacted_capture_path") or job_obj.get("redacted_capture_path"),
+                cap_obj.get("annotated_path") or cap_obj.get("annotated_capture_path") or job_obj.get("annotated_capture_path"),
+            ]
+            for cp in cand_paths:
+                if cp and "restricted_raw" not in str(cp) and Path(cp).is_file():
+                    self._serve_file(Path(cp), "image/png")
+                    return
+            self._send_json(
+                {
+                    "ok": False,
+                    "error_code": "PRIVACY_CAPTURE_BLOCKED",
+                    "error": "422_REDACTED_CAPTURE_MISSING: Verified redacted capture file not available.",
+                },
+                422,
+            )
             return
 
         if route == "/api/v8/figures/recorded-evidence":
@@ -2870,13 +3202,15 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
         if route == "/api/v7/status":
             self._send_json({
                 "ok": True,
-                "version": "v8.0.2-junior-developer-platform",
+                "version": "v8.0.3-junior-developer-platform",
+                "build_version": V7_PLATFORM.env_agent.load_build_version_metadata(REPO_ROOT),
                 "evidence_classes": list(EVIDENCE_CLASSES),
                 "job_states": list(JOB_STATES),
                 "stage_states": list(STAGE_STATES),
                 "git_sync_states": list(GIT_SYNC_STATES),
                 "agents": V7_PLATFORM.get_agent_registry(),
                 "environment": V7_PLATFORM.env_agent.discover(),
+                "device_registry": V7_PLATFORM.get_device_registry(),
                 "recent_events": V7_PLATFORM.event_log.read_recent(30),
                 "jobs": list(V7_PLATFORM.jobs.values())[-25:],
             })
@@ -3461,6 +3795,95 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
                     self._send_json({"ok": False, "error": str(exc)}, 404)
                 return
 
+        if route == "/api/v8/devices/select":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True, require_csrf=True)
+            if err:
+                return
+            dev_id = (payload.get("device_id") or payload.get("selected_device") or "imac").strip()
+            rmode = (payload.get("routing_mode") or "MANUAL_OVERRIDE").strip()
+            res = V7_PLATFORM.select_execution_device(dev_id, routing_mode=rmode)
+            self._send_json(res, 200 if res.get("ok") else 400)
+            return
+
+        if route == "/api/v8/verdi/recover":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True, require_csrf=True)
+            if err:
+                return
+            fig_id = (payload.get("fig_id") or payload.get("figure_id") or "fig10").strip()
+            sel_dev = (payload.get("selected_device") or payload.get("device_id") or "imac").strip()
+            auto_launch = bool(payload.get("auto_launch_if_ready", payload.get("force_relaunch", False)))
+            res = V7_PLATFORM.recover_native_verdi_session(
+                fig_id=fig_id,
+                selected_device=sel_dev,
+                auto_launch_if_ready=auto_launch,
+            )
+            self._send_json(res)
+            return
+
+        if route == "/api/v8/verdi/switch-figure":
+            from_fig = (payload.get("from_fig_id") or "").strip()
+            to_fig = (payload.get("to_fig_id") or payload.get("fig_id") or "fig10").strip()
+            old_job = (payload.get("old_job_id") or "").strip()
+            gen_id = payload.get("selection_generation_id")
+            res = V7_PLATFORM.switch_native_verdi_figure_lifecycle(
+                from_fig_id=from_fig,
+                to_fig_id=to_fig,
+                old_job_id=old_job,
+                client_generation_id=int(gen_id) if gen_id is not None else None,
+            )
+            self._send_json(res)
+            return
+
+        if route == "/api/v8/verdi/dismiss-modal":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True, require_csrf=True)
+            if err:
+                return
+            wid = (payload.get("window_id") or "").strip()
+            res = V7_PLATFORM.dismiss_native_verdi_modal(
+                window_id=wid,
+                force_owned_only=bool(payload.get("force_owned_only", True)),
+            )
+            self._send_json(res)
+            return
+
+        if route == "/api/v8/devices/heartbeat":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
+            if err:
+                return
+            res = V7_PLATFORM.register_device_heartbeat(payload, headers=dict(self.headers))
+            self._send_json(res, 200 if res.get("ok") else 403)
+            return
+
+        if route == "/api/v8/devices/pair":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True, require_csrf=True)
+            if err:
+                return
+            dev_id = (payload.get("device_id") or "macbook_air").strip()
+            dev_lbl = (payload.get("device_label") or "").strip()
+            res = V7_PLATFORM.pair_execution_device(device_id=dev_id, device_label=dev_lbl)
+            self._send_json(res)
+            return
+
+        if route == "/api/v8/devices/revoke":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True, require_csrf=True)
+            if err:
+                return
+            dev_id = (payload.get("device_id") or "macbook_air").strip()
+            res = V7_PLATFORM.revoke_execution_device(device_id=dev_id)
+            self._send_json(res)
+            return
+
+        if route == "/api/v8/companion/dispatch":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True, require_csrf=True)
+            if err:
+                return
+            dev_id = (payload.get("device_id") or "macbook_air").strip()
+            fig_id = (payload.get("fig_id") or "fig10").strip()
+            action = (payload.get("action") or "launch_verdi").strip()
+            res = V7_PLATFORM.dispatch_remote_companion_job(device_id=dev_id, fig_id=fig_id, action=action)
+            self._send_json(res, 200 if res.get("ok") else 503)
+            return
+
         if route == "/api/v8/projects":
             user, err = self._require_authenticated_user(payload)
             if err:
@@ -3605,6 +4028,67 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             self._send_json(res)
             return
 
+        if route == "/api/v1/native-jobs":
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
+            if err:
+                return
+            fig_id = (payload.get("figure_id") or payload.get("fig_id") or "fig10").strip()
+            pnum = int(payload.get("page_num") or payload.get("page_id") or 51)
+            user_id = user["user_id"]
+            project_id = (payload.get("project_id") or "motion_estimator_520mhz").strip()
+            force_new_launch = bool(payload.get("force_new_launch", False))
+            idemp_key = (payload.get("idempotency_key") or "").strip()
+            client_ip = self.client_address[0] if self.client_address else "127.0.0.1"
+            res = V7_PLATFORM.start_async_native_verdi_job(
+                fig_id=fig_id,
+                page_id=pnum,
+                user_id=user_id,
+                project_id=project_id,
+                attach_existing=not force_new_launch,
+                idempotency_key=idemp_key,
+                headers=self._merged_auth_headers(),
+                client_ip=client_ip,
+            )
+            code = 202 if res.get("ok") else (404 if res.get("error_code") == "UNKNOWN_FIGURE_ID" else 403)
+            self._send_json(res, code)
+            return
+
+        if route.startswith("/api/v1/native-jobs/"):
+            user, err = self._require_authenticated_user(payload, require_owner_companion=True)
+            if err:
+                return
+            sub = route[len("/api/v1/native-jobs/"):].strip("/")
+            parts = sub.split("/")
+            job_id = parts[0]
+            if len(parts) == 2 and parts[1] == "capture":
+                res = V7_PLATFORM.capture_native_verdi_run(job_id)
+                self._send_json(res, 200 if res.get("ok") else 422)
+                return
+            if len(parts) == 2 and parts[1] == "recover":
+                run_info = V7_PLATFORM.get_native_verdi_run(job_id)
+                job_obj = (run_info.get("job") if isinstance(run_info, dict) and isinstance(run_info.get("job"), dict) else {})
+                fig_id = (payload.get("fig_id") or job_obj.get("fig_id") or "fig10").strip()
+                sel_dev = (payload.get("selected_device") or "imac").strip()
+                res = V7_PLATFORM.recover_native_verdi_session(
+                    fig_id=fig_id,
+                    selected_device=sel_dev,
+                    auto_launch_if_ready=bool(payload.get("auto_launch_if_ready", False)),
+                )
+                self._send_json(res)
+                return
+            if len(parts) == 2 and parts[1] == "cancel":
+                res = V7_PLATFORM.cancel_native_verdi_run(
+                    job_id,
+                    allow_close_existing=bool(payload.get("allow_close_existing", False)),
+                )
+                self._send_json(res)
+                return
+            if len(parts) == 2 and parts[1] == "action":
+                act_name = (payload.get("action") or payload.get("action_name") or "highlight_bestdist").strip()
+                res = V7_PLATFORM.action_native_verdi_run(job_id, act_name)
+                self._send_json(res)
+                return
+
         if route == "/api/native-runs":
             user, err = self._require_authenticated_user(payload, require_owner_companion=True)
             if err:
@@ -3615,6 +4099,18 @@ class ConsoleRequestHandler(BaseHTTPRequestHandler):
             project_id = (payload.get("project_id") or "motion_estimator_520mhz").strip()
             force_new_launch = bool(payload.get("force_new_launch", False))
             client_ip = self.client_address[0] if self.client_address else "127.0.0.1"
+            if payload.get("async") is True:
+                res = V7_PLATFORM.start_async_native_verdi_job(
+                    fig_id=fig_id,
+                    page_id=pnum,
+                    user_id=user_id,
+                    project_id=project_id,
+                    attach_existing=not force_new_launch,
+                    headers=self._merged_auth_headers(),
+                    client_ip=client_ip,
+                )
+                self._send_json(res, 202 if res.get("ok") else 400)
+                return
             res = V7_PLATFORM.start_native_verdi_run(
                 fig_id=fig_id,
                 page_id=pnum,
@@ -3942,10 +4438,10 @@ def main():
     log_super_agent_event("SERVER_BOOT", f"JUNIOR DEVELOPER v8.0 & ENGR 852 Studio booted ({st.get('total_passed_pages', 0)}/100 pages)")
     t = threading.Thread(target=background_git_and_remote_sync, daemon=True)
     t.start()
-    port = int(os.environ.get("ENGR852_CONSOLE_PORT", "8788"))
+    port = int(os.environ.get("ENGR852_CONSOLE_PORT") or os.environ.get("ENGR852_PORT") or "8788")
     bind_host = os.environ.get("ENGR852_BIND_HOST", "127.0.0.1" if os.environ.get("ENGR852_ALLOW_LAN") != "1" else "0.0.0.0")
     srv = ThreadingHTTPServer((bind_host, port), ConsoleRequestHandler)
-    print(f"[JUNIOR DEVELOPER v8.0 · ENGR 852 Studio] Listening on http://{bind_host}:{port}", flush=True)
+    print(f"[JUNIOR DEVELOPER v8.1 · ENGR 852 Studio] Listening on http://{bind_host}:{port}", flush=True)
     srv.serve_forever()
 
 

@@ -1,0 +1,12 @@
+{
+  "job_id": "nv11_wrong_fsdb_test",
+  "figure_id": "fig10",
+  "fsdb_name": "motion_v5_16bit_top_regression.fsdb",
+  "fsdb_family": "fsdb_v5_16bit_regression",
+  "dbdir": "../simv_reg.daidir",
+  "fsdb_bytes": 0,
+  "fsdb_sha256": "",
+  "fsdb_unique_variables": 0,
+  "numerical_values_verified": false,
+  "verified_at_utc": "2026-11-12T22:30:21.192735+00:00"
+}

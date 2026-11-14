@@ -1,0 +1,9 @@
+{
+  "job_id": "nv13_xwd_fail_test",
+  "figure_id": "fig10",
+  "cleanup_state": "ACTIVE",
+  "signal_layout_saved": true,
+  "signal_layout_rc_sha256": "a8e7b69279d5dd7286fb716a609d8b9859f36a7deb2ca4b8b8f55afb2cbd3fe8",
+  "steps_executed": [],
+  "updated_at_utc": "2026-11-12T22:13:13.960639+00:00"
+}

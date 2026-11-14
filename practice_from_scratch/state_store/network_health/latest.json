@@ -1,0 +1,133 @@
+{
+  "ok": true,
+  "agent": "NetworkHealthAgent",
+  "schema_version": "8.2.0",
+  "probed_at_utc": "2026-11-12T22:30:34.126+00:00",
+  "probed_at_epoch": 1794522630.173,
+  "next_probe_allowed_epoch": 1794522640.173,
+  "backoff_seconds": 10,
+  "consecutive_failures": 0,
+  "circuit_breaker_state": "CLOSED",
+  "circuit_breaker_cached": false,
+  "error_code": "LIVE_VERDI_READY",
+  "summary_status": {
+    "xquartz": "READY",
+    "ssh": "CONNECTED",
+    "verdi": "RUNNING",
+    "native_waveform": "AVAILABLE"
+  },
+  "flags": {
+    "VPN_CLIENT_RUNNING": true,
+    "VPN_TUNNEL_AVAILABLE": true,
+    "EDA_ROUTE_AVAILABLE": true,
+    "DNS_RESOLVED": true,
+    "SSH_TCP_CONNECTED": true,
+    "SSH_AUTHENTICATED": true,
+    "SSH_X11_FORWARDING_READY": true,
+    "X11_FORWARDING_READY": true,
+    "XQUARTZ_READY": true,
+    "SYNOPSYS_ENV_INITIALIZED": true,
+    "SYNOPSYS_ENV_READY": true,
+    "EDA_LICENSE_READY": true,
+    "VERDI_PROCESS_RUNNING": true,
+    "VERDI_WINDOW_FOUND": true,
+    "VERDI_GUI_READY": true,
+    "FSDB_LOADED": true,
+    "SIGNALS_POPULATED": true,
+    "WAVEFORM_VERIFIED": true,
+    "CAPTURE_VERIFIED": true
+  },
+  "redacted_targets": {
+    "eda_host": "<private_eda_host>",
+    "ssh_user": "<authorized-owner>",
+    "vpn_interface": "utun4",
+    "xquartz_display": ":0"
+  },
+  "diagnostic_rows": [
+    {
+      "step": 1,
+      "key": "website_host",
+      "label": "Current website host",
+      "state": "VERIFIED",
+      "detail": "iMac.local (Staging v8.0.3)",
+      "status": "VERIFIED"
+    },
+    {
+      "step": 2,
+      "key": "execution_device",
+      "label": "Selected execution device",
+      "state": "VERIFIED",
+      "detail": "imac \u2014 University SSH Ready",
+      "status": "VERIFIED"
+    },
+    {
+      "step": 3,
+      "key": "vpn_route",
+      "label": "VPN route",
+      "state": "VERIFIED",
+      "detail": "Interface utun4 via 130.212.163.69 (utun4 (130.212.163.69))",
+      "status": "VERIFIED"
+    },
+    {
+      "step": 4,
+      "key": "ssh_transport",
+      "label": "SSH transport",
+      "state": "VERIFIED",
+      "detail": "TCP mahmoodi.rcc.at.sfsu.edu:22 CONNECTED",
+      "status": "VERIFIED"
+    },
+    {
+      "step": 5,
+      "key": "ssh_authentication",
+      "label": "SSH authentication",
+      "state": "VERIFIED",
+      "detail": "Authenticated (<authorized-owner>@mahmoodi.rcc.at.sfsu.edu)",
+      "status": "VERIFIED"
+    },
+    {
+      "step": 6,
+      "key": "xquartz_display",
+      "label": "XQuartz display",
+      "state": "VERIFIED",
+      "detail": "XQuartz: READY (/var/run/com.apple.launchd.SQD4ShgIqM/org.xquartz:0) | X11 Forwarding: READY",
+      "status": "VERIFIED"
+    },
+    {
+      "step": 7,
+      "key": "synopsys_init",
+      "label": "Remote Synopsys initialization",
+      "state": "VERIFIED",
+      "detail": "synopsys_setup.tcl + verdi + motion_v5_16bit_top_regression.fsdb (fig10_16bit_perfect_match.tcl) verified",
+      "status": "VERIFIED"
+    },
+    {
+      "step": 8,
+      "key": "verdi_process",
+      "label": "Native Verdi process",
+      "state": "RUNNING",
+      "detail": "Verdi: RUNNING (1 matching window)",
+      "status": "RUNNING"
+    },
+    {
+      "step": 9,
+      "key": "nwave_signals",
+      "label": "nWave window and signals",
+      "state": "VERIFIED",
+      "detail": "Native waveform: AVAILABLE (17 signals configured via fig10_16bit_perfect_match.tcl)",
+      "status": "VERIFIED"
+    },
+    {
+      "step": 10,
+      "key": "evidence_capture_state",
+      "label": "Evidence and capture state",
+      "state": "VERIFIED",
+      "detail": "Recorded V9 Evidence: VERIFIED (V9_fig10_16bit_perfect_match_0000_nWave.png, SHA-256 1b0895013e52...)",
+      "status": "VERIFIED"
+    }
+  ],
+  "non_destructive_policy": {
+    "kills_vpn_client": false,
+    "modifies_system_routing": false,
+    "touches_production_8788": false
+  }
+}

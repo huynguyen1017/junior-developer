@@ -1,0 +1,66 @@
+{
+  "ok": true,
+  "checkpoint_id": "JDEV_V8_1_MASTER_CHECKPOINT_20261111",
+  "version": "v8.1",
+  "p0_defects_remaining": 0,
+  "p0_defects_resolved_count": 7,
+  "updated_at_utc": "2026-11-11T10:10:00Z",
+  "environments": {
+    "production_8788": {
+      "port": 8788,
+      "pid": 46103,
+      "repo_path": "/Users/huynguyen/Developer/portfolio/motion-estimator-asic-lab-notebook-2026",
+      "branch": "manual-practice-macbook-air",
+      "commit_sha": "4fe81ae",
+      "status": "UNTOUCHED_AND_HEALTHY"
+    },
+    "staging_8789": {
+      "port": 8789,
+      "repo_path": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged",
+      "branch": "v8.1-unified-platform-staged",
+      "status": "ACTIVE_VERIFIED"
+    },
+    "main_v9_asic_reference": {
+      "branch": "main",
+      "commit_sha": "fcc7d39",
+      "status": "PRESERVED_READ_ONLY"
+    }
+  },
+  "p0_defects_resolved": {
+    "P0-01": {
+      "title": "Reconnect / Retry Button Performs Read-Only Poll Instead of Real Recovery",
+      "status": "FIXED_AND_VERIFIED",
+      "implementation": "Split UI into #nvBtnRefreshDiagnostics (read-only GET /api/v8/verdi/live-status) and #nvBtnRetryConnection (POST /api/v8/verdi/recover executing 15-step recovery state machine). Also fixed _resolve_ssh_extra_args() to always pass -F ~/.ssh/config."
+    },
+    "P0-02": {
+      "title": "Hardcoded Multi-Device Registry Booleans",
+      "status": "FIXED_AND_VERIFIED",
+      "implementation": "Replaced hardcoded website_reachable=True, xquartz_running=True, open_source_eda_ready=True on Device A (macbook_air) with real measured heartbeat store (state_store/device_heartbeats_v81.json, 60s TTL)."
+    },
+    "P0-03": {
+      "title": "No Real Remote Companion Transport Between iMac and MacBook Air",
+      "status": "FIXED_AND_VERIFIED",
+      "implementation": "Implemented signed device pairing (POST /api/v8/devices/pair), revocation (POST /api/v8/devices/revoke), authenticated heartbeat ingestion (POST /api/v8/devices/heartbeat), and remote job dispatch (POST /api/v8/companion/dispatch) returning REMOTE_COMPANION_UNREACHABLE when offline."
+    },
+    "P0-04": {
+      "title": "Production Fault-Injection Parameter Exposure",
+      "status": "FIXED_AND_VERIFIED",
+      "implementation": "Removed simulated_fault from public GET endpoints via _resolve_internal_test_fault() (requires X-ENGR852-Internal-Test-Mode: 1 + owner/companion auth) and removed automatic simulated_fault='VPN_ROUTE_UNAVAILABLE' on macbook_air."
+    },
+    "P0-05": {
+      "title": "Unauthenticated Device-Selection Mutation and Default Live-Frame Fallback",
+      "status": "FIXED_AND_VERIFIED",
+      "implementation": "Protected POST /api/v8/devices/select with require_owner_companion=True + require_csrf=True, and removed default fig10_v803_live_imac fallback on GET /api/v8/verdi/live-frame.png (requires explicit job_id and validates fig_id/state)."
+    },
+    "P0-06": {
+      "title": "Duplicate Signal Rails in Wrapped Verdi Tcl Execution",
+      "status": "FIXED_AND_VERIFIED",
+      "implementation": "Updated build_defect_d_safe_tcl_wrapper() in engr852_native_verdi_bridge.py to clear existing nWave signal groups (wvSelectAll + wvCut) before populating the canonical 17-signal list once in G1."
+    },
+    "P0-07": {
+      "title": "Cached Live-Run Manifest Can Masquerade as Current Live Execution",
+      "status": "FIXED_AND_VERIFIED",
+      "implementation": "Updated get_live_connection_status() and get_native_verdi_live_status() so closed X11 windows downgrade to VERDI_PROCESS_NOT_RUNNING / RECORDED_VERIFIED_CAPTURE with is_live_stream=False."
+    }
+  }
+}

@@ -1,0 +1,61 @@
+$date
+	Tue Nov 10 16:10:30 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb_no_assert $end
+$var wire 1 ! ovf $end
+$var wire 16 " y [15:0] $end
+$var reg 8 # a [7:0] $end
+$var reg 8 $ b [7:0] $end
+$var reg 2 % op [1:0] $end
+$scope module dut $end
+$var wire 8 & a [7:0] $end
+$var wire 8 ' b [7:0] $end
+$var wire 2 ( op [1:0] $end
+$var wire 1 ! overflow $end
+$var wire 16 ) y [15:0] $end
+$var real 1 * r_val $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+r0 *
+b110000 )
+b0 (
+b100000 '
+b10000 &
+b0 %
+b100000 $
+b10000 #
+b110000 "
+0!
+$end
+#10000
+r81.16908953746352 *
+b100000000 "
+b100000000 )
+b1 $
+b1 '
+b11111111 #
+b11111111 &
+#20000
+b1 %
+b1 (
+#30000
+r20.3718499231281 *
+b1100000 "
+b1100000 )
+b100000 $
+b100000 '
+b1000000 #
+b1000000 &
+#40000

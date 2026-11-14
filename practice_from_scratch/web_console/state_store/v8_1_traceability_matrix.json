@@ -1,0 +1,86 @@
+{
+  "ok": true,
+  "version": "v8.1",
+  "all_passed": true,
+  "total_requirements": 7,
+  "verified_requirements": 7,
+  "updated_at_utc": "2026-11-11T10:10:00Z",
+  "requirements": [
+    {
+      "req_id": "REQ-P0-01",
+      "section": "Section 2.2 / Section 6",
+      "title": "Real 15-Step Native Verdi Recovery Action & Separate Refresh vs Reconnect Buttons",
+      "code_paths": [
+        "practice_from_scratch/scripts/engr852_native_verdi_bridge.py::recover_native_verdi_session",
+        "practice_from_scratch/web_console/v7_platform_core.py::recover_native_verdi_session",
+        "practice_from_scratch/web_console/server.py::POST /api/v8/verdi/recover",
+        "practice_from_scratch/web_console/index.html::refreshNativeVerdiDiagnostics,retryNativeVerdiConnection"
+      ],
+      "verification_test": "V81-P0-01",
+      "status": "VERIFIED"
+    },
+    {
+      "req_id": "REQ-P0-02",
+      "section": "Section 2.2 / Section 8",
+      "title": "Measured Multi-Device Registry Without Hardcoded True Capabilities",
+      "code_paths": [
+        "practice_from_scratch/web_console/v7_platform_core.py::get_device_registry,_get_device_heartbeat"
+      ],
+      "verification_test": "V81-P0-02",
+      "status": "VERIFIED"
+    },
+    {
+      "req_id": "REQ-P0-03",
+      "section": "Section 2.2 / Section 8",
+      "title": "Signed Device Pairing, Revocation, Heartbeat TTL (60s), and Remote Companion Dispatch",
+      "code_paths": [
+        "practice_from_scratch/web_console/v7_platform_core.py::pair_execution_device,revoke_execution_device,register_device_heartbeat,dispatch_remote_companion_job",
+        "practice_from_scratch/web_console/server.py::POST /api/v8/devices/pair,revoke,heartbeat,companion/dispatch"
+      ],
+      "verification_test": "V81-P0-03",
+      "status": "VERIFIED"
+    },
+    {
+      "req_id": "REQ-P0-04",
+      "section": "Section 2.2 / Section 5",
+      "title": "Block Public simulated_fault Parameter Exposure & Remove macbook_air Fault Shortcut",
+      "code_paths": [
+        "practice_from_scratch/web_console/server.py::_resolve_internal_test_fault",
+        "practice_from_scratch/scripts/engr852_native_verdi_bridge.py::run_network_and_eda_preflight"
+      ],
+      "verification_test": "V81-P0-04",
+      "status": "VERIFIED"
+    },
+    {
+      "req_id": "REQ-P0-05",
+      "section": "Section 2.2 / Section 7 / Section 21",
+      "title": "Owner/Companion Auth + CSRF on Device Mutation & Explicit job_id/fig_id Validation on live-frame.png",
+      "code_paths": [
+        "practice_from_scratch/web_console/server.py::_require_authenticated_user,POST /api/v8/devices/select,GET /api/v8/verdi/live-frame.png"
+      ],
+      "verification_test": "V81-P0-05",
+      "status": "VERIFIED"
+    },
+    {
+      "req_id": "REQ-P0-06",
+      "section": "Section 2.2 / Section 7",
+      "title": "Single-Copy 17-Signal Tcl Wrapper Without Duplicate G1/G2 Signal Rails",
+      "code_paths": [
+        "practice_from_scratch/scripts/engr852_native_verdi_bridge.py::build_defect_d_safe_tcl_wrapper"
+      ],
+      "verification_test": "V81-P0-06",
+      "status": "VERIFIED"
+    },
+    {
+      "req_id": "REQ-P0-07",
+      "section": "Section 2.2 / Section 3.2",
+      "title": "Strict Separation of Live Open X11 Execution vs Recorded/Historical Manifests",
+      "code_paths": [
+        "practice_from_scratch/scripts/engr852_native_verdi_bridge.py::get_live_connection_status",
+        "practice_from_scratch/web_console/v7_platform_core.py::get_native_verdi_live_status"
+      ],
+      "verification_test": "V81-P0-07",
+      "status": "VERIFIED"
+    }
+  ]
+}

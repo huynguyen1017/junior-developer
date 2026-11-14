@@ -1,0 +1,9 @@
+{
+  "job_id": "nv15_layout_separation_test",
+  "figure_id": "layout",
+  "cleanup_state": "ACTIVE",
+  "signal_layout_saved": true,
+  "signal_layout_rc_sha256": "ce457e2f5559ce7ad6881f1041546e22d35d1df710f1cc6c892e7e352977c0f0",
+  "steps_executed": [],
+  "updated_at_utc": "2026-11-12T22:13:14.008507+00:00"
+}

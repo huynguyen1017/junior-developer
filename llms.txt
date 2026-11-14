@@ -1,0 +1,32 @@
+# Motion Estimator Native Verdi Studio (`v8.3` / `http://127.0.0.1:8789/`)
+
+> Full-stack, zero-dependency Python 3 + SQLite + X11 Native Synopsys Verdi nWave Engineering Platform, Open-Source Verilog Sandbox (`iverilog` + `vvp` + `Yosys`), and 520 MHz 14nm FinFET Systolic Motion Estimator ASIC Portfolio (`V1`–`V9` RTL-to-GDSII).
+
+## Canonical Entry Points (Start Here)
+- [README.md](README.md): Executive overview, 1-command local server launch (`ENGR852_CONSOLE_PORT=8789`), SAED14 3-corner PrimeTime sign-off metrics, Native Verdi X11 architecture, and complete repository tree.
+- [REVISION_HISTORY_AND_CHANGELOG.md](REVISION_HISTORY_AND_CHANGELOG.md): Full engineering changelog across `ASIC V1–V9` and Studio `v1.0` through `v8.3`.
+- [WAVEFORM_AND_TEST_LOG_CATALOG.md](WAVEFORM_AND_TEST_LOG_CATALOG.md): Index of all `46` `.vcd` dumps, `45` Verdi/Surfer/XQuartz screenshots, `38` per-job native Verdi captures, `100` manual page logs/PNGs, and `v7.0`–`v8.3` acceptance reports.
+- [AI_AGENT_CONTEXT_INDEX.json](AI_AGENT_CONTEXT_INDEX.json): Machine-readable manifest of runtime entrypoints, API routes, agent classes, ASIC RTL/TB targets, and verification gates.
+
+## Web Platform & Backend Architecture (`practice_from_scratch/`)
+- `practice_from_scratch/web_console/server.py`: ThreadingHTTPServer entrypoint (`ConsoleRequestHandler`, `ENGR852_CONSOLE_PORT`, `ENGR852_BIND_HOST`), serving `index.html` and `/api/v1/*`, `/api/v7/*`, `/api/v8/*`.
+- `practice_from_scratch/web_console/index.html`: Single-file `v8.3` frontend application (JUNIOR DEVELOPER IDE, real VCD canvas viewer, Native Verdi X11 viewer, 100-page interactive curriculum, 600+ flashcards, Midterm exam bank).
+- `practice_from_scratch/web_console/v7_platform_core.py`: `OrchestratorPlatform` + 7 core agent classes + 10-agent orchestration telemetry + bounded `NetworkHealthAgent` circuit breaker + durable async `/api/v1/native-jobs`.
+- `practice_from_scratch/web_console/junior_developer_v8_core.py`: `JuniorDeveloperV8Platform`, `PrivacyAndSecretScanner`, `RealtimeEventBus`, multi-tenant `0700` project sandboxes, and `iverilog`/`vvp`/`Yosys` runner.
+- `practice_from_scratch/scripts/engr852_native_verdi_bridge.py`: Authenticated SSH/XQuartz/Synopsys Verdi `nWave` bridge, Defect-D bracket-safe Tcl wrapper, fail-closed signal verifier, and privacy-redacted window capturer.
+- `practice_from_scratch/scripts/engr852_verdi_lifecycle_manager.py`: 20-state Verdi lifecycle machine, monotonic `selection_generation_id`, `.rc` signal saver, X11 `WM_DELETE_WINDOW` modal dismisser, `execute_10_step_orderly_cleanup()`, and 6 self-healing lifecycle agents.
+- `practice_from_scratch/web_console/migrations/001_junior_developer_v8_schema.sql`: 24-table SQLite schema (`junior_developer_v8.sqlite3` included with `sessions` sanitized to `0`).
+
+## Historical Frontend Snapshots & Generator Scripts
+- `docs/interactive_console_v1_classic.html`, `docs/interactive_asic_academy_v2.html`, `docs/interactive_asic_ide_v3.html`, `docs/interactive_asic_studio_v4_rose_lavender.html`, `docs/interactive_asic_studio_v5_fullstack.html`
+- `scripts/studio_generators/`: Python scripts that generated `v1`–`v5` UIs, 100-page dense manuals, and study data.
+
+## Hardware Design & Physical Sign-Off (`V1`–`V9`)
+- `rtl/16bit/top.v` & `rtl/8bit/top.v`: 16-PE systolic motion estimator RTL (corrected 16-bit full-precision vs 8-bit saturating baseline).
+- `tb/` & `verification/v6_clean/`: 520 MHz VCS & SystemVerilog testbenches + raw `.vcd` dumps (`25.85 MB` + `17.07 MB`).
+- `scripts/synopsys_tcl/` & `evidence/v9_signoff/`: 14nm SAED14 Fusion Compiler scripts, IC Validator DRC `CLEAN`, and 3-corner PrimeTime reports.
+
+## Key Verification & Acceptance Suite Entrypoints
+- `scripts/v6_stage_gate.py --scope rtl` (`7/7` clean VCS runs, RTL SHA-256 parity, V9 deliverables)
+- `practice_from_scratch/scripts/test_v8_2_master_recovery.py` (`7/7` V8.2 checks PASS, `LIVE_WAVEFORM_VERIFICATION_PASS`)
+- `practice_from_scratch/scripts/test_v8_3_native_verdi_lifecycle_and_100_transitions.py` (`18/18` NV PASS, `51/51` Regression Matrix PASS, `100/100` Transition Stability Loop PASS)

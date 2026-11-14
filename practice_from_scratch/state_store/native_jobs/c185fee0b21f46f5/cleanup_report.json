@@ -1,0 +1,9 @@
+{
+  "job_id": "c185fee0b21f46f5",
+  "figure_id": "fig10",
+  "cleanup_state": "ACTIVE",
+  "signal_layout_saved": true,
+  "signal_layout_rc_sha256": "73a2b3b018dee428c7b8c8b27bb1273345ebc2cedaaefc6623494e1270f43365",
+  "steps_executed": [],
+  "updated_at_utc": "2026-11-12T22:12:07.965037+00:00"
+}

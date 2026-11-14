@@ -1,0 +1,436 @@
+{
+  "schema_version": "v8.3",
+  "generated_at_utc": "2026-11-12T22:37:07.730394+00:00",
+  "nv18_passed": 18,
+  "nv18_total": 18,
+  "regression_51_passed": 51,
+  "regression_51_total": 51,
+  "regression_51_all_passed": true,
+  "stability_100": {
+    "total_transitions": 100,
+    "successful_transitions": 100,
+    "failed_transitions": 0,
+    "incorrect_figure_captures": 0,
+    "modal_blocked_events": 0,
+    "initial_verdi_window_count": 1,
+    "final_verdi_window_count": 1,
+    "initial_ssh_verdi_procs": 1,
+    "final_ssh_verdi_procs": 1,
+    "orphaned_resources": 0,
+    "test_runner_max_rss_bytes": 64208896,
+    "avg_transition_ms": 3016.11,
+    "max_transition_ms": 5532.27,
+    "total_duration_s": 303.78,
+    "completed_at_utc": "2026-11-12T22:37:07.730260+00:00"
+  },
+  "results": [
+    {
+      "test_id": "A01",
+      "group": "A \u2014 Native launch",
+      "description": "Launch Figure 7 preflight & authorized session readiness",
+      "passed": true,
+      "status": "PASS",
+      "detail": "ssh=True, synopsys=True, fsdb=motion_v3_all_saturated.fsdb"
+    },
+    {
+      "test_id": "A02",
+      "group": "A \u2014 Native launch",
+      "description": "Verify genuine Verdi X11 window on XQuartz (:0)",
+      "passed": true,
+      "status": "PASS",
+      "detail": "xquartz=READY, verdi_windows=1"
+    },
+    {
+      "test_id": "A03",
+      "group": "A \u2014 Native launch",
+      "description": "Verify correct FSDB identity per figure (fig7 vs fig10 vs fig9)",
+      "passed": true,
+      "status": "PASS",
+      "detail": "fig7=motion_v3_all_saturated.fsdb, fig10=motion_v5_16bit_top_regression.fsdb, fig9=motion_v3_hold.fsdb"
+    },
+    {
+      "test_id": "A04",
+      "group": "A \u2014 Native launch",
+      "description": "Verify required 17 signal rails & pixel verification",
+      "passed": true,
+      "status": "PASS",
+      "detail": "verified=True, signals=17"
+    },
+    {
+      "test_id": "A05",
+      "group": "A \u2014 Native launch",
+      "description": "Verify successful redacted window capture & pixel rails",
+      "passed": true,
+      "status": "PASS",
+      "detail": "rail_bands=23, green_scanlines=143"
+    },
+    {
+      "test_id": "A06",
+      "group": "A \u2014 Native launch",
+      "description": "Repeated selection/reuse does not create duplicate Verdi processes",
+      "passed": true,
+      "status": "PASS",
+      "detail": "before_wins=1, after_wins=1"
+    },
+    {
+      "test_id": "B01",
+      "group": "B \u2014 Figure switching",
+      "description": "Figure 7 -> Figure 8",
+      "passed": true,
+      "status": "PASS",
+      "detail": "to=fig8, fsdb=motion_v3_all_saturated.fsdb, gen=258"
+    },
+    {
+      "test_id": "B02",
+      "group": "B \u2014 Figure switching",
+      "description": "Figure 8 -> Figure 10",
+      "passed": true,
+      "status": "PASS",
+      "detail": "to=fig10, fsdb=motion_v5_16bit_top_regression.fsdb, gen=259"
+    },
+    {
+      "test_id": "B03",
+      "group": "B \u2014 Figure switching",
+      "description": "Figure 10 -> Figure 11",
+      "passed": true,
+      "status": "PASS",
+      "detail": "to=fig11, fsdb=motion_precision_520mhz.fsdb, gen=260"
+    },
+    {
+      "test_id": "B04",
+      "group": "B \u2014 Figure switching",
+      "description": "Figure 11 -> Figure 9",
+      "passed": true,
+      "status": "PASS",
+      "detail": "to=fig9, fsdb=motion_v3_hold.fsdb, gen=261"
+    },
+    {
+      "test_id": "B05",
+      "group": "B \u2014 Figure switching",
+      "description": "Figure 9 -> Figure 7",
+      "passed": true,
+      "status": "PASS",
+      "detail": "to=fig7, fsdb=motion_v3_all_saturated.fsdb, gen=262"
+    },
+    {
+      "test_id": "B06",
+      "group": "B \u2014 Figure switching",
+      "description": "Figure 7 -> Figure 10 -> Figure 7",
+      "passed": true,
+      "status": "PASS",
+      "detail": "gen1=263, gen2=264"
+    },
+    {
+      "test_id": "B07",
+      "group": "B \u2014 Figure switching",
+      "description": "Rapid repeated selection changes enforce monotonic generation IDs",
+      "passed": true,
+      "status": "PASS",
+      "detail": "generations=[265, 266, 267, 268, 269, 270, 271]"
+    },
+    {
+      "test_id": "B08",
+      "group": "B \u2014 Figure switching",
+      "description": "Switching while previous figure is still loading rejects stale response",
+      "passed": true,
+      "status": "PASS",
+      "detail": "old_gen_superseded=True, current_gen_active=True"
+    },
+    {
+      "test_id": "B09",
+      "group": "B \u2014 Figure switching",
+      "description": "Switching while last capture request is pending rejects stale capture",
+      "passed": true,
+      "status": "PASS",
+      "detail": "active_fig=fig10, stale_fig7_superseded=True"
+    },
+    {
+      "test_id": "B10",
+      "group": "B \u2014 Figure switching",
+      "description": "Switching repeatedly through all 6 supported figures",
+      "passed": true,
+      "status": "PASS",
+      "detail": "Verified live-status metadata & isolation for all 6 modes"
+    },
+    {
+      "test_id": "C01",
+      "group": "C \u2014 Modal dialog",
+      "description": "Reproduce & detect signal-save confirmation dialog (0xe0063a Question)",
+      "passed": true,
+      "status": "PASS",
+      "detail": "detected=1, category=UNSAVED_SIGNAL_FILE_CONFIRMATION"
+    },
+    {
+      "test_id": "C02",
+      "group": "C \u2014 Modal dialog",
+      "description": "Identify owning Verdi PID & job ID for modal dialog",
+      "passed": true,
+      "status": "PASS",
+      "detail": "verdi_pid=3832600, owner_job=native_fig10_1794514078_573ac4"
+    },
+    {
+      "test_id": "C03",
+      "group": "C \u2014 Modal dialog",
+      "description": "Confirm triggering action (close_nwave_tab_or_switch_figure without wvSaveSignal)",
+      "passed": true,
+      "status": "PASS",
+      "detail": "related_operation=close_nwave_tab_or_switch_figure"
+    },
+    {
+      "test_id": "C04",
+      "group": "C \u2014 Modal dialog",
+      "description": "Preserve signal layouts via wvSaveSignal .rc command",
+      "passed": true,
+      "status": "PASS",
+      "detail": "Verified wvSaveSignal -win $target_w embedded in Defect-D-safe Tcl wrapper"
+    },
+    {
+      "test_id": "C05",
+      "group": "C \u2014 Modal dialog",
+      "description": "Approved preservation & cleanup of temporary layouts in native_jobs/{job_id}/",
+      "passed": true,
+      "status": "PASS",
+      "detail": "rc_exists=True, path=/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/state_store/native_jobs/native_fig10_1794514078_573ac4/waveform_configuration.rc"
+    },
+    {
+      "test_id": "C06",
+      "group": "C \u2014 Modal dialog",
+      "description": "Automation does not become permanently blocked (live X11 modal count == 0)",
+      "passed": true,
+      "status": "PASS",
+      "detail": "live_blocking_modals_on_xquartz=0"
+    },
+    {
+      "test_id": "C07",
+      "group": "C \u2014 Modal dialog",
+      "description": "Unknown/Error dialog safely escalates (user_intervention_required=True)",
+      "passed": true,
+      "status": "PASS",
+      "detail": "user_intervention_required=True"
+    },
+    {
+      "test_id": "C08",
+      "group": "C \u2014 Modal dialog",
+      "description": "No destructive global novas.rc preference changes",
+      "passed": true,
+      "status": "PASS",
+      "detail": "No global novas.rc resaveSignals=FALSE mutation performed; per-window wvSaveSignal used instead"
+    },
+    {
+      "test_id": "D01",
+      "group": "D \u2014 Refresh and reconnect",
+      "description": "Refresh Capture / live-status does not restart Verdi",
+      "passed": true,
+      "status": "PASS",
+      "detail": "windows_before=1, windows_after=1"
+    },
+    {
+      "test_id": "D02",
+      "group": "D \u2014 Refresh and reconnect",
+      "description": "Refresh Capture retains selected figure",
+      "passed": true,
+      "status": "PASS",
+      "detail": "retained_fig=fig10"
+    },
+    {
+      "test_id": "D03",
+      "group": "D \u2014 Refresh and reconnect",
+      "description": "Failed capture refresh preserves live native Verdi process",
+      "passed": true,
+      "status": "PASS",
+      "detail": "http_status=403, live_verdi_windows=1"
+    },
+    {
+      "test_id": "D04",
+      "group": "D \u2014 Refresh and reconnect",
+      "description": "Reconnect attaches/verifies healthy existing session",
+      "passed": true,
+      "status": "PASS",
+      "detail": "step_count=15, error_code=LIVE_VERDI_READY"
+    },
+    {
+      "test_id": "D05",
+      "group": "D \u2014 Refresh and reconnect",
+      "description": "Reconnect does not kill unrelated windows",
+      "passed": true,
+      "status": "PASS",
+      "detail": "windows_after_recover=1"
+    },
+    {
+      "test_id": "D06",
+      "group": "D \u2014 Refresh and reconnect",
+      "description": "Repeated retries do not produce duplicate sessions",
+      "passed": true,
+      "status": "PASS",
+      "detail": "windows_stable=1"
+    },
+    {
+      "test_id": "D07",
+      "group": "D \u2014 Refresh and reconnect",
+      "description": "Browser refresh restores active job & 10-field lifecycle telemetry",
+      "passed": true,
+      "status": "PASS",
+      "detail": "telemetry_keys=10"
+    },
+    {
+      "test_id": "D08",
+      "group": "D \u2014 Refresh and reconnect",
+      "description": "Pop-out viewer handoff preserves native Verdi application",
+      "passed": true,
+      "status": "PASS",
+      "detail": "Verified ENGR852_NATIVE_VIEWER_INIT postMessage handoff and non-destructive preview pause"
+    },
+    {
+      "test_id": "E01",
+      "group": "E \u2014 Cleanup",
+      "description": "Job-owned resources identified & stored in 8-file native_jobs/{job_id}/ layout",
+      "passed": true,
+      "status": "PASS",
+      "detail": "job_dir=/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/state_store/native_jobs/native_fig10_1794514078_573ac4, all_8_present=True"
+    },
+    {
+      "test_id": "E02",
+      "group": "E \u2014 Cleanup",
+      "description": "Unrelated manually launched Verdi / X11 windows remain untouched",
+      "passed": true,
+      "status": "PASS",
+      "detail": "live_verdi_windows=1"
+    },
+    {
+      "test_id": "E03",
+      "group": "E \u2014 Cleanup",
+      "description": "Unsaved user layouts preserved (USER_MANAGED never discarded)",
+      "passed": true,
+      "status": "PASS",
+      "detail": "Ownership verification rejects non-job PIDs"
+    },
+    {
+      "test_id": "E04",
+      "group": "E \u2014 Cleanup",
+      "description": "10-step orderly cleanup executes without broad kill commands",
+      "passed": true,
+      "status": "PASS",
+      "detail": "steps=10, state=REUSED_BY_COMPATIBLE_FIGURE"
+    },
+    {
+      "test_id": "E05",
+      "group": "E \u2014 Cleanup",
+      "description": "Released viewers stop capture subscriptions cleanly",
+      "passed": true,
+      "status": "PASS",
+      "detail": "Step 3 release_viewer_subscription COMPLETED"
+    },
+    {
+      "test_id": "E06",
+      "group": "E \u2014 Cleanup",
+      "description": "Shared Verdi processes remain active when compatible figures depend on them",
+      "passed": true,
+      "status": "PASS",
+      "detail": "cleanup_state=REUSED_BY_COMPATIBLE_FIGURE"
+    },
+    {
+      "test_id": "E07",
+      "group": "E \u2014 Cleanup",
+      "description": "Exclusively job-owned process terminates gracefully via verified PID check",
+      "passed": true,
+      "status": "PASS",
+      "detail": "step8_status=TERMINATED"
+    },
+    {
+      "test_id": "E08",
+      "group": "E \u2014 Cleanup",
+      "description": "No persistent process or window growth after repeated switching",
+      "passed": true,
+      "status": "PASS",
+      "detail": "windows_constant=1"
+    },
+    {
+      "test_id": "E09",
+      "group": "E \u2014 Cleanup",
+      "description": "Crash recovery reconciles orphaned job-owned resources (OrphanResourceReconciler)",
+      "passed": true,
+      "status": "PASS",
+      "detail": "OrphanResourceReconciler reconciled persisted manifests against live X11/OS state"
+    },
+    {
+      "test_id": "E10",
+      "group": "E \u2014 Cleanup",
+      "description": "Original simulation & V9 physical-design evidence remains unchanged",
+      "passed": true,
+      "status": "PASS",
+      "detail": "All 6 recorded V9 SHA-256 artifacts intact"
+    },
+    {
+      "test_id": "F01",
+      "group": "F \u2014 Physical layout",
+      "description": "Switching to IC Compiler II layout uses correct NDM artifact",
+      "passed": true,
+      "status": "PASS",
+      "detail": "status=LAYOUT_TOOL_SEPARATE_FROM_VERDI_NWAVE, dbdir=v9_closure/top.dlib"
+    },
+    {
+      "test_id": "F02",
+      "group": "F \u2014 Physical layout",
+      "description": "Layout tool lifecycle is independent of nWave",
+      "passed": true,
+      "status": "PASS",
+      "detail": "requires_native_verdi=False, strategy=SEPARATE_PHYSICAL_DESIGN_TOOL_PRESERVE_VERDI"
+    },
+    {
+      "test_id": "F03",
+      "group": "F \u2014 Physical layout",
+      "description": "Switching away from layout does not corrupt layout data or Verdi",
+      "passed": true,
+      "status": "PASS",
+      "detail": "live_verdi_windows=1"
+    },
+    {
+      "test_id": "F04",
+      "group": "F \u2014 Physical layout",
+      "description": "Returning to waveform mode restores valid Verdi session",
+      "passed": true,
+      "status": "PASS",
+      "detail": "restored_fig=fig10"
+    },
+    {
+      "test_id": "G01",
+      "group": "G \u2014 Production safety",
+      "description": "Production port 8788 is unchanged and serving",
+      "passed": true,
+      "status": "PASS",
+      "detail": "Python  46103 huynguyen    3u  IPv4 0x2cd4a6a3fac8557b      0t0  TCP 127.0.0.1:8788 (LISTEN)"
+    },
+    {
+      "test_id": "G02",
+      "group": "G \u2014 Production safety",
+      "description": "Staging port 8789 continues serving correctly",
+      "passed": true,
+      "status": "PASS",
+      "detail": "Python  95423 huynguyen    3u  IPv4 0x9209574207613ac1      0t0  TCP 127.0.0.1:8789 (LISTEN)"
+    },
+    {
+      "test_id": "G03",
+      "group": "G \u2014 Production safety",
+      "description": "University SSH sessions unrelated to this job remain untouched",
+      "passed": true,
+      "status": "PASS",
+      "detail": "Zero broad ssh/pkill commands executed"
+    },
+    {
+      "test_id": "G04",
+      "group": "G \u2014 Production safety",
+      "description": "XQuartz remains available to other applications",
+      "passed": true,
+      "status": "PASS",
+      "detail": "XQuartz :0 READY"
+    },
+    {
+      "test_id": "G05",
+      "group": "G \u2014 Production safety",
+      "description": "Original ASIC evidence and presentation artifacts remain unchanged",
+      "passed": true,
+      "status": "PASS",
+      "detail": "All 6 SHA-256 hashes verified intact"
+    }
+  ]
+}

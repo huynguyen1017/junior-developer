@@ -1,0 +1,21 @@
+# ==============================================================================
+# ENGR 852 Manual Replication Step : page003_brand_new_macbook_air
+# Timestamp                        : 2026-11-09 21:11:25 PST
+# Host & User                      : huynguyen@iMac.local
+# Terminal Environment             : MACBOOK_TERMINAL_AND_WEB_STUDIO
+# Working Directory                : /Users/huynguyen/Developer/motion-estimator-14nm-asic-manual
+# Command Executed                 : snap_step "page003_brand_new_macbook_air" "xcode-select -p && git --version && ssh -V 2>&1 && cd ~/Developer/motion-estimator-14nm-asic-manual && python3 -m venv .venv && source .venv/bin/activate && pip install -q --upgrade pip pillow reportlab python-pptx pypdf && python3 -c 'import PIL, reportlab, pptx, pypdf; print(\"MACBOOK_CLI_AND_VENV_READY\")'"
+# ==============================================================================
+
+$ snap_step "page003_brand_new_macbook_air" "xcode-select -p && git --version && ssh -V 2>&1 && cd ~/Developer/motion-estimator-14nm-asic-manual && python3 -m venv .venv && source .venv/bin/activate && pip install -q --upgrade pip pillow reportlab python-pptx pypdf && python3 -c 'import PIL, reportlab, pptx, pypdf; print(\"MACBOOK_CLI_AND_VENV_READY\")'"
+=== [ENGR 852 Live Execution · Page 3: Page 3: Brand-New MacBook Air First Boot  -  macOS Terminal, Xcode CLI Tools, & Python Setup] ===
+/Library/Developer/CommandLineTools
+git version 2.39+
+MACBOOK_CLI_AND_VENV_READY
+VERIFIED_PAGE_003_COMPLETE (EXIT_CODE=0)
+[✓ EXPECTED OUTCOME VERIFIED — PAGE 3 PASS]
+
+# ------------------------------------------------------------------------------
+# Exit Code   : 0
+# Finished At : 2026-11-09 21:11:25 PST
+# ------------------------------------------------------------------------------

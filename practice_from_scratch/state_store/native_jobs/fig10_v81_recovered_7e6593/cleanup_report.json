@@ -1,0 +1,9 @@
+{
+  "job_id": "fig10_v81_recovered_7e6593",
+  "figure_id": "fig10",
+  "cleanup_state": "ACTIVE",
+  "signal_layout_saved": true,
+  "signal_layout_rc_sha256": "c4282af4945b904a34e7464bca898755a39c382289090730b5a17b6b6e21b24b",
+  "steps_executed": [],
+  "updated_at_utc": "2026-11-12T22:23:07.657931+00:00"
+}

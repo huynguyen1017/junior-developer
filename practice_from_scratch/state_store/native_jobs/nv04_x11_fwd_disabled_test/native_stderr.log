@@ -1,0 +1,1 @@
+[BLOCKED_X11_FORWARDING_DISABLED:X11_FORWARDING_FAILED] Remote tool/FSDB/Tcl/X11 preflight failed (rc=25): Remote X11 forwarding check (`xset q`) failed

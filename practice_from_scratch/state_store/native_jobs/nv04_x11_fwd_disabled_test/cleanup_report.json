@@ -1,0 +1,9 @@
+{
+  "job_id": "nv04_x11_fwd_disabled_test",
+  "figure_id": "fig10",
+  "cleanup_state": "ACTIVE",
+  "signal_layout_saved": true,
+  "signal_layout_rc_sha256": "3b483799662040e94b80876c6ec3223903803f365f3b35714fd294a9f5e224a6",
+  "steps_executed": [],
+  "updated_at_utc": "2026-11-12T22:13:13.580981+00:00"
+}

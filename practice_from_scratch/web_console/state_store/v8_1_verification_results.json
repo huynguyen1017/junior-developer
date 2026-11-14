@@ -1,0 +1,62 @@
+{
+  "ok": true,
+  "version": "v8.1",
+  "passed": 9,
+  "total": 9,
+  "results": [
+    {
+      "case_id": "V81-P0-01A",
+      "title": "SSH config resolution always includes -F ~/.ssh/config",
+      "passed": true,
+      "detail": "ssh_extra_args=['-F', '/Users/huynguyen/.ssh/config']"
+    },
+    {
+      "case_id": "V81-P0-01B",
+      "title": "15-step recovery endpoint POST /api/v8/verdi/recover & split Refresh vs Reconnect UI buttons",
+      "passed": true,
+      "detail": "http=200, recovery_steps=15, ui_split_ok=True, error_code=LIVE_VERDI_READY"
+    },
+    {
+      "case_id": "V81-P0-02",
+      "title": "Device registry uses real heartbeat & pairing store (no hardcoded True booleans when offline)",
+      "passed": true,
+      "detail": "offline_honest=True, online_verified=True, disp_ok=200, revoke=200, disp_blocked=True (503)"
+    },
+    {
+      "case_id": "V81-P0-03",
+      "title": "POST /api/v8/devices/select enforces authentication (401) and CSRF token validation (403)",
+      "passed": true,
+      "detail": "unauth=401, missing_csrf=403, valid_owner_csrf=200"
+    },
+    {
+      "case_id": "V81-P0-04",
+      "title": "Public GET /api/v8/verdi/live-status rejects simulated_fault while internal test mode with owner auth honors it",
+      "passed": true,
+      "detail": "pub_rejected=True (error_code=NONE), int_accepted=True (error_code=VPN_ROUTE_UNAVAILABLE)"
+    },
+    {
+      "case_id": "V81-P0-05",
+      "title": "GET /api/v8/verdi/live-frame.png rejects missing job_id (400) and figure mismatch (409), serves PNG on match (200)",
+      "passed": true,
+      "detail": "missing_job=400, fig_mismatch=409, valid_match=200 (png=True, bytes=108713)"
+    },
+    {
+      "case_id": "V81-P0-06",
+      "title": "Tcl wrapper clears pre-existing signals (wvSelectAll + wvCut) and adds 17 canonical signals once in G1",
+      "passed": true,
+      "detail": "has_clear=True, wvAddSignal_count=17"
+    },
+    {
+      "case_id": "V81-P0-07",
+      "title": "Closed X11 window downgrades live status to VERDI_PROCESS_NOT_RUNNING and is_live_stream=False",
+      "passed": true,
+      "detail": "status=VERDI_PROCESS_NOT_RUNNING, error_code=VERDI_PROCESS_NOT_RUNNING"
+    },
+    {
+      "case_id": "V81-META-08",
+      "title": "Checkpoint (/api/v8/checkpoint), Traceability Matrix (/api/v8/traceability-matrix), and Build Version (/api/v8/build-version) verified",
+      "passed": true,
+      "detail": "cp=200 (p0_remaining=0), tm=200 (total=7), bv=200"
+    }
+  ]
+}

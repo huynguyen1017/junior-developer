@@ -1,0 +1,14 @@
+{
+  "job_id": "nv06_missing_fsdb_test",
+  "figure_id": "fig10",
+  "window_id": "",
+  "evidence_class": "FAILED",
+  "evidence_distinction_badge": "HISTORICAL_CAPTURE_AVAILABLE",
+  "redacted_name": "verdi_window_redacted.png",
+  "redacted_sha256": "",
+  "restricted_raw_sha256": "",
+  "privacy_redacted": false,
+  "privacy_verified": false,
+  "pixel_metrics": {},
+  "captured_at_utc": ""
+}

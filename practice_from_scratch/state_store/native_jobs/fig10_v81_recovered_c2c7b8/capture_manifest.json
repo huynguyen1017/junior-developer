@@ -1,0 +1,23 @@
+{
+  "job_id": "fig10_v81_recovered_c2c7b8",
+  "figure_id": "fig10",
+  "window_id": "0xe00006",
+  "evidence_class": "REAL_APPLICATION_CAPTURE",
+  "evidence_distinction_badge": "LIVE_WAVEFORMS_VERIFIED",
+  "redacted_name": "verdi_window_redacted.png",
+  "redacted_sha256": "97070479bf119e18e6be124800472ead4770051795b314a42106c53c14a35f6b",
+  "restricted_raw_sha256": "04888b8652ea1a0f547f3f71a18d6a61799361d5923ba0caf5adca304448c6f8",
+  "privacy_redacted": true,
+  "privacy_verified": true,
+  "pixel_metrics": {
+    "verified": true,
+    "width": 1900,
+    "height": 1040,
+    "nwave_green_scanlines": 111,
+    "nwave_detected_rail_bands": 40,
+    "nwave_label_rows": 791,
+    "nwave_yellow_axis_samples": 0,
+    "reason": "Verified 40 populated waveform signal-rail bands (111 active trace scanlines)"
+  },
+  "captured_at_utc": "2026-11-11T10:11:02.747064+00:00"
+}

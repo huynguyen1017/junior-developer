@@ -1,0 +1,17 @@
+{
+  "run_20261112T191104Z_e9901d": {
+    "archived_prior_runs": [],
+    "created_at_utc": "2026-11-12T19:11:04.992+00:00",
+    "device_id": "d974a6b8a2cc9412",
+    "git_branch": "v8.0.3-multi-mac-vpn-xquartz-verdi-repair",
+    "git_head_sha": "f39e9f36e711c2576807868fe9f9202e02286946",
+    "host": "iMac.local",
+    "preserved_legacy_artifacts_count": 200,
+    "project_id": "motion_estimator_520mhz",
+    "reason": "Initial Run",
+    "run_dir": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/runs/run_20261112T191104Z_e9901d",
+    "run_id": "run_20261112T191104Z_e9901d",
+    "status": "ACTIVE",
+    "user_id": "usr_owner_companion"
+  }
+}

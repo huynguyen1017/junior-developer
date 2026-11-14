@@ -1,0 +1,9 @@
+{
+  "job_id": "nv03_xquartz_offline_test",
+  "figure_id": "fig10",
+  "cleanup_state": "ACTIVE",
+  "signal_layout_saved": true,
+  "signal_layout_rc_sha256": "e22a477c496f39130b4b205547649db976ecd1e5aee45a581a12bc87397b4989",
+  "steps_executed": [],
+  "updated_at_utc": "2026-11-12T22:13:13.356036+00:00"
+}

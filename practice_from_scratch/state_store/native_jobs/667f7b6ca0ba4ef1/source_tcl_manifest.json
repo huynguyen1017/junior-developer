@@ -1,0 +1,29 @@
+{
+  "job_id": "667f7b6ca0ba4ef1",
+  "figure_id": "fig10",
+  "tcl_script": "fig10_16bit_perfect_match.tcl",
+  "tcl_sha256": "",
+  "wvAddSignal_count": 17,
+  "tcl_signal_paths": [
+    "/motion_v5_16bit_top_regression_tb/clock",
+    "/motion_v5_16bit_top_regression_tb/start",
+    "/motion_v5_16bit_top_regression_tb/dut/ctl_u/count[12:0]",
+    "/motion_v5_16bit_top_regression_tb/dut/S1S2mux[15:0]",
+    "/motion_v5_16bit_top_regression_tb/dut/newDist[15:0]",
+    "/motion_v5_16bit_top_regression_tb/dut/CompStart",
+    "/motion_v5_16bit_top_regression_tb/dut/PEready[15:0]",
+    "/motion_v5_16bit_top_regression_tb/dut/VectorX[3:0]",
+    "/motion_v5_16bit_top_regression_tb/dut/VectorY[3:0]",
+    "/motion_v5_16bit_top_regression_tb/AddressR[7:0]",
+    "/motion_v5_16bit_top_regression_tb/AddressS1[9:0]",
+    "/motion_v5_16bit_top_regression_tb/AddressS2[9:0]",
+    "/motion_v5_16bit_top_regression_tb/dut/comp_u/newBest",
+    "/motion_v5_16bit_top_regression_tb/BestDist[15:0]",
+    "/motion_v5_16bit_top_regression_tb/motionX[3:0]",
+    "/motion_v5_16bit_top_regression_tb/motionY[3:0]",
+    "/motion_v5_16bit_top_regression_tb/completed"
+  ],
+  "signal_layout_saved_rc": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/state_store/native_jobs/667f7b6ca0ba4ef1/waveform_configuration.rc",
+  "signal_layout_rc_sha256": "0b809d5229b67d2c0ae875708a2b9fcb118f7c5733d60c47c4f59eb863f9645e",
+  "verified_at_utc": "2026-11-12T22:22:49.945039+00:00"
+}

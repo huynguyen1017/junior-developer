@@ -1,0 +1,11 @@
+{
+  "job_id": "nv01_ssh_timeout_test",
+  "figure_id": "fig10",
+  "tcl_script": "fig10_16bit_perfect_match.tcl",
+  "tcl_sha256": "",
+  "wvAddSignal_count": 0,
+  "tcl_signal_paths": [],
+  "signal_layout_saved_rc": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/state_store/native_jobs/nv01_ssh_timeout_test/waveform_configuration.rc",
+  "signal_layout_rc_sha256": "0248a46d17df94a5582cf8618cee9a69c73ebe506d97271fe26c524a197bc08d",
+  "verified_at_utc": "2026-11-12T22:30:20.830046+00:00"
+}

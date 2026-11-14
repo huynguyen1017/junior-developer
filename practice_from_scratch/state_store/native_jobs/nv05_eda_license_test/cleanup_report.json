@@ -1,0 +1,9 @@
+{
+  "job_id": "nv05_eda_license_test",
+  "figure_id": "fig10",
+  "cleanup_state": "ACTIVE",
+  "signal_layout_saved": true,
+  "signal_layout_rc_sha256": "50b4f17210412df9f9cff89677b4d5a6397a7b586c5748854e621463eef4795d",
+  "steps_executed": [],
+  "updated_at_utc": "2026-11-12T22:13:13.703333+00:00"
+}

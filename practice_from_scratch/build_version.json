@@ -1,0 +1,13 @@
+{
+  "version": "v8.0.3",
+  "platform_version": "v8.1",
+  "release_title": "JUNIOR DEVELOPER v8.1 Unified Platform — Evidence-Driven Multi-Mac VPN, XQuartz & Native Verdi Studio",
+  "branch": "v8.1-unified-platform-staged",
+  "source_commit_sha": "f39e9f36e711c2576807868fe9f9202e02286946",
+  "deployed_at_utc": "2026-11-11T09:10:00Z",
+  "device_hostname": "iMac.local",
+  "portable_archive_supported": true,
+  "live_verified_verdi_job_id": "fig10_v803_live_imac",
+  "live_verified_verdi_window_id": "0xe00006",
+  "live_verified_verdi_capture_sha256": "0802eb420fc04f4d97f923e2e43b8d44d20da6d1859f0152f4ad5911d1af1596"
+}

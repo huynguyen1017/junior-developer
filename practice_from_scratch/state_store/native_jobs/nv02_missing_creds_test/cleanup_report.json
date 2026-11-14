@@ -1,0 +1,9 @@
+{
+  "job_id": "nv02_missing_creds_test",
+  "figure_id": "fig10",
+  "cleanup_state": "ACTIVE",
+  "signal_layout_saved": true,
+  "signal_layout_rc_sha256": "5fa9370d65ba43495228a70eb786bd10ea17eb1104c8e3df9194852fc8d8cd4d",
+  "steps_executed": [],
+  "updated_at_utc": "2026-11-12T22:13:13.298631+00:00"
+}

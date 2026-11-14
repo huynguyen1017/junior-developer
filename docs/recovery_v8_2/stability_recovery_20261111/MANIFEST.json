@@ -1,0 +1,27 @@
+{
+  "created_utc": "2026-11-12T06:14:46.541542+00:00",
+  "production_8788": "UNTOUCHED",
+  "staging_8789": "UNTOUCHED",
+  "runtime": "NOT_RESTARTED",
+  "files": {
+    "index.html": {
+      "original_sha256": "db8fe82012883d94b8400e7c9457405756ffa76db25b033809cb077363a0351b",
+      "candidate_sha256": "3eb0ad4e0072150ca46a88456ea10928d45b1d17e6e342e4ec9d97fd54b691c8"
+    },
+    "engr852_native_verdi_bridge.py": {
+      "original_sha256": "3864a299893e5f6b4235713f8f46851cb11c105ed10ef942a5c43b14db45b7c5",
+      "candidate_sha256": "8d513141f9824529ef4993049e3c78153b7ef25ca97476a76d1b953cda73b209"
+    },
+    "manage_staging_8789.sh": {
+      "original_sha256": "c2dcbfd1731e9ce09889eac8ef362bf0a9e694bc14aaf54d9b88768c0eec83ac",
+      "candidate_sha256": "9178046e01e3b74a9e9cae631aa2a4a642c818e307a3aa21e7f31ca4755734e0"
+    }
+  },
+  "test_summary": {
+    "frontend_static_checks_passed": 8,
+    "frontend_static_checks_total": 8,
+    "js_syntax_valid": true,
+    "native_network_test": "SSH_TCP_TIMEOUT",
+    "deployment": "NOT_DEPLOYED"
+  }
+}

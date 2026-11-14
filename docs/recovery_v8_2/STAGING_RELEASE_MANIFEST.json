@@ -1,0 +1,28 @@
+{
+  "release_id": "JUNIOR-DEVELOPER-v8.2.0-MASTER-RECOVERY",
+  "released_at_utc": "2026-11-12T19:10:00Z",
+  "staging_root": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged",
+  "staging_url": "http://127.0.0.1:8789",
+  "production_url": "http://127.0.0.1:8788",
+  "production_pid_untouched": 46103,
+  "pre_v8_2_snapshot_dir": "/Users/huynguyen/Developer/ENGR852_Stability_Recovery_20261111/backups/pre_v8_2_snapshot",
+  "modified_files": [
+    "practice_from_scratch/scripts/engr852_native_verdi_bridge.py",
+    "practice_from_scratch/web_console/v7_platform_core.py",
+    "practice_from_scratch/web_console/server.py",
+    "practice_from_scratch/scripts/test_v8_2_master_recovery.py"
+  ],
+  "engineering_reports": [
+    "docs/recovery_v8_2/ARCHITECTURE_RECOVERY_REPORT.md",
+    "docs/recovery_v8_2/MASTER_DEFECT_REGISTER.md",
+    "docs/recovery_v8_2/NETWORK_RECOVERY_REPORT.md",
+    "docs/recovery_v8_2/NATIVE_VERDI_E2E_REPORT.md",
+    "docs/recovery_v8_2/AI_AGENT_ORCHESTRATION_DESIGN.md",
+    "docs/recovery_v8_2/CROSS_DEVICE_AND_MOBILE_QA.md",
+    "docs/recovery_v8_2/QA_ACCEPTANCE_MATRIX.json",
+    "docs/recovery_v8_2/QA_ACCEPTANCE_MATRIX.md",
+    "docs/recovery_v8_2/STAGING_RELEASE_MANIFEST.json",
+    "docs/recovery_v8_2/STAGING_ROLLBACK_RUNBOOK.md",
+    "docs/recovery_v8_2/FINAL_RELEASE_DECISION.md"
+  ]
+}

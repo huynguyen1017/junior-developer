@@ -1,0 +1,16 @@
+{
+  "time_utc": "2026-11-12T06:25:48.154797+00:00",
+  "production_pid_before": "46103",
+  "staging_pid_before": "62532",
+  "manager_rc": 0,
+  "manager_stdout_short": "[staging-8789] Stopped port 8789 listener (Production 8788 untouched).\n[staging-8789] Started successfully (PID 63137) on http://127.0.0.1:8789/\n",
+  "manager_stderr_short": "",
+  "stage_pid_after": "63137",
+  "production_pid_after": "46103",
+  "web_has_fig_map": true,
+  "web_has_preview_pause": true,
+  "status": "STAGING_8789_DEPLOYED",
+  "production_healthy": true,
+  "staging_healthy": true,
+  "production_pid_unchanged": true
+}

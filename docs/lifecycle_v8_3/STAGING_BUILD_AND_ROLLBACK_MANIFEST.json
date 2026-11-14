@@ -1,0 +1,17 @@
+{
+  "schema_version": "v8.3",
+  "environment": "staging_only",
+  "staging_root": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged",
+  "staging_port": 8789,
+  "production_port": 8788,
+  "production_pid_untouched": 46103,
+  "modified_files": [
+    "practice_from_scratch/scripts/engr852_verdi_lifecycle_manager.py",
+    "practice_from_scratch/scripts/engr852_native_verdi_bridge.py",
+    "practice_from_scratch/web_console/v7_platform_core.py",
+    "practice_from_scratch/web_console/server.py",
+    "practice_from_scratch/web_console/index.html",
+    "practice_from_scratch/scripts/test_v8_3_native_verdi_lifecycle_and_100_transitions.py"
+  ],
+  "rollback_instructions": "Stop staging PID on port 8789 (`kill <staging_pid>`), run `git checkout -- practice_from_scratch/` in staging repo, and restart staging port 8789. Production port 8788 is completely isolated and unaffected."
+}

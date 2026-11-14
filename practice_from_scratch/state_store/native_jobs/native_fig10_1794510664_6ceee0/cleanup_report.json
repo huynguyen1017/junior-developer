@@ -1,0 +1,9 @@
+{
+  "job_id": "native_fig10_1794510664_6ceee0",
+  "figure_id": "fig10",
+  "cleanup_state": "CLEANUP_COMPLETE",
+  "signal_layout_saved": true,
+  "signal_layout_rc_sha256": "0b533bfff7c40c21389aba703f6e95fc54ff6bfddbead546cf5b5a0865d30227",
+  "steps_executed": [],
+  "updated_at_utc": "2026-11-12T22:12:07.985155+00:00"
+}

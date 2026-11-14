@@ -1,0 +1,182 @@
+{
+  "total": 25,
+  "passed": 24,
+  "failed": 1,
+  "results": [
+    {
+      "id": "E2E-01",
+      "title": "Staging 127.0.0.1:8789 health & build-version check",
+      "status": "PASS",
+      "passed": true,
+      "detail": "HTTP 200, git_mode=GIT_WORKING_TREE"
+    },
+    {
+      "id": "E2E-02",
+      "title": "LaunchAgent plist & manage_staging_8789.sh present",
+      "status": "PASS",
+      "passed": true,
+      "detail": "plist=True, script=True"
+    },
+    {
+      "id": "E2E-03",
+      "title": "Explicit -F ~/.ssh/config in SSH args (P0-01)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "ssh_extra_args=['-F', '/Users/huynguyen/.ssh/config']"
+    },
+    {
+      "id": "E2E-04",
+      "title": "Signed 4-bit two's-complement formatting (Fix 7)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "4'h8 (-8), 4'h7 (+7), 4'he (-2), 4'hd (-3)"
+    },
+    {
+      "id": "E2E-05",
+      "title": "Single-copy 17-signal Tcl wrapper (P0-06)",
+      "status": "FAIL",
+      "passed": false,
+      "detail": "wvSelectAll + wvCut + ENGR852_SIGNAL_ADDED verified in Tcl wrapper"
+    },
+    {
+      "id": "E2E-06",
+      "title": "Distinct metadata for fig7..fig11 & layout",
+      "status": "PASS",
+      "passed": true,
+      "detail": "figures=['fig7', 'fig8', 'fig9', 'fig10', 'fig11', 'layout']"
+    },
+    {
+      "id": "E2E-07",
+      "title": "Truthful live-status state machine (P0-07)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "state=STREAMING, evidence_class=REAL_APPLICATION_CAPTURE"
+    },
+    {
+      "id": "E2E-08",
+      "title": "Reject live-frame.png without explicit job_id (P0-05)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "HTTP 400 without job_id"
+    },
+    {
+      "id": "E2E-09",
+      "title": "Reject mismatched figure/job_id on live-frame.png (409)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "HTTP 409 on fig7 + fig10 job"
+    },
+    {
+      "id": "E2E-10",
+      "title": "Serve verified redacted PNG for valid fig10 job_id",
+      "status": "PASS",
+      "passed": true,
+      "detail": "HTTP 200, bytes=108713"
+    },
+    {
+      "id": "E2E-11",
+      "title": "Unauthenticated POST /api/v8/devices/select rejected (401)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "HTTP 401"
+    },
+    {
+      "id": "E2E-12",
+      "title": "Public request rejects ?simulated_fault= parameter (P0-04)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "simulated_fault_rejected=True"
+    },
+    {
+      "id": "E2E-13",
+      "title": "Device registry reports real telemetry for MacBook Air (P0-02)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "HTTP 200, mba_heartbeat=None"
+    },
+    {
+      "id": "E2E-14",
+      "title": "POST /api/v8/verdi/recover protected by owner auth (401)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "HTTP 401 for unauthenticated caller"
+    },
+    {
+      "id": "E2E-15",
+      "title": "15-step recover_native_verdi_session() executes real probes",
+      "status": "PASS",
+      "passed": true,
+      "detail": "steps=15, error_code=LIVE_VERDI_READY"
+    },
+    {
+      "id": "E2E-16",
+      "title": "GET /api/v8/checkpoint returns active state",
+      "status": "PASS",
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "id": "E2E-17",
+      "title": "GET /api/v8/traceability-matrix returns P0 matrix",
+      "status": "PASS",
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "id": "E2E-18",
+      "title": "Split Refresh Diagnostics & Reconnect buttons in UI",
+      "status": "PASS",
+      "passed": true,
+      "detail": "nvBtnRefreshDiagnostics & nvBtnRetryConnection present=True"
+    },
+    {
+      "id": "E2E-19",
+      "title": "Recorded V9 evidence metadata & SHA-256 for fig10",
+      "status": "PASS",
+      "passed": true,
+      "detail": "sha256=1b0895013e5247ab..."
+    },
+    {
+      "id": "E2E-20",
+      "title": "Privacy redaction audit on verdi_window_redacted.png",
+      "status": "PASS",
+      "passed": true,
+      "detail": "privacy_audit={'verified': True, 'redacted_zones_verified': 8, 'waveform_preserved': True}"
+    },
+    {
+      "id": "E2E-21",
+      "title": "X11 nWave green/yellow signal-rail pixel verification",
+      "status": "PASS",
+      "passed": true,
+      "detail": "green_scanlines=139, rail_bands=19"
+    },
+    {
+      "id": "E2E-22",
+      "title": "Public Platform Overview & Courses API (/api/v8/overview)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "id": "E2E-23",
+      "title": "Reddit-style Community posts API (/api/v8/posts)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "HTTP 200, posts=6"
+    },
+    {
+      "id": "E2E-24",
+      "title": "100-Page Manual & 500-Question Quiz state (/api/state)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "id": "E2E-25",
+      "title": "Staging (8789) isolated from Production (8788)",
+      "status": "PASS",
+      "passed": true,
+      "detail": "staging_pid=15825, prod_pid=46103"
+    }
+  ]
+}

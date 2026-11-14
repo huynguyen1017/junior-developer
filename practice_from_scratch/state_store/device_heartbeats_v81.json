@@ -1,0 +1,25 @@
+{
+  "macbook_air": {
+    "device_id": "macbook_air",
+    "hostname": "MacBook-Air.local",
+    "paired": false,
+    "revoked": true,
+    "companion_version": "v8.1.0",
+    "ttl_seconds": 60,
+    "last_heartbeat_epoch": 0.0,
+    "last_heartbeat_utc": "2026-11-11T10:12:28.292+00:00",
+    "capabilities": {
+      "website_ready": true,
+      "xquartz_ready": true,
+      "vpn_client_running": true,
+      "vpn_tunnel_available": true,
+      "eda_route_available": true,
+      "dns_resolved": true,
+      "ssh_tcp_connected": true,
+      "eda_ssh_authenticated": true,
+      "synopsys_env_ready": true,
+      "verdi_gui_ready": false
+    },
+    "revoked_at_utc": "2026-11-11T10:12:32.014+00:00"
+  }
+}

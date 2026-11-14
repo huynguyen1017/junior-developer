@@ -1,0 +1,11 @@
+{
+  "job_id": "nv13_xwd_fail_test",
+  "figure_id": "fig10",
+  "tcl_script": "fig10_16bit_perfect_match.tcl",
+  "tcl_sha256": "",
+  "wvAddSignal_count": 0,
+  "tcl_signal_paths": [],
+  "signal_layout_saved_rc": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/state_store/native_jobs/nv13_xwd_fail_test/waveform_configuration.rc",
+  "signal_layout_rc_sha256": "e48c0f33b1277c0f1ba28cd4bf09f90702d61f4c894ff40b1b0d509efa20cf1d",
+  "verified_at_utc": "2026-11-12T22:30:21.198050+00:00"
+}

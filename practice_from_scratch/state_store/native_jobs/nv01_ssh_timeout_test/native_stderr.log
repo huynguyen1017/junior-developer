@@ -1,0 +1,1 @@
+[BLOCKED_SSH_TIMEOUT_OR_VPN_DOWN:SSH_UNREACHABLE] Remote tool/FSDB/Tcl/X11 preflight failed (rc=255): SSH connection to SFSU EDA server timed out or campus VPN (utun) is offline

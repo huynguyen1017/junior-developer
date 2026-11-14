@@ -1,0 +1,763 @@
+{
+  "job_id": "fig10_v803_live_imac",
+  "user_id": "huynguyen",
+  "project_id": "motion_estimator_520mhz",
+  "run_id": "run_20261111_092732",
+  "attempt_id": "attempt_fig10_v8",
+  "attempt_workspace_dir": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/users/huynguyen/projects/motion_estimator_520mhz/runs/run_20261111_092732/attempts/attempt_fig10_v8",
+  "fig_id": "fig10",
+  "page_num": 51,
+  "tool_type": "verdi_nwave",
+  "title": "Fig 10: 16-Bit Exact Match (BestDist = 16'h0100 -> 16'h0000, motionX=7, motionY=8)",
+  "remote_target": "OWNER_AUTHORIZED_SSH_TARGET",
+  "remote_dir": "/home/926784856/ENGR852_Project/22_v9_clean_verdi_waveforms/work_93",
+  "fsdb": "motion_v5_16bit_top_regression.fsdb",
+  "tcl": "fig10_16bit_perfect_match.tcl",
+  "dbdir": "../simv_reg.daidir",
+  "controller_state": "VERIFY_OUTPUT",
+  "connection_state": "GUI_OPEN",
+  "controller_history": [
+    "DISCOVER",
+    "CONNECT",
+    "LOAD_EDA",
+    "LOAD_FSDB",
+    "LAUNCH_GUI",
+    "PLOT_SIGNALS",
+    "VERIFY_OUTPUT",
+    "CAPTURE"
+  ],
+  "status": "GUI_OPEN_SIGNAL_VERIFICATION_PENDING",
+  "evidence_class": "REAL_APPLICATION_CAPTURE_NOT_SIGNAL_VERIFIED",
+  "recorded_reference_evidence": {
+    "fig_id": "fig10",
+    "page_num": 51,
+    "tool_type": "verdi_nwave",
+    "title": "Fig 10: 16-Bit Exact Match (BestDist = 16'h0100 -> 16'h0000, motionX=7, motionY=8)",
+    "evidence_class": "RECORDED_VERIFIED_CAPTURE",
+    "is_live_stream": false,
+    "fsdb": "motion_v5_16bit_top_regression.fsdb",
+    "tcl": "fig10_16bit_perfect_match.tcl",
+    "dbdir": "../simv_reg.daidir",
+    "tb_top": "motion_v5_16bit_top_regression_tb",
+    "recorded_capture_timestamp_utc": "2026-11-10T18:45:12Z",
+    "recorded_image_url": "/files/ref_screenshots/V9_fig10_16bit_perfect_match_0000_nWave.png",
+    "recorded_image_exists": true,
+    "recorded_image_bytes": 70370,
+    "recorded_image_sha256": "1b0895013e5247ab507c3923b6933001b06f017921fbddc374050eaa2e8ec03e",
+    "screenshot_sha256": "1b0895013e5247ab507c3923b6933001b06f017921fbddc374050eaa2e8ec03e",
+    "sha256": "1b0895013e5247ab507c3923b6933001b06f017921fbddc374050eaa2e8ec03e",
+    "recorded_native_job_id": "fig10_v8_verified",
+    "recorded_native_redacted_url": "/api/native-runs/fig10_v8_verified/artifacts/verdi_window_redacted.png",
+    "recorded_native_redacted_sha256": "723ae2736a462dd68869c43f17ca1575c2af6ed0ef57c76ce888be4dedd6aa96",
+    "required_signals": [
+      "clock",
+      "start",
+      "count[12:0]",
+      "S1S2mux[15:0]",
+      "newDist[15:0]",
+      "CompStart",
+      "PEready[15:0]",
+      "VectorX[3:0]",
+      "VectorY[3:0]",
+      "AddressR[7:0]",
+      "AddressS1[9:0]",
+      "AddressS2[9:0]",
+      "newBest",
+      "BestDist[15:0]",
+      "motionX[3:0]",
+      "motionY[3:0]",
+      "completed"
+    ],
+    "expected_values": {
+      "count_0x0100": {
+        "time_100fs": 4940000,
+        "BestDist": "16'h0100",
+        "motionX": "4'h8",
+        "motionY": "4'h8",
+        "newBest": "1'b1"
+      },
+      "count_0x010f": {
+        "time_100fs": 5228000,
+        "BestDist": "16'h0000",
+        "motionX": "4'h7",
+        "motionY": "4'h8",
+        "newBest": "1'b1"
+      }
+    }
+  },
+  "created_at_utc": "2026-11-11T09:27:32.175336+00:00",
+  "local_x11_inspection": {
+    "schema_version": "v8.0.3",
+    "display": "/var/run/com.apple.launchd.SQD4ShgIqM/org.xquartz:0",
+    "xquartz_reachable": true,
+    "xquartz_running": true,
+    "xquartz_status": "READY",
+    "verdi_window_count": 1,
+    "verdi_windows": [
+      {
+        "window_id": "0xe00006",
+        "title": "<Verdi-Apex:nTraceMain:1> motion_v5_16bit_top_regression_tb motion_v5_16bit_top_regression_tb (motion_v5_16bit_top_regression_tb.sv) - /home/.../motion_v5_16bit_top_regression.fsdb",
+        "wm_class": "WM_CLASS(STRING) = \"Novas\", \"novas\"",
+        "width": 1900,
+        "height": 1040
+      }
+    ],
+    "verdi_status": "RUNNING",
+    "native_waveform_status": "AVAILABLE",
+    "non_verdi_x11_windows": [
+      {
+        "window_id": "0xe003b4",
+        "title": "Get Signals",
+        "wm_class": "Novas.novas",
+        "width": 800,
+        "height": 479
+      },
+      {
+        "window_id": "0xe003bc",
+        "title": "novas",
+        "wm_class": "Novas.novas",
+        "width": 220,
+        "height": 22
+      },
+      {
+        "window_id": "0xe00370",
+        "title": "novas",
+        "wm_class": "Novas.novas",
+        "width": 1900,
+        "height": 454
+      },
+      {
+        "window_id": "0xe002d0",
+        "title": "MainWindow",
+        "wm_class": "Novas.novas",
+        "width": 1900,
+        "height": 429
+      },
+      {
+        "window_id": "0xe0030c",
+        "title": "novas",
+        "wm_class": "Novas.novas",
+        "width": 1015,
+        "height": 25
+      },
+      {
+        "window_id": "0xe002f8",
+        "title": "novas",
+        "wm_class": "Novas.novas",
+        "width": 359,
+        "height": 25
+      },
+      {
+        "window_id": "0xe002f2",
+        "title": "novas",
+        "wm_class": "Novas.novas",
+        "width": 1900,
+        "height": 22
+      },
+      {
+        "window_id": "0xe002d2",
+        "title": "novas",
+        "wm_class": "Novas.novas",
+        "width": 1900,
+        "height": 382
+      },
+      {
+        "window_id": "0xe002d4",
+        "title": "novas",
+        "wm_class": "Novas.novas",
+        "width": 1900,
+        "height": 382
+      },
+      {
+        "window_id": "0xe002d6",
+        "title": "novas",
+        "wm_class": "Novas.novas",
+        "width": 1900,
+        "height": 382
+      }
+    ],
+    "xterm_windows": [
+      {
+        "window_id": "0x60000c",
+        "title": "<redacted>@mahmoodi:~",
+        "wm_class": "xterm.XTerm",
+        "width": 484,
+        "height": 316
+      }
+    ],
+    "xterm_window_ids": [
+      "0x60000c"
+    ],
+    "xterm_window_found": true,
+    "inspected_at_utc": "2026-11-11T09:27:32.442889+00:00",
+    "ok": true
+  },
+  "fsdb_audit": {
+    "remote_target": "OWNER_AUTHORIZED_SSH_TARGET",
+    "remote_dir": "/home/926784856/ENGR852_Project/22_v9_clean_verdi_waveforms/work_93",
+    "fsdb": "motion_v5_16bit_top_regression.fsdb",
+    "fsdb_bytes": 252336,
+    "fsdb_sha256": "4c84034d6af389eeb21da0fdbe75816cddde88d4929e3b4a32dbd18c910379c4",
+    "fsdb_unique_variables": 200,
+    "fsdb_simulation_end": "(0 237327245) or (23732724500fs)",
+    "tcl": "fig10_16bit_perfect_match.tcl",
+    "tcl_sha256": "340f0fe856e922475fedf420c2695a400cbe6866157f39b4527e0fa4b61703c5",
+    "dbdir": "../simv_reg.daidir",
+    "tcl_wvAddSignal_count": 17,
+    "tcl_signal_paths": [
+      "/motion_v5_16bit_top_regression_tb/clock",
+      "/motion_v5_16bit_top_regression_tb/start",
+      "/motion_v5_16bit_top_regression_tb/dut/ctl_u/count[12:0]",
+      "/motion_v5_16bit_top_regression_tb/dut/S1S2mux[15:0]",
+      "/motion_v5_16bit_top_regression_tb/dut/newDist[15:0]",
+      "/motion_v5_16bit_top_regression_tb/dut/CompStart",
+      "/motion_v5_16bit_top_regression_tb/dut/PEready[15:0]",
+      "/motion_v5_16bit_top_regression_tb/dut/VectorX[3:0]",
+      "/motion_v5_16bit_top_regression_tb/dut/VectorY[3:0]",
+      "/motion_v5_16bit_top_regression_tb/AddressR[7:0]",
+      "/motion_v5_16bit_top_regression_tb/AddressS1[9:0]",
+      "/motion_v5_16bit_top_regression_tb/AddressS2[9:0]",
+      "/motion_v5_16bit_top_regression_tb/dut/comp_u/newBest",
+      "/motion_v5_16bit_top_regression_tb/BestDist[15:0]",
+      "/motion_v5_16bit_top_regression_tb/motionX[3:0]",
+      "/motion_v5_16bit_top_regression_tb/motionY[3:0]",
+      "/motion_v5_16bit_top_regression_tb/completed"
+    ],
+    "matched_required_signals": [
+      "clock",
+      "start",
+      "count[12:0]",
+      "S1S2mux[15:0]",
+      "newDist[15:0]",
+      "CompStart",
+      "PEready[15:0]",
+      "VectorX[3:0]",
+      "VectorY[3:0]",
+      "AddressR[7:0]",
+      "AddressS1[9:0]",
+      "AddressS2[9:0]",
+      "newBest",
+      "BestDist[15:0]",
+      "motionX[3:0]",
+      "motionY[3:0]",
+      "completed"
+    ],
+    "missing_required_signals": [],
+    "numerical_audit": {
+      "verified": true,
+      "vcd_defined_symbols": 198,
+      "vcd_transition_events": 1128,
+      "observed_signal_values": {
+        "BestDist": [
+          "0xffff",
+          "0x100",
+          "0x0"
+        ],
+        "motionX": [
+          "0x0",
+          "0x8",
+          "0x7"
+        ],
+        "motionY": [
+          "0x0",
+          "0x8"
+        ],
+        "count": [
+          "0xfb",
+          "0xfc",
+          "0xfd",
+          "0xfe",
+          "0xff",
+          "0x100",
+          "0x101",
+          "0x102",
+          "0x103",
+          "0x104",
+          "0x105",
+          "0x106",
+          "0x107",
+          "0x108",
+          "0x109",
+          "0x10a"
+        ],
+        "newDist": [
+          "0",
+          "0x0",
+          "0xffff",
+          "0",
+          "0x0",
+          "0",
+          "1",
+          "0x100",
+          "0x1",
+          "0",
+          "0x1fe",
+          "0x2",
+          "1",
+          "0x2",
+          "0x4",
+          "0"
+        ],
+        "PEready": [
+          "0x0",
+          "0x1",
+          "0x2",
+          "0x4",
+          "0x8",
+          "0x10",
+          "0x20",
+          "0x40",
+          "0x80",
+          "0x100",
+          "0x200",
+          "0x400",
+          "0x800",
+          "0x1000",
+          "0x2000",
+          "0x4000"
+        ],
+        "completed": [
+          "0"
+        ],
+        "clock": [
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1"
+        ],
+        "start": [
+          "1"
+        ]
+      }
+    },
+    "numerical_values_verified": true,
+    "fsdb_verified": true
+  },
+  "ssh_pid": null,
+  "attached_existing_window": true,
+  "window_id": "0xe00006",
+  "window_meta": {
+    "window_id": "0xe00006",
+    "title": "<Verdi-Apex:nTraceMain:1> motion_v5_16bit_top_regression_tb motion_v5_16bit_top_regression_tb (motion_v5_16bit_top_regression_tb.sv) - /home/<redacted>/motion_v5_16bit_top_regression.fsdb",
+    "wm_class": "WM_CLASS(STRING) = \"Novas\", \"novas\"",
+    "width": 1900,
+    "height": 1040
+  },
+  "provenance": {
+    "provenance_type": "REAL_APPLICATION_CAPTURE_NOT_SIGNAL_VERIFIED",
+    "job_id": "fig10_v803_live_imac",
+    "run_id": "run_20261111_092732",
+    "attempt_id": "attempt_fig10_v8",
+    "window_id": "0xe00006",
+    "capture_timestamp_utc": "2026-11-11T09:27:39.485550+00:00",
+    "fsdb_path": "/home/926784856/ENGR852_Project/22_v9_clean_verdi_waveforms/work_93/motion_v5_16bit_top_regression.fsdb",
+    "fsdb_sha256": "4c84034d6af389eeb21da0fdbe75816cddde88d4929e3b4a32dbd18c910379c4",
+    "tcl_path": "/home/926784856/ENGR852_Project/22_v9_clean_verdi_waveforms/work_93/fig10_16bit_perfect_match.tcl",
+    "tcl_sha256": "340f0fe856e922475fedf420c2695a400cbe6866157f39b4527e0fa4b61703c5",
+    "screenshot_sha256": "a250c4467d878ca985cf877a21528fed1dbfd5823fee8f9492d7893a9084127a"
+  },
+  "signal_verification": {
+    "all_verified": false,
+    "fsdb_verified": true,
+    "numerical_values_verified": true,
+    "numerical_audit": {
+      "verified": true,
+      "vcd_defined_symbols": 198,
+      "vcd_transition_events": 1128,
+      "observed_signal_values": {
+        "BestDist": [
+          "0xffff",
+          "0x100",
+          "0x0"
+        ],
+        "motionX": [
+          "0x0",
+          "0x8",
+          "0x7"
+        ],
+        "motionY": [
+          "0x0",
+          "0x8"
+        ],
+        "count": [
+          "0xfb",
+          "0xfc",
+          "0xfd",
+          "0xfe",
+          "0xff",
+          "0x100",
+          "0x101",
+          "0x102",
+          "0x103",
+          "0x104",
+          "0x105",
+          "0x106",
+          "0x107",
+          "0x108",
+          "0x109",
+          "0x10a"
+        ],
+        "newDist": [
+          "0",
+          "0x0",
+          "0xffff",
+          "0",
+          "0x0",
+          "0",
+          "1",
+          "0x100",
+          "0x1",
+          "0",
+          "0x1fe",
+          "0x2",
+          "1",
+          "0x2",
+          "0x4",
+          "0"
+        ],
+        "PEready": [
+          "0x0",
+          "0x1",
+          "0x2",
+          "0x4",
+          "0x8",
+          "0x10",
+          "0x20",
+          "0x40",
+          "0x80",
+          "0x100",
+          "0x200",
+          "0x400",
+          "0x800",
+          "0x1000",
+          "0x2000",
+          "0x4000"
+        ],
+        "completed": [
+          "0"
+        ],
+        "clock": [
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1"
+        ],
+        "start": [
+          "1"
+        ]
+      }
+    },
+    "tcl_signals_verified": true,
+    "nwave_pixel_rails_verified": false,
+    "privacy_redaction_verified": true,
+    "privacy_verification": {
+      "verified": true,
+      "redacted_zones_verified": 8,
+      "waveform_preserved": false
+    },
+    "pixel_metrics": {
+      "verified": false,
+      "width": 1900,
+      "height": 1040,
+      "nwave_green_scanlines": 0,
+      "nwave_detected_rail_bands": 0,
+      "nwave_label_rows": 791,
+      "nwave_yellow_axis_samples": 0,
+      "reason": "nWave signal canvas appears unpopulated (rail_bands=0, green_scanlines=0)"
+    },
+    "verified_signals": [
+      "clock",
+      "start",
+      "count[12:0]",
+      "S1S2mux[15:0]",
+      "newDist[15:0]",
+      "CompStart",
+      "PEready[15:0]",
+      "VectorX[3:0]",
+      "VectorY[3:0]",
+      "AddressR[7:0]",
+      "AddressS1[9:0]",
+      "AddressS2[9:0]",
+      "newBest",
+      "BestDist[15:0]",
+      "motionX[3:0]",
+      "motionY[3:0]",
+      "completed"
+    ],
+    "per_signal_records": [
+      {
+        "requested_signal": "clock",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/clock",
+        "bit_width": 1,
+        "radix": "BIN",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": [
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1",
+          "0",
+          "1"
+        ]
+      },
+      {
+        "requested_signal": "start",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/start",
+        "bit_width": 1,
+        "radix": "BIN",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": [
+          "1"
+        ]
+      },
+      {
+        "requested_signal": "count[12:0]",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/dut/ctl_u/count[12:0]",
+        "bit_width": 13,
+        "radix": "HEX",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": [
+          "0xfb",
+          "0xfc",
+          "0xfd",
+          "0xfe",
+          "0xff",
+          "0x100",
+          "0x101",
+          "0x102"
+        ]
+      },
+      {
+        "requested_signal": "S1S2mux[15:0]",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/dut/S1S2mux[15:0]",
+        "bit_width": 16,
+        "radix": "HEX",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": []
+      },
+      {
+        "requested_signal": "newDist[15:0]",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/dut/newDist[15:0]",
+        "bit_width": 16,
+        "radix": "HEX",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": [
+          "0",
+          "0x0",
+          "0xffff",
+          "0",
+          "0x0",
+          "0",
+          "1",
+          "0x100"
+        ]
+      },
+      {
+        "requested_signal": "CompStart",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/dut/CompStart",
+        "bit_width": 1,
+        "radix": "BIN",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": []
+      },
+      {
+        "requested_signal": "PEready[15:0]",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/dut/PEready[15:0]",
+        "bit_width": 16,
+        "radix": "HEX",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": [
+          "0x0",
+          "0x1",
+          "0x2",
+          "0x4",
+          "0x8",
+          "0x10",
+          "0x20",
+          "0x40"
+        ]
+      },
+      {
+        "requested_signal": "VectorX[3:0]",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/dut/VectorX[3:0]",
+        "bit_width": 4,
+        "radix": "HEX",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": []
+      },
+      {
+        "requested_signal": "VectorY[3:0]",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/dut/VectorY[3:0]",
+        "bit_width": 4,
+        "radix": "HEX",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": []
+      },
+      {
+        "requested_signal": "AddressR[7:0]",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/AddressR[7:0]",
+        "bit_width": 8,
+        "radix": "HEX",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": []
+      },
+      {
+        "requested_signal": "AddressS1[9:0]",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/AddressS1[9:0]",
+        "bit_width": 10,
+        "radix": "HEX",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": []
+      },
+      {
+        "requested_signal": "AddressS2[9:0]",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/AddressS2[9:0]",
+        "bit_width": 10,
+        "radix": "HEX",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": []
+      },
+      {
+        "requested_signal": "newBest",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/dut/comp_u/newBest",
+        "bit_width": 1,
+        "radix": "BIN",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": []
+      },
+      {
+        "requested_signal": "BestDist[15:0]",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/BestDist[15:0]",
+        "bit_width": 16,
+        "radix": "HEX",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": [
+          "0xffff",
+          "0x100",
+          "0x0"
+        ]
+      },
+      {
+        "requested_signal": "motionX[3:0]",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/motionX[3:0]",
+        "bit_width": 4,
+        "radix": "HEX",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": [
+          "0x0",
+          "0x8",
+          "0x7"
+        ]
+      },
+      {
+        "requested_signal": "motionY[3:0]",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/motionY[3:0]",
+        "bit_width": 4,
+        "radix": "HEX",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": [
+          "0x0",
+          "0x8"
+        ]
+      },
+      {
+        "requested_signal": "completed",
+        "resolved_fsdb_path": "/motion_v5_16bit_top_regression_tb/completed",
+        "bit_width": 1,
+        "radix": "BIN",
+        "added_ok": true,
+        "verified_x11_window_id": "0xe00006",
+        "verified_nwave_handle": "_nWave2",
+        "observed_values": [
+          "0"
+        ]
+      }
+    ],
+    "expected_values": {
+      "count_0x0100": {
+        "time_100fs": 4940000,
+        "BestDist": "16'h0100",
+        "motionX": "4'h8",
+        "motionY": "4'h8",
+        "newBest": "1'b1"
+      },
+      "count_0x010f": {
+        "time_100fs": 5228000,
+        "BestDist": "16'h0000",
+        "motionX": "4'h7",
+        "motionY": "4'h8",
+        "newBest": "1'b1"
+      }
+    }
+  },
+  "capture": {
+    "name": "verdi_window_redacted.png",
+    "restricted_raw_sha256": "6cb6973629af9763e510f7952d73c7eb1d709e80245480540a920872cd9af401",
+    "redacted_name": "verdi_window_redacted.png",
+    "redacted_path": "/Users/huynguyen/.local/share/engr852-native-gui/fig10_v803_live_imac/verdi_window_redacted.png",
+    "redacted_sha256": "a250c4467d878ca985cf877a21528fed1dbfd5823fee8f9492d7893a9084127a",
+    "captured_at_utc": "2026-11-11T09:27:39.485550+00:00",
+    "privacy_redacted": true,
+    "privacy_verified": true,
+    "window_id": "0xe00006",
+    "evidence_class": "REAL_APPLICATION_CAPTURE_NOT_SIGNAL_VERIFIED"
+  }
+}

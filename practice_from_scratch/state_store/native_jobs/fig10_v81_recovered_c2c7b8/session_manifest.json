@@ -1,0 +1,33 @@
+{
+  "schema_version": "v8.3",
+  "session_id": "ses_fig10_v81_recovered_c2c7b8",
+  "job_id": "fig10_v81_recovered_c2c7b8",
+  "figure_id": "fig10",
+  "fsdb_family": "fsdb_v5_16bit_regression",
+  "execution_device_id": "imac",
+  "owner_id": "huynguyen",
+  "remote_host_id": "mahmoodi.rcc.at.sfsu.edu",
+  "ssh_connection_id": "ssh_pid:attached",
+  "ssh_pid": null,
+  "verdi_pid": null,
+  "verdi_process_start_time": "2026-11-11T10:10:55.541869+00:00",
+  "nw_wave_window_ids": [
+    "_nWave2"
+  ],
+  "active_window_id": "0xe00006",
+  "fsdb_path": "/home/926784856/ENGR852_Project/22_v9_clean_verdi_waveforms/work_93/motion_v5_16bit_top_regression.fsdb",
+  "fsdb_sha256": "4c84034d6af389eeb21da0fdbe75816cddde88d4929e3b4a32dbd18c910379c4",
+  "tcl_path": "/home/926784856/ENGR852_Project/22_v9_clean_verdi_waveforms/work_93/fig10_16bit_perfect_match.tcl",
+  "tcl_sha256": "340f0fe856e922475fedf420c2695a400cbe6866157f39b4527e0fa4b61703c5",
+  "signal_layout_path": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/state_store/native_jobs/fig10_v81_recovered_c2c7b8/waveform_configuration.rc",
+  "signal_layout_sha256": "8abf902ac83b0cf108cd0638de88da4499bb288f085622da3a923383a2cecbca",
+  "signal_layout_saved": true,
+  "signal_ownership_class": "VERIFIED_EVIDENCE",
+  "capture_state": "LIVE_WAVEFORMS_VERIFIED",
+  "session_state": "READY",
+  "last_verified_at": "2026-11-11T10:11:02.747064+00:00",
+  "cleanup_state": "ACTIVE",
+  "reference_count": 1,
+  "ownership_token": "59333584413b2e70f579e2e4",
+  "selection_generation_id": 384
+}

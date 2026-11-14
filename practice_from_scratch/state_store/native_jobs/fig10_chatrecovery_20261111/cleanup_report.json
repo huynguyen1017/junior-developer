@@ -1,0 +1,9 @@
+{
+  "job_id": "fig10_chatrecovery_20261111",
+  "figure_id": "fig10",
+  "cleanup_state": "ACTIVE",
+  "signal_layout_saved": true,
+  "signal_layout_rc_sha256": "7286b514602d42dc89d5ea6e934e21814f58ec3545eadebc3067aef2122b3716",
+  "steps_executed": [],
+  "updated_at_utc": "2026-11-12T22:12:07.987764+00:00"
+}

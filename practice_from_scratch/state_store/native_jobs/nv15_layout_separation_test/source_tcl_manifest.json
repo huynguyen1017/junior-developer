@@ -1,0 +1,11 @@
+{
+  "job_id": "nv15_layout_separation_test",
+  "figure_id": "layout",
+  "tcl_script": "v9_closure/capture_layout_gui.tcl",
+  "tcl_sha256": "",
+  "wvAddSignal_count": 0,
+  "tcl_signal_paths": [],
+  "signal_layout_saved_rc": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/state_store/native_jobs/nv15_layout_separation_test/waveform_configuration.rc",
+  "signal_layout_rc_sha256": "16ebf296e999695bf4d3fcd6e6b38e6195183604fd999b3f6539e5a664402290",
+  "verified_at_utc": "2026-11-12T22:30:21.252740+00:00"
+}

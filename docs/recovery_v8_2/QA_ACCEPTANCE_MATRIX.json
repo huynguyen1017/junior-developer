@@ -1,0 +1,74 @@
+{
+  "schema_version": "8.2.0",
+  "generated_at_utc": "2026-11-12T20:08:02Z",
+  "staging_url": "http://127.0.0.1:8789",
+  "production_url_untouched": "http://127.0.0.1:8788",
+  "total_checks": 7,
+  "passed_checks": 7,
+  "live_waveform_verdict": "LIVE_WAVEFORM_VERIFICATION_PASS",
+  "results": [
+    {
+      "test_id": "V82-01",
+      "category": "P0_TCL_BRACKET_FIX",
+      "title": "Defect-D Tcl wrapper executes all 17 signals in tclsh without [12:0] command substitution error",
+      "passed": true,
+      "verdict_class": "UNIT_TEST_PASS",
+      "detail": "rc=0, verified_signals=17/17, handle=_nWave4",
+      "timestamp_utc": "2026-11-12T20:07:46Z"
+    },
+    {
+      "test_id": "V82-02",
+      "category": "P0_FAIL_CLOSED_SIGNAL_RECORDS",
+      "title": "build_signal_verification_records rejects empty and 3-signal partial TclPlay crash logs",
+      "passed": true,
+      "verdict_class": "UNIT_TEST_PASS",
+      "detail": "empty_added_ok=[False, False, False, False], partial_added_ok=[True, True, False, False]",
+      "timestamp_utc": "2026-11-12T20:07:46Z"
+    },
+    {
+      "test_id": "V82-03",
+      "category": "SERVICE_ISOLATION",
+      "title": "Production 127.0.0.1:8788 untouched (HTTP 200) and Staging 127.0.0.1:8789 online (HTTP 200)",
+      "passed": true,
+      "verdict_class": "BACKEND_INTEGRATION_PASS",
+      "detail": "prod_8788=HTTP 200, staging_8789=HTTP 200",
+      "timestamp_utc": "2026-11-12T20:07:46Z"
+    },
+    {
+      "test_id": "V82-04",
+      "category": "TEN_AGENT_ORCHESTRATION",
+      "title": "GET /api/v8/agents/status (10 agents) & GET /api/v8/network/health (circuit breaker + 0600 latest.json)",
+      "passed": true,
+      "verdict_class": "BACKEND_INTEGRATION_PASS",
+      "detail": "agents=10, circuit_breaker=CLOSED, mode=0o600",
+      "timestamp_utc": "2026-11-12T20:07:58Z"
+    },
+    {
+      "test_id": "V82-05",
+      "category": "SECURITY_ACCESS_CONTROL",
+      "title": "Unauthenticated POST /api/v1/native-jobs and forged Bearer token on GET /api/v8/verdi/live-status rejected",
+      "passed": true,
+      "verdict_class": "BACKEND_INTEGRATION_PASS",
+      "detail": "unauth_post_native_jobs=HTTP 401, forged_live_status=HTTP 401",
+      "timestamp_utc": "2026-11-12T20:07:58Z"
+    },
+    {
+      "test_id": "V82-06",
+      "category": "DURABLE_ASYNC_NATIVE_JOBS",
+      "title": "POST /api/v1/native-jobs returns HTTP 202 Accepted with durable job_id, GET status, and GET events",
+      "passed": true,
+      "verdict_class": "BACKEND_INTEGRATION_PASS",
+      "detail": "HTTP 202 in 39.5ms, job_id=native_fig10_1794514078_573ac4, status_http=200, events_http=200",
+      "timestamp_utc": "2026-11-12T20:07:58Z"
+    },
+    {
+      "test_id": "V82-07",
+      "category": "TRUTHFUL_LIVE_TRANSPORT_AND_GUI_STATE",
+      "title": "Live transport & XQuartz Verdi state classified truthfully without fabricating PASS",
+      "passed": true,
+      "verdict_class": "LIVE_WAVEFORM_VERIFICATION_PASS",
+      "detail": "summary_status=VERDI_GUI_READY, error_code=NONE, verdi_window_id=0xe00006, flags={'VPN_CLIENT_RUNNING': True, 'VPN_TUNNEL_AVAILABLE': True, 'EDA_ROUTE_AVAILABLE': True, 'DNS_RESOLVED': True, 'SSH_TCP_CONNECTED': True, 'SSH_AUTHENTICATED': True, 'SSH_X11_FORWARDING_READY': True, 'X11_FORWARDING_READY': True, 'XQUARTZ_READY': True, 'SYNOPSYS_ENV_INITIALIZED': True, 'SYNOPSYS_ENV_READY': True, 'EDA_LICENSE_READY': True, 'VERDI_PROCESS_RUNNING': True, 'VERDI_WINDOW_FOUND': True, 'VERDI_GUI_READY': True, 'FSDB_LOADED': True, 'SIGNALS_POPULATED': True, 'WAVEFORM_VERIFIED': True, 'CAPTURE_VERIFIED': True}",
+      "timestamp_utc": "2026-11-12T20:08:02Z"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{"action": "NATIVE_VERDI_ASYNC:fig10", "client_ip": "127.0.0.1", "decision": "DENIED", "detail": "Missing or malformed bearer token", "timestamp_utc": "2026-11-12T19:08:55.736+00:00", "user_id": "usr_owner_companion"}
+{"action": "NATIVE_VERDI_ASYNC:fig10", "client_ip": "127.0.0.1", "decision": "ALLOWED", "detail": "Authorized", "timestamp_utc": "2026-11-12T19:11:04.833+00:00", "user_id": "usr_owner_companion"}
+{"action": "NATIVE_VERDI:fig10", "client_ip": "127.0.0.1", "decision": "ALLOWED", "detail": "Authorized", "timestamp_utc": "2026-11-12T19:11:05.025+00:00", "user_id": "usr_owner_companion"}
+{"action": "NATIVE_VERDI_ASYNC:fig10", "client_ip": "127.0.0.1", "decision": "ALLOWED", "detail": "Authorized", "timestamp_utc": "2026-11-12T20:04:51.309+00:00", "user_id": "usr_owner_companion"}
+{"action": "NATIVE_VERDI:fig10", "client_ip": "127.0.0.1", "decision": "ALLOWED", "detail": "Authorized", "timestamp_utc": "2026-11-12T20:04:51.348+00:00", "user_id": "usr_owner_companion"}
+{"action": "NATIVE_VERDI_ASYNC:fig10", "client_ip": "127.0.0.1", "decision": "ALLOWED", "detail": "Authorized", "timestamp_utc": "2026-11-12T20:07:58.654+00:00", "user_id": "usr_owner_companion"}
+{"action": "NATIVE_VERDI:fig10", "client_ip": "127.0.0.1", "decision": "ALLOWED", "detail": "Authorized", "timestamp_utc": "2026-11-12T20:07:58.692+00:00", "user_id": "usr_owner_companion"}

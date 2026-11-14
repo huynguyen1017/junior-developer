@@ -1,0 +1,13 @@
+; ENGR 852 Native Synopsys Verdi Signal Configuration (FIG10)
+; Generated UTC: 2026-11-12T22:30:20.972602+00:00
+Magic 271485
+Revision Verdi_W-2024.09-1
+
+activeFile "motion_v5_16bit_top_regression.fsdb"
+zoom 4900000.000000 5320000.000000
+ruler 0.000000
+waveformTimeUnit default
+
+addGroup "G1"
+activeDirFile "" "motion_v5_16bit_top_regression.fsdb"
+addGroup "G2"

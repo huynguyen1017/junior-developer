@@ -1,0 +1,257 @@
+{
+  "selection_generation_id": 384,
+  "active_fig_id": "fig11",
+  "updated_at_utc": "2026-11-12T22:37:05.875193+00:00",
+  "history": [
+    {
+      "selection_generation_id": 335,
+      "fig_id": "fig7",
+      "updated_at_utc": "2026-11-12T22:34:46.117040+00:00"
+    },
+    {
+      "selection_generation_id": 336,
+      "fig_id": "fig8",
+      "updated_at_utc": "2026-11-12T22:34:50.846042+00:00"
+    },
+    {
+      "selection_generation_id": 337,
+      "fig_id": "fig10",
+      "updated_at_utc": "2026-11-12T22:34:55.628029+00:00"
+    },
+    {
+      "selection_generation_id": 338,
+      "fig_id": "fig11",
+      "updated_at_utc": "2026-11-12T22:35:00.485446+00:00"
+    },
+    {
+      "selection_generation_id": 339,
+      "fig_id": "fig9",
+      "updated_at_utc": "2026-11-12T22:35:05.174887+00:00"
+    },
+    {
+      "selection_generation_id": 340,
+      "fig_id": "layout",
+      "updated_at_utc": "2026-11-12T22:35:06.557843+00:00"
+    },
+    {
+      "selection_generation_id": 341,
+      "fig_id": "fig7",
+      "updated_at_utc": "2026-11-12T22:35:08.089084+00:00"
+    },
+    {
+      "selection_generation_id": 342,
+      "fig_id": "fig7",
+      "updated_at_utc": "2026-11-12T22:35:08.089757+00:00"
+    },
+    {
+      "selection_generation_id": 343,
+      "fig_id": "fig8",
+      "updated_at_utc": "2026-11-12T22:35:09.946884+00:00"
+    },
+    {
+      "selection_generation_id": 344,
+      "fig_id": "fig10",
+      "updated_at_utc": "2026-11-12T22:35:11.240328+00:00"
+    },
+    {
+      "selection_generation_id": 345,
+      "fig_id": "fig11",
+      "updated_at_utc": "2026-11-12T22:35:12.607981+00:00"
+    },
+    {
+      "selection_generation_id": 346,
+      "fig_id": "fig9",
+      "updated_at_utc": "2026-11-12T22:35:14.032847+00:00"
+    },
+    {
+      "selection_generation_id": 347,
+      "fig_id": "layout",
+      "updated_at_utc": "2026-11-12T22:35:15.584181+00:00"
+    },
+    {
+      "selection_generation_id": 348,
+      "fig_id": "fig7",
+      "updated_at_utc": "2026-11-12T22:35:16.872938+00:00"
+    },
+    {
+      "selection_generation_id": 349,
+      "fig_id": "fig8",
+      "updated_at_utc": "2026-11-12T22:35:18.186452+00:00"
+    },
+    {
+      "selection_generation_id": 350,
+      "fig_id": "fig8",
+      "updated_at_utc": "2026-11-12T22:35:19.497360+00:00"
+    },
+    {
+      "selection_generation_id": 351,
+      "fig_id": "fig11",
+      "updated_at_utc": "2026-11-12T22:35:20.827476+00:00"
+    },
+    {
+      "selection_generation_id": 352,
+      "fig_id": "fig9",
+      "updated_at_utc": "2026-11-12T22:35:22.171250+00:00"
+    },
+    {
+      "selection_generation_id": 353,
+      "fig_id": "fig9",
+      "updated_at_utc": "2026-11-12T22:35:22.172001+00:00"
+    },
+    {
+      "selection_generation_id": 354,
+      "fig_id": "layout",
+      "updated_at_utc": "2026-11-12T22:35:27.362534+00:00"
+    },
+    {
+      "selection_generation_id": 355,
+      "fig_id": "fig7",
+      "updated_at_utc": "2026-11-12T22:35:32.260207+00:00"
+    },
+    {
+      "selection_generation_id": 356,
+      "fig_id": "fig8",
+      "updated_at_utc": "2026-11-12T22:35:36.896552+00:00"
+    },
+    {
+      "selection_generation_id": 357,
+      "fig_id": "fig10",
+      "updated_at_utc": "2026-11-12T22:35:41.547045+00:00"
+    },
+    {
+      "selection_generation_id": 358,
+      "fig_id": "fig11",
+      "updated_at_utc": "2026-11-12T22:35:46.835320+00:00"
+    },
+    {
+      "selection_generation_id": 359,
+      "fig_id": "fig9",
+      "updated_at_utc": "2026-11-12T22:35:51.580170+00:00"
+    },
+    {
+      "selection_generation_id": 360,
+      "fig_id": "layout",
+      "updated_at_utc": "2026-11-12T22:35:56.235073+00:00"
+    },
+    {
+      "selection_generation_id": 361,
+      "fig_id": "fig7",
+      "updated_at_utc": "2026-11-12T22:36:00.991949+00:00"
+    },
+    {
+      "selection_generation_id": 362,
+      "fig_id": "fig8",
+      "updated_at_utc": "2026-11-12T22:36:05.707988+00:00"
+    },
+    {
+      "selection_generation_id": 363,
+      "fig_id": "fig10",
+      "updated_at_utc": "2026-11-12T22:36:07.189845+00:00"
+    },
+    {
+      "selection_generation_id": 364,
+      "fig_id": "fig10",
+      "updated_at_utc": "2026-11-12T22:36:07.190541+00:00"
+    },
+    {
+      "selection_generation_id": 365,
+      "fig_id": "fig11",
+      "updated_at_utc": "2026-11-12T22:36:08.994317+00:00"
+    },
+    {
+      "selection_generation_id": 366,
+      "fig_id": "fig9",
+      "updated_at_utc": "2026-11-12T22:36:10.339150+00:00"
+    },
+    {
+      "selection_generation_id": 367,
+      "fig_id": "layout",
+      "updated_at_utc": "2026-11-12T22:36:11.649723+00:00"
+    },
+    {
+      "selection_generation_id": 368,
+      "fig_id": "fig7",
+      "updated_at_utc": "2026-11-12T22:36:12.968176+00:00"
+    },
+    {
+      "selection_generation_id": 369,
+      "fig_id": "fig7",
+      "updated_at_utc": "2026-11-12T22:36:14.366543+00:00"
+    },
+    {
+      "selection_generation_id": 370,
+      "fig_id": "fig10",
+      "updated_at_utc": "2026-11-12T22:36:16.780202+00:00"
+    },
+    {
+      "selection_generation_id": 371,
+      "fig_id": "fig11",
+      "updated_at_utc": "2026-11-12T22:36:18.200245+00:00"
+    },
+    {
+      "selection_generation_id": 372,
+      "fig_id": "fig9",
+      "updated_at_utc": "2026-11-12T22:36:19.606367+00:00"
+    },
+    {
+      "selection_generation_id": 373,
+      "fig_id": "layout",
+      "updated_at_utc": "2026-11-12T22:36:21.031637+00:00"
+    },
+    {
+      "selection_generation_id": 374,
+      "fig_id": "fig7",
+      "updated_at_utc": "2026-11-12T22:36:22.428472+00:00"
+    },
+    {
+      "selection_generation_id": 375,
+      "fig_id": "fig7",
+      "updated_at_utc": "2026-11-12T22:36:22.429134+00:00"
+    },
+    {
+      "selection_generation_id": 376,
+      "fig_id": "fig8",
+      "updated_at_utc": "2026-11-12T22:36:27.761060+00:00"
+    },
+    {
+      "selection_generation_id": 377,
+      "fig_id": "fig10",
+      "updated_at_utc": "2026-11-12T22:36:32.658349+00:00"
+    },
+    {
+      "selection_generation_id": 378,
+      "fig_id": "fig11",
+      "updated_at_utc": "2026-11-12T22:36:37.528990+00:00"
+    },
+    {
+      "selection_generation_id": 379,
+      "fig_id": "fig9",
+      "updated_at_utc": "2026-11-12T22:36:42.314951+00:00"
+    },
+    {
+      "selection_generation_id": 380,
+      "fig_id": "layout",
+      "updated_at_utc": "2026-11-12T22:36:47.023044+00:00"
+    },
+    {
+      "selection_generation_id": 381,
+      "fig_id": "fig7",
+      "updated_at_utc": "2026-11-12T22:36:51.767250+00:00"
+    },
+    {
+      "selection_generation_id": 382,
+      "fig_id": "fig8",
+      "updated_at_utc": "2026-11-12T22:36:56.379096+00:00"
+    },
+    {
+      "selection_generation_id": 383,
+      "fig_id": "fig10",
+      "updated_at_utc": "2026-11-12T22:37:01.103996+00:00"
+    },
+    {
+      "selection_generation_id": 384,
+      "fig_id": "fig11",
+      "updated_at_utc": "2026-11-12T22:37:05.875193+00:00"
+    }
+  ]
+}

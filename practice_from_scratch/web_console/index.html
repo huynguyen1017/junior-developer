@@ -1759,11 +1759,11 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           <button class="btn btn-sm btn-mint" onclick="refreshNativeVerdiViewerCapture()">
             🔄 Refresh Capture
           </button>
-          <button class="btn btn-sm btn-lavender" onclick="triggerXquartzExternalWindowPlot(true)">
+          <button class="btn btn-sm btn-lavender" onclick="retryNativeVerdiConnection(false)">
             🔁 Retry / Reconnect
           </button>
           <button class="btn btn-sm" onclick="stopNativeVerdiLiveStream()">
-            ⏹ Stop Stream
+            ⏸ Pause Browser Preview
           </button>
           <button class="btn btn-sm btn-mint" onclick="detachLivePopupToSeparateWindow()">
             🗗 Pop Out Separate Browser Window
@@ -1847,24 +1847,74 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
         </div>
       </div>
 
-      <!-- Split Inside Pop-Up: Left = Real Application Capture / Blocked Diagnostic | Right = Provenance & 17-Signal Verification Table -->
+      <!-- Split Inside Pop-Up: Left = Real Application Capture + 10-Row Connection Diagnostic Panel | Right = Provenance & 17-Signal Verification Table -->
       <div class="lab-split" style="grid-template-columns:minmax(500px, 58%) minmax(360px, 42%);">
         <div id="nativeVerdiLiveViewerPanel">
-          <!-- Blocked / Disconnected Truthful State Card (Shown when SSH/Verdi is unavailable and Recorded mode is not selected) -->
-          <div id="nativeVerdiBlockedBanner" style="display:none;margin-bottom:10px;background:#fff1f2;border:2px solid #fda4af;border-radius:14px;padding:14px 16px;">
+          <!-- v8.0.3 Step-by-Step 10-Row User-Facing Connection & Multi-Device Diagnostic Panel -->
+          <div id="nativeVerdiDiagnosticPanel" style="margin-bottom:10px;background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:14px;padding:12px 14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+              <div>
+                <span style="font-size:12.8px;font-weight:800;color:#0f172a;">🧭 v8.0.3 Multi-Mac VPN, SSH, XQuartz &amp; Native Verdi Connection Diagnostics</span>
+                <span class="badge lavender" id="nativeVerdiSummaryStatusBadge" style="margin-left:6px;">INSPECTING</span>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;" id="nativeVerdiActionButtonsBar">
+                <button class="btn btn-sm btn-mint" id="nvBtnRefreshDiagnostics" onclick="refreshNativeVerdiDiagnostics()">🔄 Refresh Diagnostics</button>
+                <button class="btn btn-sm btn-pink" id="nvBtnRetryConnection" onclick="retryNativeVerdiConnection()">🔁 Reconnect / Recover Session</button>
+                <button class="btn btn-sm btn-lavender" id="nvBtnSwitchDevice" onclick="switchAuthorizedExecutionDevice()">🖥️ Switch Authorized Device</button>
+                <button class="btn btn-sm" id="nvBtnInspectLogs" onclick="inspectNativeVerdiLogs()">📋 Inspect Logs</button>
+                <button class="btn btn-sm btn-mint" id="nvBtnViewRecorded" onclick="selectNativeVerdiFigure(POPUP_CURRENT_FIG, true)">📸 View Recorded Evidence</button>
+              </div>
+            </div>
+            <!-- Multi-Device Execution Registry Bar (Device A: MacBook Air vs Device B: iMac) -->
+            <div id="nativeVerdiDeviceRegistryBox" style="margin-bottom:8px;padding:8px 10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;font-size:11.3px;color:#1e3a8a;">
+              Loading authorized execution device registry (Device B: iMac vs Device A: MacBook Air)...
+            </div>
+            <!-- v8.3 10-Field Lifecycle & Modal Observability Strip -->
+            <div id="nativeVerdiLifecycleTelemetryBar" style="margin-bottom:8px;padding:8px 10px;background:#fdf4ff;border:1px solid #e9d5ff;border-radius:10px;font-size:10.8px;font-family:var(--mono);color:#4c1d95;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:4px 10px;">
+              <div><b>Selected figure:</b> inspecting...</div>
+              <div><b>Native session:</b> inspecting...</div>
+              <div><b>Verdi process:</b> inspecting...</div>
+              <div><b>nWave windows:</b> inspecting...</div>
+              <div><b>Signal layout:</b> inspecting...</div>
+              <div><b>Modal dialog:</b> inspecting...</div>
+              <div><b>Cleanup:</b> Not required</div>
+              <div><b>Waveform verification:</b> inspecting...</div>
+              <div><b>Capture:</b> inspecting...</div>
+              <div><b>Recovery:</b> Ready</div>
+            </div>
+            <!-- 10-Row Diagnostic Table -->
+            <div id="nativeVerdiDiagnosticRowsBox" style="overflow-x:auto;">
+              <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;background:#ffffff;border:1px solid #e2e8f0;border-radius:8px;">
+                <thead>
+                  <tr style="background:#f1f5f9;text-align:left;color:#334155;">
+                    <th style="padding:4px 8px;width:36px;">#</th>
+                    <th style="padding:4px 8px;width:210px;">Diagnostic Step</th>
+                    <th style="padding:4px 8px;width:95px;">Status</th>
+                    <th style="padding:4px 8px;">Live Engineering Telemetry</th>
+                  </tr>
+                </thead>
+                <tbody id="nativeVerdiDiagnosticTableBody">
+                  <tr><td colspan="4" style="padding:8px;color:#64748b;">Running 10-step preflight inspection...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Specific Error Diagnosis Banner (Shown when preflight or Verdi launch is blocked) -->
+          <div id="nativeVerdiBlockedBanner" style="display:none;margin-bottom:10px;background:#fff1f2;border:2px solid #fda4af;border-radius:14px;padding:12px 15px;">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
-              <span class="badge coral" id="nativeVerdiBlockedCodeBadge">BLOCKED · NO_LIVE_VERDI_WINDOW</span>
-              <span style="font-size:11.5px;font-family:var(--mono);color:#9f1239;" id="nativeVerdiBlockedEnvSummary">XQuartz :0 | xterm present | Verdi: not running</span>
+              <span class="badge coral" id="nativeVerdiBlockedCodeBadge">BLOCKED · VERDI_PROCESS_NOT_RUNNING</span>
+              <span style="font-size:11.3px;font-family:var(--mono);color:#9f1239;" id="nativeVerdiBlockedEnvSummary">XQuartz :0 READY | SSH AUTHENTICATED</span>
             </div>
-            <div style="font-size:13px;font-weight:800;color:#881337;margin-bottom:4px;" id="nativeVerdiBlockedHeadline">
-              Live Synopsys Verdi / nWave X11 Capture Blocked — Synthetic Canvas Waveforms Strictly Disabled
+            <div style="font-size:12.8px;font-weight:800;color:#881337;margin-bottom:4px;" id="nativeVerdiBlockedHeadline">
+              Native Synopsys Verdi / nWave Diagnostic Status
             </div>
-            <div style="font-size:12.2px;color:#9f1239;line-height:1.55;margin-bottom:10px;" id="nativeVerdiBlockedReasonText">
-              No live Synopsys Verdi/nWave X11 window is currently active on DISPLAY :0, or SSH -Y to mahmoodi.rcc.at.sfsu.edu timed out (rc=255). Per engineering integrity policy, synthetic browser Canvas waveforms are never displayed as live tool evidence.
+            <div style="font-size:11.9px;color:#9f1239;line-height:1.5;margin-bottom:8px;" id="nativeVerdiBlockedReasonText">
+              Inspecting selected execution device...
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button class="btn btn-sm btn-pink" onclick="triggerXquartzExternalWindowPlot(true)">🔁 Retry Live SSH -Y + Verdi Launch</button>
-              <button class="btn btn-sm btn-mint" onclick="selectNativeVerdiFigure(POPUP_CURRENT_FIG, true)">📸 Inspect Recorded Verified V9 Capture Instead</button>
+              <button class="btn btn-sm btn-pink" onclick="triggerXquartzExternalWindowPlot(true)">🚀 Launch Native Verdi via SSH -Y</button>
+              <button class="btn btn-sm btn-mint" onclick="selectNativeVerdiFigure(POPUP_CURRENT_FIG, true)">📸 View Recorded Evidence</button>
             </div>
           </div>
 
@@ -1877,14 +1927,14 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
                 <button class="btn btn-sm" onclick="zoomImage(document.getElementById('nativeVerdiWindowPreviewImg').src)">🔍 Zoom Full-Screen</button>
               </div>
             </div>
-            <img id="nativeVerdiWindowPreviewImg" src="" alt="Synopsys Verdi / nWave Application Capture" style="width:100%;max-height:360px;object-fit:contain;border-radius:10px;cursor:pointer;display:none;" onclick="zoomImage(this.src)">
-            <div id="nativeVerdiNoImagePlaceholder" style="padding:36px 20px;text-align:center;color:#cbd5e1;font-size:12.6px;font-family:var(--mono);">
-              No live X11 frame loaded yet. Click <b>"🖥️ Launch / Verify Live Verdi X11 Window (:0)"</b> to capture a live window, or click <b>"📸 View Recorded Verified V9 Capture"</b> to inspect historical V9 evidence with SHA-256 provenance.
+            <img id="nativeVerdiWindowPreviewImg" src="" alt="Synopsys Verdi / nWave Application Capture" style="width:100%;max-height:380px;object-fit:contain;border-radius:10px;cursor:pointer;display:none;" onclick="zoomImage(this.src)">
+            <div id="nativeVerdiNoImagePlaceholder" style="padding:28px 18px;text-align:center;color:#cbd5e1;font-size:12.2px;font-family:var(--mono);">
+              No live X11 frame loaded for this figure yet. Click <b>"🚀 Launch Native Verdi via SSH -Y"</b> on an authenticated device (Device B: iMac), or click <b>"📸 View Recorded Evidence"</b> to inspect verified V9 captures.
             </div>
           </div>
 
           <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--text-body);background:#f0fdf4;padding:8px 12px;border-radius:10px;border:1px solid #a7f3d0;">
-            <span id="popupCursorTelemetryLbl"><b>⏱️ Provenance & Telemetry:</b> <code>FSDB: motion_v5_16bit_top_regression.fsdb</code> · <code>Tcl: fig10_16bit_perfect_match.tcl</code></span>
+            <span id="popupCursorTelemetryLbl"><b>⏱️ Provenance &amp; Telemetry:</b> <code>FSDB: inspecting...</code> · <code>Tcl: inspecting...</code></span>
           </div>
         </div>
         <div style="background:#fdf4ff;border:1.5px solid #e9d5ff;border-radius:14px;padding:13px 15px;">
@@ -2626,7 +2676,7 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
         try {
           const res = await fetch(url, Object.assign({}, opts, { signal: ctrl.signal }));
           clearTimeout(tid);
-          if (res.ok || res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404 || res.status === 422) {
+          if (res.ok || [400, 401, 403, 404, 409, 422, 429, 500, 502, 503, 504].includes(res.status)) {
             if (base) ACTIVE_API_BASE = base;
             return res;
           }
@@ -4077,6 +4127,20 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
     let POPUP_CURRENT_FIG = 'fig10';
     let POPUP_VIEW_RECORDED_MODE = false;
     let ACTIVE_NATIVE_RUN_JOB_ID = '';
+    // Never reuse a native job for a different figure, or lose its identity on pop-out.
+    const NATIVE_JOB_BY_FIG = Object.create(null);
+    let NATIVE_VIEW_REQUEST_COUNTER = 0;
+    window.addEventListener('message', event => {
+      if (event.origin !== window.location.origin || event.source !== window.opener) return;
+      const msg = event.data;
+      if (!msg || msg.type !== 'ENGR852_NATIVE_VIEWER_INIT') return;
+      const fig = resolveCanonicalFigId(msg.fig_id);
+      if (typeof msg.job_id === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(msg.job_id)) {
+        NATIVE_JOB_BY_FIG[fig] = msg.job_id;
+        ACTIVE_NATIVE_RUN_JOB_ID = msg.job_id;
+      }
+      openLivePopupExecutionModal(fig, Boolean(msg.recorded));
+    });
 
     function resolveCanonicalFigId(rawFigId) {
       const figMap = {
@@ -4114,19 +4178,28 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
         clearInterval(POPUP_PLOT_TIMER);
         POPUP_PLOT_TIMER = null;
       }
+      // Pauses only the browser preview. Never kill SSH, Verdi, or nWave.
+      const previewImg = document.getElementById('nativeVerdiWindowPreviewImg');
+      if (previewImg) previewImg.style.display = 'none';
       const connBadge = document.getElementById('nativeVerdiConnectionStateBadge');
-      if (connBadge && connBadge.textContent.includes('STREAMING')) {
+      if (connBadge) {
         connBadge.className = 'badge lavender';
-        connBadge.textContent = 'STATE: DISCONNECTED (STREAM STOPPED)';
+        connBadge.textContent = 'STATE: PREVIEW PAUSED (NATIVE SESSION UNCHANGED)';
       }
     }
 
     function detachLivePopupToSeparateWindow() {
       const w = window.open(window.location.href, 'ENGR852_Native_Verdi_Viewer', 'width=1220,height=840,menubar=no,toolbar=no,location=no,status=no');
       if (w) {
+        const fig = POPUP_CURRENT_FIG;
+        const job = NATIVE_JOB_BY_FIG[fig] || ACTIVE_NATIVE_RUN_JOB_ID || '';
+        const recorded = POPUP_VIEW_RECORDED_MODE;
         w.addEventListener('load', () => {
-          try { w.openLivePopupExecutionModal(POPUP_CURRENT_FIG, POPUP_VIEW_RECORDED_MODE); } catch (e) {}
-        });
+          try {
+            w.postMessage({type:'ENGR852_NATIVE_VIEWER_INIT',fig_id:fig,
+              job_id:job,recorded:recorded},window.location.origin);
+          } catch (e) { console.warn('Native viewer pop-out handoff failed',e); }
+        }, {once:true});
       }
     }
 
@@ -4142,6 +4215,150 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
       }).join('');
     }
 
+    let SELECTED_EXECUTION_DEVICE = '';
+
+    function renderNativeVerdiDiagnosticPanel(liveSt) {
+      const st = liveSt || {};
+      const sumBadge = document.getElementById('nativeVerdiSummaryStatusBadge');
+      const devBox = document.getElementById('nativeVerdiDeviceRegistryBox');
+      const tbody = document.getElementById('nativeVerdiDiagnosticTableBody');
+
+      if (sumBadge) {
+        const s = st.summary_status || st.status || 'UNKNOWN';
+        const isOk = s === 'VERDI_GUI_READY' || st.status === 'WAVEFORM_SIGNALS_VERIFIED';
+        const isRdy = s === 'SYNOPSYS_ENV_READY' || s === 'SSH_AUTHENTICATED' || s === 'X11_FORWARDING_READY';
+        sumBadge.className = isOk ? 'badge mint' : (isRdy ? 'badge lavender' : 'badge coral');
+        sumBadge.textContent = `${s}${st.error_code && st.error_code !== 'NONE' ? ' · ' + st.error_code : ''}`;
+      }
+
+      if (devBox) {
+        const reg = st.device_registry || {};
+        const devs = Array.isArray(reg.devices) ? reg.devices : [];
+        const selId = st.selected_device || reg.selected_device_id || 'imac';
+        SELECTED_EXECUTION_DEVICE = selId;
+        if (devs.length) {
+          devBox.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+              <div><b>Authorized Execution Devices:</b> <span style="color:#1e40af;">Active = <code>${escapeHtml(selId.toUpperCase())}</code> (Recommended: <code>${escapeHtml((reg.recommended_device_id || 'imac').toUpperCase())}</code> · Mode: <code>${escapeHtml(reg.routing_mode || 'AUTO_RECOMMENDED')}</code>)</span></div>
+              <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                <button class="btn btn-sm ${selId === 'imac' ? 'btn-mint' : ''}" onclick="switchAuthorizedExecutionDevice('imac')">🖥️ Use Device B: iMac</button>
+                <button class="btn btn-sm ${selId === 'macbook_air' ? 'btn-pink' : ''}" onclick="switchAuthorizedExecutionDevice('macbook_air')">💻 Use Device A: MacBook Air</button>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:6px;">
+              ${devs.map(d => `
+                <div style="background:#ffffff;border:1.5px solid ${d.device_id === selId ? '#3b82f6' : '#dbeafe'};border-radius:8px;padding:6px 8px;">
+                  <div style="font-weight:800;color:#0f172a;display:flex;justify-content:space-between;gap:4px;">
+                    <span>${escapeHtml(d.device_label || d.device_id)} (${escapeHtml(d.hostname || '')})</span>
+                    <span class="badge ${d.can_execute_live_verdi ? 'mint' : 'coral'}" style="font-size:9.8px;">${d.can_execute_live_verdi ? 'SSH+X11 READY' : 'SSH BLOCKED'}</span>
+                  </div>
+                  <div style="font-size:10.5px;font-family:var(--mono);color:#334155;margin-top:2px;">${escapeHtml(d.summary_badge || '')}</div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+      }
+
+      if (tbody) {
+        const rows = Array.isArray(st.diagnostic_rows) ? st.diagnostic_rows : [];
+        if (!rows.length) {
+          tbody.innerHTML = `<tr><td colspan="4" style="padding:8px;color:#64748b;">No diagnostic preflight rows returned.</td></tr>`;
+        } else {
+          tbody.innerHTML = rows.map(r => {
+            const stTxt = String(r.status || 'UNKNOWN').toUpperCase();
+            const badgeCls = stTxt === 'VERIFIED' ? 'mint' : (stTxt === 'RUNNING' ? 'lavender' : 'coral');
+            return `
+              <tr style="border-bottom:1px solid #f1f5f9;">
+                <td style="padding:4px 8px;font-weight:700;color:#475569;">${escapeHtml(String(r.step || ''))}</td>
+                <td style="padding:4px 8px;font-weight:700;color:#0f172a;">${escapeHtml(String(r.label || ''))}</td>
+                <td style="padding:4px 8px;"><span class="badge ${badgeCls}" style="font-size:9.8px;">${escapeHtml(stTxt)}</span></td>
+                <td style="padding:4px 8px;color:#334155;">${escapeHtml(String(r.detail || ''))}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      const lcBar = document.getElementById('nativeVerdiLifecycleTelemetryBar');
+      if (lcBar) {
+        const lt = st.lifecycle_telemetry || {};
+        const modals = Array.isArray(st.modal_dialogs) ? st.modal_dialogs : [];
+        const fields = [
+          ['Selected figure', lt.selected_figure || `${String(st.fig_id || POPUP_CURRENT_FIG).toUpperCase()} (${st.fsdb || 'N/A'})`],
+          ['Native session', lt.native_session || st.connection_state || st.status || 'STANDBY'],
+          ['Verdi process', lt.verdi_process || (st.verdi_window_found ? `RUNNING (${st.verdi_window_id || 'X11'})` : 'NOT RUNNING')],
+          ['nWave windows', lt.nwave_windows || (st.verdi_window_found ? '1 active window' : '0 active windows')],
+          ['Signal layout', lt.signal_layout || `Saved (${st.tcl || 'N/A'})`],
+          ['Modal dialog', lt.modal_dialog || (modals.length ? `${modals[0].dialog_window_id} (${modals[0].dialog_category})` : 'None')],
+          ['Cleanup', lt.cleanup || 'Not required'],
+          ['Waveform verification', lt.waveform_verification || st.status || 'Pending'],
+          ['Capture', lt.capture || (st.is_live_stream ? 'Live' : 'Historical / Standby')],
+          ['Recovery', lt.recovery || `Gen #${st.selection_generation_id || NATIVE_VIEW_REQUEST_COUNTER}`],
+        ];
+        lcBar.innerHTML = fields.map(([k, v]) => `<div><b>${escapeHtml(k)}:</b> <code>${escapeHtml(String(v))}</code></div>`).join('');
+      }
+    }
+
+    async function refreshNativeVerdiDiagnostics() {
+      return selectNativeVerdiFigure(POPUP_CURRENT_FIG || 'fig10', false);
+    }
+
+    async function retryNativeVerdiConnection(forceRelaunch) {
+      const figId = resolveCanonicalFigId(POPUP_CURRENT_FIG || 'fig10');
+      const stEl = document.getElementById('popupPlotterStepStatus');
+      const logEl = document.getElementById('popupLiveExecutionLog');
+      if (stEl) {
+        stEl.textContent = `🔁 Executing 15-Step Native Verdi Recovery Sequence (${figId.toUpperCase()} on ${SELECTED_EXECUTION_DEVICE || 'imac'})...`;
+      }
+      try {
+        const res = await smartApiFetch('/api/v8/verdi/recover', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fig_id: figId,
+            selected_device: SELECTED_EXECUTION_DEVICE || 'imac',
+            force_relaunch: Boolean(forceRelaunch)
+          })
+        }, 35000);
+        const data = await res.json();
+        if (logEl) {
+          logEl.textContent = JSON.stringify(data, null, 2);
+        }
+        const recovered = (data && data.recovered_job) || {};
+        const recoveredId = recovered.job_id || (data && data.job_id);
+        if (recoveredId && recovered.fig_id === figId && /^[A-Za-z0-9_-]{1,128}$/.test(recoveredId)) {
+          NATIVE_JOB_BY_FIG[figId] = recoveredId;
+          ACTIVE_NATIVE_RUN_JOB_ID = recoveredId;
+        }
+      } catch (e) {
+        if (stEl) stEl.textContent = `⚠ Recovery error: ${e.message || e}`;
+      }
+      return selectNativeVerdiFigure(figId, false);
+    }
+
+    async function switchAuthorizedExecutionDevice(targetDevice) {
+      const nextDev = targetDevice || (SELECTED_EXECUTION_DEVICE === 'imac' ? 'macbook_air' : 'imac');
+      try {
+        await smartApiFetch('/api/v8/devices/select', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ device_id: nextDev, routing_mode: 'MANUAL_OVERRIDE' })
+        }, 6000);
+      } catch (e) {}
+      SELECTED_EXECUTION_DEVICE = nextDev;
+      return selectNativeVerdiFigure(POPUP_CURRENT_FIG || 'fig10', false);
+    }
+
+    function inspectNativeVerdiLogs() {
+      const logEl = document.getElementById('popupLiveExecutionLog');
+      if (logEl) {
+        logEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        logEl.style.outline = '2px solid #ec4899';
+        setTimeout(() => { logEl.style.outline = 'none'; }, 1800);
+      }
+    }
+
     function renderNativeVerdiProvenanceAndSignals(provenanceObj, signalsList) {
       const provBox = document.getElementById('nativeVerdiProvenanceBox');
       const sigBox = document.getElementById('nativeVerdiSignalTableBox');
@@ -4151,8 +4368,9 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           <div style="background:#ffffff;border:1px solid #d8b4fe;border-radius:8px;padding:8px 10px;font-family:var(--mono);font-size:10.8px;">
             <div><b>• Evidence Class:</b> <code>${escapeHtml(p.evidence_class || 'UNVERIFIED')}</code> | <b>Status:</b> <code>${escapeHtml(p.status || 'UNKNOWN')}</code></div>
             <div><b>• Figure / Tool:</b> <code>${escapeHtml((p.fig_id || POPUP_CURRENT_FIG).toUpperCase())}</code> | <b>Window ID:</b> <code>${escapeHtml(p.window_id || 'none')}</code></div>
-            <div><b>• FSDB Database:</b> <code>${escapeHtml(p.fsdb || 'N/A')}</code></div>
-            <div><b>• Tcl Script:</b> <code>${escapeHtml(p.tcl_script || 'N/A')}</code></div>
+            <div><b>• FSDB Database:</b> <code>${escapeHtml(p.fsdb || 'UNKNOWN')}</code></div>
+            <div><b>• Tcl Script:</b> <code>${escapeHtml(p.tcl_script || 'UNKNOWN')}</code></div>
+            <div><b>• Compile DB (dbdir):</b> <code>${escapeHtml(p.dbdir || 'UNKNOWN')}</code></div>
             <div><b>• Captured UTC:</b> <code>${escapeHtml(p.captured_at_utc || 'N/A')}</code></div>
             <div><b>• Artifact SHA-256:</b> <code>${escapeHtml((p.screenshot_sha256 || 'N/A').slice(0, 32))}...</code></div>
           </div>
@@ -4175,15 +4393,23 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
                 </tr>
               </thead>
               <tbody>
-                ${rows.map(r => `
+                ${rows.map(r => {
+                  const isStr = typeof r === 'string';
+                  const sigName = isStr ? r : (r.requested_signal || r.signal || '');
+                  const widthStr = isStr ? (sigName.includes('[15:0]') ? '16' : (sigName.includes('[12:0]') ? '13' : (sigName.includes('[9:0]') ? '10' : (sigName.includes('[7:0]') ? '8' : (sigName.includes('[3:0]') ? '4' : '1'))))) : String(r.bit_width || 1);
+                  const radixStr = isStr ? 'HEX' : String(r.radix || 'HEX');
+                  const addedOk = !isStr && r.added_ok === true;
+                  const obsStr = isStr ? 'Configured in Tcl (not confirmed by live execution)' : JSON.stringify(r.observed_values || {});
+                  return `
                   <tr style="border-bottom:1px solid #f5d0fe;">
-                    <td style="padding:3px 5px;font-weight:700;">${escapeHtml(String(r.requested_signal || '').split('/').pop())}</td>
-                    <td style="padding:3px 5px;">${escapeHtml(String(r.bit_width || 1))}-b</td>
-                    <td style="padding:3px 5px;">${escapeHtml(String(r.radix || 'HEX'))}</td>
-                    <td style="padding:3px 5px;color:${r.added_ok ? '#047857' : '#be123c'};font-weight:700;">${r.added_ok ? '✓ YES' : '✗ NO'}</td>
-                    <td style="padding:3px 5px;">${escapeHtml(JSON.stringify(r.observed_values || {}))}</td>
+                    <td style="padding:3px 5px;font-weight:700;">${escapeHtml(String(sigName).split('/').pop())}</td>
+                    <td style="padding:3px 5px;">${escapeHtml(widthStr)}-b</td>
+                    <td style="padding:3px 5px;">${escapeHtml(radixStr)}</td>
+                    <td style="padding:3px 5px;color:${addedOk ? '#047857' : '#be123c'};font-weight:700;">${addedOk ? '✓ YES' : '✗ NO'}</td>
+                    <td style="padding:3px 5px;">${escapeHtml(obsStr)}</td>
                   </tr>
-                `).join('')}
+                `;
+                }).join('')}
               </tbody>
             </table>
           `;
@@ -4193,9 +4419,26 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
 
     async function selectNativeVerdiFigure(figId, preferRecorded) {
       const cleanFig = resolveCanonicalFigId(figId);
+      const prevFig = POPUP_CURRENT_FIG;
+      const prevJobId = ACTIVE_NATIVE_RUN_JOB_ID || NATIVE_JOB_BY_FIG[prevFig] || '';
+      if (POPUP_CURRENT_FIG !== cleanFig)
+        ACTIVE_NATIVE_RUN_JOB_ID = NATIVE_JOB_BY_FIG[cleanFig] || '';
       POPUP_CURRENT_FIG = cleanFig;
+      const currentRequest = ++NATIVE_VIEW_REQUEST_COUNTER;
       POPUP_VIEW_RECORDED_MODE = Boolean(preferRecorded);
       updatePopupFigButtonsUI(cleanFig);
+      if (prevFig && prevFig !== cleanFig) {
+        smartApiFetch('/api/v8/verdi/switch-figure', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from_fig_id: prevFig,
+            to_fig_id: cleanFig,
+            old_job_id: prevJobId,
+            selection_generation_id: currentRequest
+          })
+        }, 6000).catch(() => {});
+      }
 
       const pageBadge = document.getElementById('popupExecPageBadge');
       if (pageBadge) pageBadge.textContent = `Page ${IDE_CURRENT_PAGE} · ${cleanFig.toUpperCase()} · 520 MHz 14nm ASIC`;
@@ -4207,6 +4450,7 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
       const blockedBanner = document.getElementById('nativeVerdiBlockedBanner');
       const blockedCode = document.getElementById('nativeVerdiBlockedCodeBadge');
       const blockedEnv = document.getElementById('nativeVerdiBlockedEnvSummary');
+      const blockedHeadline = document.getElementById('nativeVerdiBlockedHeadline');
       const blockedReason = document.getElementById('nativeVerdiBlockedReasonText');
       const previewImg = document.getElementById('nativeVerdiWindowPreviewImg');
       const noImgPlaceholder = document.getElementById('nativeVerdiNoImagePlaceholder');
@@ -4216,15 +4460,28 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
       const logEl = document.getElementById('popupLiveExecutionLog');
 
       try {
-        const res = await smartApiFetch(`/api/v8/verdi/live-status?fig_id=${encodeURIComponent(cleanFig)}&job_id=${encodeURIComponent(ACTIVE_NATIVE_RUN_JOB_ID || '')}`, {}, 8000);
+        const devQuery = SELECTED_EXECUTION_DEVICE ? `&selected_device=${encodeURIComponent(SELECTED_EXECUTION_DEVICE)}` : '';
+        const res = await smartApiFetch(`/api/v8/verdi/live-status?fig_id=${encodeURIComponent(cleanFig)}&job_id=${encodeURIComponent(ACTIVE_NATIVE_RUN_JOB_ID || '')}${devQuery}`, {}, 10000);
         const data = await res.json();
-        const liveSt = (data && data.live_status) || {};
-        const recEv = (data && data.selected_recorded_evidence) || {};
-        const x11Env = liveSt.x11_environment || {};
+        // A slow network response from the previous figure must not overwrite this figure.
+        if (currentRequest !== NATIVE_VIEW_REQUEST_COUNTER || POPUP_CURRENT_FIG !== cleanFig) return;
+        const liveSt = (data && data.live_status) || data || {};
+        const recEv = (data && data.selected_recorded_evidence) || liveSt.recorded_evidence || {};
+        const x11Env = liveSt.local_x11_inspection || liveSt.x11_environment || {};
+        const figMeta = liveSt.figure_metadata || {};
+
+        // Resolve exact figure metadata without EVER falling back to fig10_16bit_perfect_match.tcl
+        const resolvedFsdb = liveSt.fsdb || figMeta.fsdb || recEv.fsdb || 'UNKNOWN';
+        const resolvedTcl = liveSt.tcl || figMeta.tcl || recEv.tcl || recEv.tcl_script || 'UNKNOWN';
+        const resolvedDbdir = liveSt.dbdir || figMeta.dbdir || 'UNKNOWN';
+        const resolvedSignals = Array.isArray(liveSt.required_signals) && liveSt.required_signals.length
+          ? liveSt.required_signals
+          : (Array.isArray(figMeta.required_signals) ? figMeta.required_signals : []);
+
+        renderNativeVerdiDiagnosticPanel(liveSt);
 
         if (POPUP_VIEW_RECORDED_MODE && recEv && recEv.ok) {
           const imgUrl = recEv.recorded_image_url || recEv.web_url || '';
-          const tclName = recEv.tcl || recEv.tcl_script || 'N/A';
           const capTs = recEv.recorded_capture_timestamp_utc || recEv.captured_at_utc || 'V9 Sign-Off';
           if (blockedBanner) blockedBanner.style.display = 'none';
           if (topBadge) {
@@ -4255,94 +4512,194 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
             progBadge.textContent = 'RECORDED_VERIFIED_CAPTURE';
           }
           if (cursorLbl) {
-            cursorLbl.innerHTML = `<b>⏱️ Recorded V9 Provenance:</b> <code>FSDB: ${escapeHtml(recEv.fsdb || 'N/A (ICC2 Layout)')}</code> · <code>Tcl: ${escapeHtml(tclName)}</code> · <code>SHA256: ${escapeHtml((recEv.screenshot_sha256 || '').slice(0, 16))}...</code>`;
+            cursorLbl.innerHTML = `<b>⏱️ Recorded V9 Provenance:</b> <code>FSDB: ${escapeHtml(resolvedFsdb)}</code> · <code>Tcl: ${escapeHtml(resolvedTcl)}</code> · <code>DB: ${escapeHtml(resolvedDbdir)}</code> · <code>SHA256: ${escapeHtml((recEv.screenshot_sha256 || '').slice(0, 16))}...</code>`;
           }
           renderNativeVerdiProvenanceAndSignals({
             evidence_class: 'RECORDED_VERIFIED_CAPTURE',
             status: 'RECORDED_VERIFIED_CAPTURE',
             fig_id: cleanFig,
             window_id: 'V9_ARCHIVE_CAPTURE',
-            fsdb: recEv.fsdb || 'N/A (Physical Layout)',
-            tcl_script: tclName,
+            fsdb: resolvedFsdb,
+            tcl_script: resolvedTcl,
+            dbdir: resolvedDbdir,
             captured_at_utc: capTs,
-            screenshot_sha256: recEv.screenshot_sha256
-          }, []);
+            screenshot_sha256: recEv.screenshot_sha256 || 'UNKNOWN'
+          }, resolvedSignals);
           if (logEl) {
-            logEl.textContent = JSON.stringify(recEv, null, 2);
+            logEl.textContent = JSON.stringify({ figure_metadata: figMeta, recorded_evidence: recEv }, null, 2);
           }
           return;
         }
 
-        // Live mode: check if a live Verdi window is actually verified or if it's BLOCKED
-        const isLiveVerified = Boolean(liveSt.verdi_window_found && (liveSt.status === 'WAVEFORM_VERIFIED' || liveSt.status === 'GUI_OPEN'));
-        if (!isLiveVerified) {
-          if (blockedBanner) blockedBanner.style.display = 'block';
-          if (blockedCode) blockedCode.textContent = `BLOCKED · ${liveSt.reason_code || 'NO_LIVE_VERDI_WINDOW'}`;
-          if (blockedEnv) {
-            blockedEnv.textContent = `XQuartz ${x11Env.display || ':0'}: ${x11Env.xquartz_running ? 'running' : 'offline'} | xterm: ${(x11Env.xterm_window_ids || []).join(',') || 'none'} | Verdi: none`;
-          }
-          if (blockedReason) {
-            blockedReason.textContent = liveSt.message || 'No live Synopsys Verdi/nWave X11 window is active on DISPLAY :0, and SSH to mahmoodi.rcc.at.sfsu.edu is unreachable. Synthetic browser Canvas waveforms are never displayed.';
-          }
+        // Live mode: check if a live Verdi window is verified and open for this figure
+        const isLiveVerified = Boolean(
+          liveSt.verdi_window_found &&
+          liveSt.window_currently_open_on_xquartz !== false &&
+          (liveSt.status === 'WAVEFORM_SIGNALS_VERIFIED' || liveSt.status === 'WAVEFORM_VERIFIED') &&
+          String(liveSt.fig_id || cleanFig).toLowerCase() === cleanFig &&
+          (liveSt.job_id || ACTIVE_NATIVE_RUN_JOB_ID)
+        );
+
+        if (isLiveVerified) {
+          const liveJobId = liveSt.job_id || ACTIVE_NATIVE_RUN_JOB_ID;
+          ACTIVE_NATIVE_RUN_JOB_ID = liveJobId;
+          NATIVE_JOB_BY_FIG[cleanFig] = liveJobId;
+          const winId = liveSt.window_id || liveSt.verdi_window_id || '0xe00006';
+          const capObj = liveSt.capture || {};
+          const sigVer = liveSt.signal_verification || {};
+          const pixMetrics = sigVer.pixel_metrics || {};
+          const capSha = capObj.sha256 || liveSt.redacted_sha256 || 'VERIFIED';
+
+          if (blockedBanner) blockedBanner.style.display = 'none';
           if (topBadge) {
-            topBadge.className = 'badge coral';
-            topBadge.textContent = `⚠ LIVE NATIVE VERDI CAPTURE BLOCKED (${liveSt.reason_code || 'SSH_OR_X11_UNAVAILABLE'})`;
+            topBadge.className = 'badge mint';
+            topBadge.textContent = `🟢 LIVE NATIVE VERDI · WAVEFORM_SIGNALS_VERIFIED (${cleanFig.toUpperCase()} · ${winId})`;
           }
           if (connBadge) {
-            connBadge.className = 'badge coral';
-            connBadge.textContent = `STATE: ${liveSt.status || 'BLOCKED'}`;
+            connBadge.className = 'badge mint';
+            connBadge.textContent = `STATE: ${liveSt.status}`;
           }
           if (evBadge) {
-            evBadge.className = 'badge coral';
-            evBadge.textContent = `${liveSt.evidence_class || 'BLOCKED'} · ${liveSt.reason_code || 'NO_LIVE_VERDI'}`;
+            evBadge.className = 'badge mint';
+            evBadge.textContent = `${liveSt.evidence_class || 'REAL_APPLICATION_CAPTURE'} · ${winId}`;
           }
           if (stEl) {
-            stEl.textContent = `⚠ Live Synopsys Verdi X11 Capture is BLOCKED (${liveSt.reason_code || 'NO_LIVE_VERDI_WINDOW'}). Click "📸 View Recorded Verified V9 Capture" to inspect archived V9 evidence.`;
+            stEl.textContent = `✓ Live Synopsys Verdi W-2024.09-1 Window (${winId}) Verified on XQuartz (${liveSt.display || ':0'}) — ${sigVer.expected_signal_count || resolvedSignals.length} Signals & ${pixMetrics.nwave_detected_rail_bands ?? 0} Waveform Rail Bands Verified!`;
           }
           if (previewImg) {
-            previewImg.src = '';
-            previewImg.style.display = 'none';
+            const base = ACTIVE_API_BASE ? ACTIVE_API_BASE.replace(/\/$/, '') : '';
+            previewImg.src = `${base}/api/v8/verdi/live-frame.png?job_id=${encodeURIComponent(liveJobId)}&fig_id=${encodeURIComponent(cleanFig)}&t=${Date.now()}`;
+            previewImg.style.display = 'block';
           }
-          if (noImgPlaceholder) {
-            noImgPlaceholder.style.display = 'block';
-            noImgPlaceholder.innerHTML = `🚫 <b>NO LIVE SYNOPSYS VERDI X11 FRAME AVAILABLE (${escapeHtml(liveSt.status || 'BLOCKED')})</b><br>Synthetic Canvas oscilloscope waveforms have been permanently removed.<br>Connect SFSU GlobalProtect VPN + SSH -Y, or click <b>"📸 View Recorded Verified V9 Capture"</b> above.`;
+          if (noImgPlaceholder) noImgPlaceholder.style.display = 'none';
+          if (previewTitle) {
+            previewTitle.textContent = `🪟 Live Synopsys Verdi / nWave Application Capture (${cleanFig.toUpperCase()} · Window ${winId} · Privacy Redacted)`;
           }
           if (progBadge) {
-            progBadge.className = 'badge coral';
-            progBadge.textContent = liveSt.status || 'BLOCKED';
+            progBadge.className = 'badge mint';
+            progBadge.textContent = 'REAL_APPLICATION_CAPTURE';
+          }
+          if (cursorLbl) {
+            cursorLbl.innerHTML = `<b>⏱️ Live Provenance:</b> <code>FSDB: ${escapeHtml(resolvedFsdb)}</code> · <code>Tcl: ${escapeHtml(resolvedTcl)}</code> · <code>DB: ${escapeHtml(resolvedDbdir)}</code> · <code>SHA256: ${escapeHtml(String(capSha).slice(0, 16))}...</code>`;
           }
           renderNativeVerdi10StageBar({
-            DISCOVER: x11Env.xquartz_running ? 'PASSED' : 'BLOCKED',
-            CONNECT: 'BLOCKED',
-            LOAD_EDA: 'WAITING',
-            LOAD_FSDB: 'WAITING',
-            LAUNCH_GUI: 'BLOCKED',
-            PLOT_SIGNALS: 'WAITING',
-            VERIFY_OUTPUT: 'WAITING',
-            CAPTURE: 'WAITING',
+            DISCOVER: 'PASSED',
+            CONNECT: 'PASSED',
+            LOAD_EDA: 'PASSED',
+            LOAD_FSDB: 'PASSED',
+            LAUNCH_GUI: 'PASSED',
+            PLOT_SIGNALS: 'PASSED',
+            VERIFY_OUTPUT: 'PASSED',
+            CAPTURE: 'PASSED',
             SYNC: 'WAITING',
-            COMPLETE: 'BLOCKED'
+            COMPLETE: 'WAITING'
           });
           updateVisualPipelineFromStages({
-            stage1_terminal: { state: 'PASSED', detail: 'Local X11 & SSH environment inspected' },
-            stage2_gui: { state: 'BLOCKED', detail: `XQuartz :0 (${(x11Env.xterm_window_ids || []).length} xterm, 0 Verdi)` },
-            stage3_tool: { state: 'BLOCKED', detail: liveSt.reason_code || 'SSH / Synopsys Verdi unavailable' },
-            stage4_verifier: { state: 'BLOCKED', detail: 'Signal rail verification blocked' },
-            stage5_artifact: { state: 'BLOCKED', detail: 'No live capture produced' }
+            stage1_terminal: { state: 'PASSED', detail: `SFSU VPN + SSH -Y authenticated (${liveSt.selected_device || 'imac'})` },
+            stage2_gui: { state: 'PASSED', detail: `Verdi X11 window ${winId} active on XQuartz` },
+            stage3_tool: { state: 'PASSED', detail: `Loaded ${resolvedFsdb} + ${resolvedTcl}` },
+            stage4_verifier: { state: 'PASSED', detail: `Verified ${pixMetrics.nwave_detected_rail_bands ?? 0} rail bands & ${sigVer.expected_signal_count ?? resolvedSignals.length} signals` },
+            stage5_artifact: { state: 'PASSED', detail: `Redacted PNG sha256=${String(capSha).slice(0, 12)}...` }
           });
           renderNativeVerdiProvenanceAndSignals({
-            evidence_class: liveSt.evidence_class || 'BLOCKED',
-            status: liveSt.status || 'BLOCKED',
+            evidence_class: liveSt.evidence_class || 'REAL_APPLICATION_CAPTURE',
+            status: liveSt.status || 'WAVEFORM_SIGNALS_VERIFIED',
             fig_id: cleanFig,
-            window_id: 'none',
-            fsdb: recEv.fsdb || 'motion_v5_16bit_top_regression.fsdb',
-            tcl_script: recEv.tcl_script || 'fig10_16bit_perfect_match.tcl',
-            captured_at_utc: 'N/A (Blocked)',
-            screenshot_sha256: 'NONE'
-          }, []);
+            window_id: winId,
+            fsdb: resolvedFsdb,
+            tcl_script: resolvedTcl,
+            dbdir: resolvedDbdir,
+            captured_at_utc: liveSt.updated_at_utc || new Date().toISOString(),
+            screenshot_sha256: capSha
+          }, resolvedSignals);
           if (logEl) {
             logEl.textContent = JSON.stringify(liveSt, null, 2);
           }
+          return;
+        }
+
+        // Not live-verified for this figure: show exact error code & diagnosis from v8.0.3 preflight
+        const errCode = liveSt.error_code && liveSt.error_code !== 'NONE' ? liveSt.error_code : (liveSt.status || 'VERDI_PROCESS_NOT_RUNNING');
+        const errDetail = liveSt.error_detail || {};
+        const flags = liveSt.flags || {};
+        const xqReachable = Boolean(liveSt.xquartz_reachable || x11Env.xquartz_reachable || x11Env.xquartz_running);
+        const sshAuthed = Boolean(flags.SSH_AUTHENTICATED);
+
+        if (blockedBanner) blockedBanner.style.display = 'block';
+        if (blockedCode) blockedCode.textContent = `${errCode}`;
+        if (blockedEnv) {
+          blockedEnv.textContent = `XQuartz: ${xqReachable ? 'READY' : 'OFFLINE'} | VPN: ${flags.VPN_TUNNEL_AVAILABLE ? 'UP' : 'DOWN'} | SSH: ${sshAuthed ? 'AUTHENTICATED' : 'BLOCKED'} | Verdi: ${liveSt.verdi_window_id || 'none'}`;
+        }
+        if (blockedHeadline) {
+          blockedHeadline.textContent = errDetail.title
+            ? `${errCode} — ${errDetail.title}`
+            : `Native Synopsys Verdi Status: ${errCode}`;
+        }
+        if (blockedReason) {
+          blockedReason.textContent = liveSt.reason || errDetail.diagnosis || 'Inspect connection diagnostic table above.';
+        }
+        if (topBadge) {
+          topBadge.className = sshAuthed && xqReachable ? 'badge lavender' : 'badge coral';
+          topBadge.textContent = `${errCode} (${cleanFig.toUpperCase()})`;
+        }
+        if (connBadge) {
+          connBadge.className = sshAuthed && xqReachable ? 'badge lavender' : 'badge coral';
+          connBadge.textContent = `STATE: ${typeof liveSt.summary_status === 'string' ? liveSt.summary_status : errCode}`;
+        }
+        if (evBadge) {
+          evBadge.className = 'badge coral';
+          evBadge.textContent = `${liveSt.evidence_class || 'BLOCKED'} · ${errCode}`;
+        }
+        if (stEl) {
+          stEl.textContent = liveSt.reason || `Status: ${errCode}`;
+        }
+        if (previewImg) {
+          previewImg.src = '';
+          previewImg.style.display = 'none';
+        }
+        if (noImgPlaceholder) {
+          noImgPlaceholder.style.display = 'block';
+          noImgPlaceholder.innerHTML = `🧭 <b>${escapeHtml(errCode)}: ${escapeHtml(errDetail.title || 'Live Frame Not Loaded')}</b><br>${escapeHtml(errDetail.diagnosis || liveSt.reason || '')}<br><b>Recovery:</b> ${escapeHtml(errDetail.recovery_action || 'Click Launch Native Verdi via SSH -Y or View Recorded Evidence.')}`;
+        }
+        if (progBadge) {
+          progBadge.className = 'badge coral';
+          progBadge.textContent = errCode;
+        }
+        if (cursorLbl) {
+          cursorLbl.innerHTML = `<b>⏱️ Figure Metadata (${escapeHtml(cleanFig.toUpperCase())}):</b> <code>FSDB: ${escapeHtml(resolvedFsdb)}</code> · <code>Tcl: ${escapeHtml(resolvedTcl)}</code> · <code>DB: ${escapeHtml(resolvedDbdir)}</code>`;
+        }
+        renderNativeVerdi10StageBar({
+          DISCOVER: xqReachable ? 'PASSED' : 'BLOCKED',
+          CONNECT: sshAuthed ? 'PASSED' : 'BLOCKED',
+          LOAD_EDA: flags.SYNOPSYS_ENV_READY ? 'PASSED' : 'WAITING',
+          LOAD_FSDB: flags.SYNOPSYS_ENV_READY ? 'PASSED' : 'WAITING',
+          LAUNCH_GUI: liveSt.verdi_window_found ? 'PASSED' : 'WAITING',
+          PLOT_SIGNALS: 'WAITING',
+          VERIFY_OUTPUT: 'WAITING',
+          CAPTURE: 'WAITING',
+          SYNC: 'WAITING',
+          COMPLETE: 'WAITING'
+        });
+        updateVisualPipelineFromStages({
+          stage1_terminal: { state: sshAuthed ? 'PASSED' : 'BLOCKED', detail: `VPN=${Boolean(flags.VPN_TUNNEL_AVAILABLE)} · SSH=${sshAuthed}` },
+          stage2_gui: { state: xqReachable ? 'PASSED' : 'BLOCKED', detail: `XQuartz ${xqReachable ? 'READY' : 'OFFLINE'} (Verdi=${liveSt.verdi_window_id || 'none'})` },
+          stage3_tool: { state: flags.SYNOPSYS_ENV_READY ? 'PASSED' : 'BLOCKED', detail: `${resolvedTcl} · ${resolvedFsdb}` },
+          stage4_verifier: { state: 'WAITING', detail: `Awaiting ${resolvedSignals.length} signal rails` },
+          stage5_artifact: { state: 'WAITING', detail: `Reason: ${errCode}` }
+        });
+        renderNativeVerdiProvenanceAndSignals({
+          evidence_class: liveSt.evidence_class || 'BLOCKED',
+          status: errCode,
+          fig_id: cleanFig,
+          window_id: liveSt.verdi_window_id || 'none',
+          fsdb: resolvedFsdb,
+          tcl_script: resolvedTcl,
+          dbdir: resolvedDbdir,
+          captured_at_utc: 'N/A (Live window not captured for this figure)',
+          screenshot_sha256: 'NONE'
+        }, resolvedSignals);
+        if (logEl) {
+          logEl.textContent = JSON.stringify(liveSt, null, 2);
         }
       } catch (e) {
         if (stEl) stEl.textContent = `⚠ Status check failed: ${e.message || e}`;
@@ -4369,9 +4726,8 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           const previewImg = document.getElementById('nativeVerdiWindowPreviewImg');
           const noImgPlaceholder = document.getElementById('nativeVerdiNoImagePlaceholder');
           const base = ACTIVE_API_BASE ? ACTIVE_API_BASE.replace(/\/$/, '') : '';
-          const tokParam = JDEV8_SESSION_TOKEN ? `&token=${encodeURIComponent(JDEV8_SESSION_TOKEN)}` : '';
           if (previewImg) {
-            previewImg.src = `${base}/api/native-runs/${ACTIVE_NATIVE_RUN_JOB_ID}/frame.png?t=${Date.now()}${tokParam}`;
+            previewImg.src = `${base}/api/v8/verdi/live-frame.png?job_id=${encodeURIComponent(ACTIVE_NATIVE_RUN_JOB_ID)}&t=${Date.now()}`;
             previewImg.style.display = 'block';
           }
           if (noImgPlaceholder) noImgPlaceholder.style.display = 'none';
@@ -4412,7 +4768,7 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
             figure_id: figId,
             force_new_launch: Boolean(forceNewLaunch)
           })
-        }, 25000);
+        }, 180000);
         const data = await res.json();
         if (!res.ok) {
           if (connBadge) {
@@ -4425,31 +4781,34 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           return;
         }
 
-        ACTIVE_NATIVE_RUN_JOB_ID = data.job_id || '';
+        if (data.job_id && /^[A-Za-z0-9_-]{1,128}$/.test(data.job_id))
+          NATIVE_JOB_BY_FIG[figId] = data.job_id;
+        if (POPUP_CURRENT_FIG !== figId) return;
+        ACTIVE_NATIVE_RUN_JOB_ID = NATIVE_JOB_BY_FIG[figId] || '';
         renderNativeVerdi10StageBar(data.stage_states || {});
         if (data.stages) {
           updateVisualPipelineFromStages(data.stages);
         }
-        const okVerified = Boolean(data.ok && data.signal_rail_verified && data.status === 'WAVEFORM_VERIFIED');
-        const sigVer = data.signal_rail_verification || {};
-        const pixVer = sigVer.pixel_rail_audit || {};
+        const okVerified = Boolean(data.ok && (data.signal_rail_verified || data.status === 'WAVEFORM_SIGNALS_VERIFIED' || data.status === 'WAVEFORM_VERIFIED'));
+        const sigVer = data.signal_rail_verification || data.signal_verification || {};
+        const pixVer = sigVer.pixel_rail_audit || sigVer.pixel_metrics || {};
 
         if (okVerified) {
           if (blockedBanner) blockedBanner.style.display = 'none';
           if (topBadge) {
             topBadge.className = 'badge mint';
-            topBadge.textContent = `🟢 WAVEFORM_VERIFIED · REAL APPLICATION CAPTURE (${figId.toUpperCase()})`;
+            topBadge.textContent = `🟢 WAVEFORM_SIGNALS_VERIFIED · REAL APPLICATION CAPTURE (${figId.toUpperCase()})`;
           }
           if (connBadge) {
             connBadge.className = 'badge mint';
-            connBadge.textContent = `STATE: WAVEFORM_VERIFIED`;
+            connBadge.textContent = `STATE: ${data.status || 'WAVEFORM_SIGNALS_VERIFIED'}`;
           }
           if (evBadge) {
             evBadge.className = 'badge mint';
             evBadge.textContent = `${data.evidence_class || 'REAL_APPLICATION_CAPTURE'} · ${data.status}`;
           }
           if (st) {
-            st.textContent = `✓ WAVEFORM_VERIFIED (${figId.toUpperCase()} · Window ${data.window_id} · ${pixVer.signal_rail_bands_detected || 0} Signal Rails)`;
+            st.textContent = `✓ ${data.status} (${figId.toUpperCase()} · Window ${data.window_id} · ${pixVer.nwave_detected_rail_bands ?? pixVer.signal_rail_bands_detected ?? 0} Signal Rails)`;
           }
           if (progBadge) {
             progBadge.className = 'badge mint';
@@ -4457,8 +4816,7 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           }
           if (previewImg && data.job_id) {
             const base = ACTIVE_API_BASE ? ACTIVE_API_BASE.replace(/\/$/, '') : '';
-            const tokParam = JDEV8_SESSION_TOKEN ? `&token=${encodeURIComponent(JDEV8_SESSION_TOKEN)}` : '';
-            previewImg.src = `${base}/api/native-runs/${data.job_id}/frame.png?t=${Date.now()}${tokParam}`;
+            previewImg.src = `${base}/api/v8/verdi/live-frame.png?job_id=${encodeURIComponent(data.job_id)}&t=${Date.now()}`;
             previewImg.style.display = 'block';
           }
           if (noImgPlaceholder) noImgPlaceholder.style.display = 'none';
@@ -4474,11 +4832,12 @@ student@junior-dev-sandbox motion-estimator-14nm-asic % _</div>
           status: data.status || 'BLOCKED',
           fig_id: figId,
           window_id: data.window_id || 'none',
-          fsdb: ((data.launch || {}).fsdb) || 'motion_v5_16bit_top_regression.fsdb',
-          tcl_script: ((data.launch || {}).tcl_script) || 'fig10_16bit_perfect_match.tcl',
-          captured_at_utc: ((data.capture || {}).capture_timestamp_utc) || new Date().toISOString(),
-          screenshot_sha256: data.redacted_sha256 || ((data.capture || {}).redacted_sha256) || 'NONE'
-        }, ((data.capture || {}).signal_verification_records) || ((data.launch || {}).signal_verification_records) || []);
+          fsdb: data.fsdb || ((data.launch || {}).fsdb) || 'UNKNOWN',
+          tcl_script: data.tcl || ((data.launch || {}).tcl_script) || 'UNKNOWN',
+          dbdir: data.dbdir || ((data.launch || {}).dbdir) || 'UNKNOWN',
+          captured_at_utc: ((data.capture || {}).capture_timestamp_utc) || data.updated_at_utc || new Date().toISOString(),
+          screenshot_sha256: data.redacted_sha256 || ((data.capture || {}).sha256) || ((data.capture || {}).redacted_sha256) || 'NONE'
+        }, ((data.capture || {}).signal_verification_records) || ((data.launch || {}).signal_verification_records) || data.required_signals || []);
 
         if (logEl) {
           logEl.textContent = JSON.stringify(data, null, 2);

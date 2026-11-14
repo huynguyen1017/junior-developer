@@ -1,0 +1,30 @@
+; ENGR 852 Native Synopsys Verdi Signal Configuration (FIG10)
+; Generated UTC: 2026-11-12T22:37:07.610272+00:00
+Magic 271485
+Revision Verdi_W-2024.09-1
+
+activeFile "motion_v5_16bit_top_regression.fsdb"
+zoom 4900000.000000 5320000.000000
+ruler 0.000000
+waveformTimeUnit default
+
+addGroup "G1"
+activeDirFile "" "motion_v5_16bit_top_regression.fsdb"
+addSignal -h 15 -BIN /motion_v5_16bit_top_regression_tb/clock
+addSignal -h 15 -BIN /motion_v5_16bit_top_regression_tb/start
+addSignal -h 15 -HEX /motion_v5_16bit_top_regression_tb/dut/ctl_u/count[12:0]
+addSignal -h 15 -HEX /motion_v5_16bit_top_regression_tb/dut/S1S2mux[15:0]
+addSignal -h 15 -HEX /motion_v5_16bit_top_regression_tb/dut/newDist[15:0]
+addSignal -h 15 -BIN /motion_v5_16bit_top_regression_tb/dut/CompStart
+addSignal -h 15 -HEX /motion_v5_16bit_top_regression_tb/dut/PEready[15:0]
+addSignal -h 15 -HEX /motion_v5_16bit_top_regression_tb/dut/VectorX[3:0]
+addSignal -h 15 -HEX /motion_v5_16bit_top_regression_tb/dut/VectorY[3:0]
+addSignal -h 15 -HEX /motion_v5_16bit_top_regression_tb/AddressR[7:0]
+addSignal -h 15 -HEX /motion_v5_16bit_top_regression_tb/AddressS1[9:0]
+addSignal -h 15 -HEX /motion_v5_16bit_top_regression_tb/AddressS2[9:0]
+addSignal -h 15 -BIN /motion_v5_16bit_top_regression_tb/dut/comp_u/newBest
+addSignal -h 15 -HEX /motion_v5_16bit_top_regression_tb/BestDist[15:0]
+addSignal -h 15 -HEX /motion_v5_16bit_top_regression_tb/motionX[3:0]
+addSignal -h 15 -HEX /motion_v5_16bit_top_regression_tb/motionY[3:0]
+addSignal -h 15 -BIN /motion_v5_16bit_top_regression_tb/completed
+addGroup "G2"

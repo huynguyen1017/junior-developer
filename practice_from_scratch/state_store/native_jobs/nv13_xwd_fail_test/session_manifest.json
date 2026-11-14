@@ -1,0 +1,33 @@
+{
+  "schema_version": "v8.3",
+  "session_id": "ses_nv13_xwd_fail_test",
+  "job_id": "nv13_xwd_fail_test",
+  "figure_id": "fig10",
+  "fsdb_family": "fsdb_v5_16bit_regression",
+  "execution_device_id": "imac",
+  "owner_id": "authorized_companion_user",
+  "remote_host_id": "mahmoodi.rcc.at.sfsu.edu",
+  "ssh_connection_id": "ssh_pid:attached",
+  "ssh_pid": null,
+  "verdi_pid": null,
+  "verdi_process_start_time": "2026-11-12T22:30:21.198033+00:00",
+  "nw_wave_window_ids": [
+    "_nWave2"
+  ],
+  "active_window_id": "0x1400006",
+  "fsdb_path": "/motion_v5_16bit_top_regression.fsdb",
+  "fsdb_sha256": "",
+  "tcl_path": "/fig10_16bit_perfect_match.tcl",
+  "tcl_sha256": "",
+  "signal_layout_path": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/state_store/native_jobs/nv13_xwd_fail_test/waveform_configuration.rc",
+  "signal_layout_sha256": "e48c0f33b1277c0f1ba28cd4bf09f90702d61f4c894ff40b1b0d509efa20cf1d",
+  "signal_layout_saved": true,
+  "signal_ownership_class": "AUTOMATION_TEMPORARY",
+  "capture_state": "NATIVE_SESSION_BLOCKED",
+  "session_state": "FAILED",
+  "last_verified_at": "2026-11-12T22:30:21.198041+00:00",
+  "cleanup_state": "ACTIVE",
+  "reference_count": 0,
+  "ownership_token": "704e817e2b98b46c8332dbd0",
+  "selection_generation_id": 256
+}

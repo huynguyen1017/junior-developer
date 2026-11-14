@@ -1,0 +1,11 @@
+{
+  "job_id": "nv06_missing_fsdb_test",
+  "figure_id": "fig10",
+  "tcl_script": "fig10_16bit_perfect_match.tcl",
+  "tcl_sha256": "",
+  "wvAddSignal_count": 0,
+  "tcl_signal_paths": [],
+  "signal_layout_saved_rc": "/Users/huynguyen/Developer/portfolio/motion-estimator-v7-native-verdi-staged/practice_from_scratch/state_store/native_jobs/nv06_missing_fsdb_test/waveform_configuration.rc",
+  "signal_layout_rc_sha256": "3aacfeede5996bc915e10906a19917981049073b4527683421d748b58eee93cd",
+  "verified_at_utc": "2026-11-12T22:30:21.003119+00:00"
+}

@@ -1,0 +1,9 @@
+{
+  "job_id": "nv11_wrong_fsdb_test",
+  "figure_id": "fig10",
+  "cleanup_state": "ACTIVE",
+  "signal_layout_saved": true,
+  "signal_layout_rc_sha256": "4aa76b3bd180adeca6da3e6aeac0cd6ac384f69b11c2ceb2215afbded11229f0",
+  "steps_executed": [],
+  "updated_at_utc": "2026-11-12T22:13:13.954309+00:00"
+}
