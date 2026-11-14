@@ -1,4 +1,4 @@
-# Motion Estimator Native Verdi Studio (`v1.0` → `v8.3`) — Full-Stack ASIC Web IDE & Verification Platform (`:8789`)
+# JUNIOR DEVELOPER — JD JUNIOR DEVELOPER · Learn. Build. Connect. — Public Engineering, Community & ASIC Studio Platform (v8.0) (`v1.0` → `v8.3` on `:8789`)
 
 [![Platform Version](https://img.shields.io/badge/Studio_Platform-v8.3_Native_Verdi_%26_JUNIOR_DEVELOPER-ec4899)](REVISION_HISTORY_AND_CHANGELOG.md)
 [![100-Transition Stability](https://img.shields.io/badge/v8.3_Verdi_Lifecycle-18%2F18_NV_%7C_51%2F51_Matrix_%7C_100%2F100_Loop-15803d)](docs/lifecycle_v8_3/FINAL_NATIVE_VERDI_ACCEPTANCE_REPORT.md)
@@ -37,8 +37,8 @@ See [`REVISION_HISTORY_AND_CHANGELOG.md`](REVISION_HISTORY_AND_CHANGELOG.md) for
 `practice_from_scratch/web_console/server.py` runs purely on the **Python 3 Standard Library** (`http.server`, `sqlite3`, `ctypes`, `threading`, `subprocess`, `pty`) — zero third-party `pip` packages needed:
 
 ```bash
-git clone https://github.com/huynguyen1017/motion-estimator-native-verdi-studio-2026.git
-cd motion-estimator-native-verdi-studio-2026
+git clone https://github.com/huynguyen1017/junior-developer.git
+cd junior-developer
 ENGR852_CONSOLE_PORT=8789 python3 practice_from_scratch/web_console/server.py
 # Open http://127.0.0.1:8789/ in your browser
 ```
@@ -103,7 +103,7 @@ All **46 `.vcd` waveform dumps** (`motion_v5_16bit_top_regression.vcd` `25.85 MB
 ## Repository Directory Structure
 
 ```text
-motion-estimator-native-verdi-studio-2026/
+junior-developer/
 ├── README.md                                   # Executive showcase, 1-command launch & verification overview
 ├── REVISION_HISTORY_AND_CHANGELOG.md           # Full changelog across v1.0 -> v8.3 & ASIC V1 -> V9
 ├── WAVEFORM_AND_TEST_LOG_CATALOG.md            # Complete index of 46 .vcd dumps, screenshots & test logs

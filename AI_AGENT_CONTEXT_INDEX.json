@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0.0",
-  "project_name": "motion-estimator-native-verdi-studio-2026",
+  "project_name": "junior-developer",
   "companion_asic_repo": "https://github.com/huynguyen1017/motion-estimator-asic-lab-notebook-2026",
   "live_staging_origin": "http://127.0.0.1:8789/",
-  "platform_version": "v8.3 (JUNIOR DEVELOPER v8.1 + MASTER-RECOVERY-v8.2 + Lifecycle v8.3)",
+  "platform_version": "JD JUNIOR DEVELOPER · Learn. Build. Connect. — Public Engineering, Community & ASIC Studio Platform (v8.0) (v8.3: v8.1 + MASTER-RECOVERY-v8.2 + Lifecycle v8.3)",
   "asic_target": {
     "architecture": "16-PE Systolic Full-Search Block-Matching Motion Estimator",
     "technology": "Synopsys SAED14 FinFET RVT (14nm)",

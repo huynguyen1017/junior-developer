@@ -1,4 +1,4 @@
-# Motion Estimator Native Verdi Studio (`v8.3` / `http://127.0.0.1:8789/`)
+# JUNIOR DEVELOPER — JD JUNIOR DEVELOPER · Learn. Build. Connect. — Public Engineering, Community & ASIC Studio Platform (v8.0) (`v8.3` / `http://127.0.0.1:8789/`)
 
 > Full-stack, zero-dependency Python 3 + SQLite + X11 Native Synopsys Verdi nWave Engineering Platform, Open-Source Verilog Sandbox (`iverilog` + `vvp` + `Yosys`), and 520 MHz 14nm FinFET Systolic Motion Estimator ASIC Portfolio (`V1`–`V9` RTL-to-GDSII).
 
